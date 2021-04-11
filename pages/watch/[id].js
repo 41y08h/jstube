@@ -47,7 +47,7 @@ export default function VideoPage({ error, data }) {
 export async function getServerSideProps(context) {
   try {
     const result = await fetch(
-      `http://localhost:5000/video/${context.params.id}`
+      `${process.env.API_URL}/video/${context.params.id}`
     );
     const data = await result.json();
 

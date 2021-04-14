@@ -11,6 +11,7 @@ export async function getServerSideProps(ctx) {
     nookies.set(ctx, "token", token, {
       path: "/",
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
     });
 
   return { redirect: { destination: "/", permanent: false } };

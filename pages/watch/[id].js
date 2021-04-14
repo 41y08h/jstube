@@ -6,9 +6,9 @@ import {
   Typography,
 } from "@material-ui/core";
 import Head from "next/head";
-import fetch from "node-fetch";
 import Layout from "../../components/Layout";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import fetcher from "../../lib/fetcher";
 
 const useStyles = makeStyles({
   video: {
@@ -17,9 +17,18 @@ const useStyles = makeStyles({
 });
 
 export default function VideoPage({ error, data }) {
-  if (error) return <p>{error}</p>;
-
   const classes = useStyles();
+
+  if (error)
+    return (
+      <Layout>
+        <Head>
+          <title>{error.response.data.message}</title>
+        </Head>
+        <p>{error.response.data.message}</p>
+      </Layout>
+    );
+
   return (
     <Layout>
       <Head>
@@ -46,13 +55,10 @@ export default function VideoPage({ error, data }) {
 
 export async function getServerSideProps(context) {
   try {
-    const result = await fetch(
-      `${process.env.API_URL}/video/${context.params.id}`
-    );
-    const data = await result.json();
-
+    const data = await fetcher(`/videos/${context.params.id}`);
     return { props: { data } };
   } catch (error) {
-    return { props: { error: error.message } };
+    if (error.response.status === 404) return { notFound: true };
+    return { props: { error: error } };
   }
 }

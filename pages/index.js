@@ -1,38 +1,19 @@
 import Layout from "../components/Layout";
 import Head from "next/head";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import VideoCard from "../components/VideoCard";
+import { useQuery } from "react-query";
 
-export default function Home({ API_URL }) {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/data`)
-      .then((res) => {
-        setData(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, []);
+export default function Home() {
+  const { isLoading, error, data } = useQuery("videos");
 
   return (
     <Layout>
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-      {data && data.map((item) => <VideoCard data={item} />)}
+      <Head>
+        <title>JS Tube </title>
+      </Head>
+      {isLoading && <p>Loading...</p>}
+      {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
+      {data && data.map((item) => <VideoCard key={data.id} data={item} />)}
     </Layout>
   );
-}
-
-export function getStaticProps() {
-  const { API_URL } = process.env;
-
-  return { props: { API_URL } };
 }

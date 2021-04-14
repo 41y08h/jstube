@@ -8,7 +8,10 @@ export function useAuth() {
 }
 
 export default function AuthProvider({ children }) {
-  const { isLoading, error, data: user } = useQuery("/auth/current-user");
+  const { isLoading, error, data: user } = useQuery("/auth/current-user", {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
   return (
     <AuthContext.Provider value={{ isLoading, user, error }}>

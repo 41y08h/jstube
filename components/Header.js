@@ -14,6 +14,7 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
+import VideoCallIcon from "@material-ui/icons/VideoCall";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import { useAuth } from "../contexts/auth";
@@ -28,6 +29,10 @@ const useStyles = makeStyles({
   },
   bar: {
     justifyContent: "space-between",
+  },
+  small: {
+    width: 30,
+    height: 30,
   },
 });
 
@@ -61,6 +66,11 @@ export default function Header() {
     if (user)
       return (
         <div>
+          <Link href="/upload">
+            <IconButton>
+              <VideoCallIcon />
+            </IconButton>
+          </Link>
           <IconButton
             ref={anchorRef}
             aria-label="account of current user"
@@ -69,7 +79,11 @@ export default function Header() {
             color="inherit"
             onClick={handleToggle}
           >
-            <Avatar alt={user.name} src={user.picture} />
+            <Avatar
+              className={classes.small}
+              alt={user.name}
+              src={user.picture}
+            />
           </IconButton>
           <Popper
             open={open}
@@ -95,7 +109,7 @@ export default function Header() {
                       className={classes.menuBox}
                     >
                       <MenuItem>
-                        <a href={`${API_URL}/auth/logout`}>Logout</a>
+                        <a href="/api/auth/logout">Logout</a>
                       </MenuItem>
                     </MenuList>
                   </ClickAwayListener>

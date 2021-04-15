@@ -4,7 +4,7 @@ import Header from "./Header";
 
 const useStyles = makeStyles({
   children: {
-    paddingTop: 100,
+    marginTop: 50,
   },
 });
 

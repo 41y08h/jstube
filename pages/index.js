@@ -4,7 +4,7 @@ import VideoCard from "../components/VideoCard";
 import { useQuery } from "react-query";
 
 export default function Home() {
-  const { isLoading, error, data } = useQuery("videos");
+  const { isLoading, error, data } = useQuery("/api/videos");
 
   return (
     <Layout>

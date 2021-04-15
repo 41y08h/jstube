@@ -13,7 +13,7 @@ export default function Home() {
       </Head>
       {isLoading && <p>Loading...</p>}
       {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
-      {data && data.map((item) => <VideoCard key={data.id} data={item} />)}
+      {data && data.map((item) => <VideoCard key={item.id} data={item} />)}
     </Layout>
   );
 }

@@ -1,9 +1,11 @@
+const { API_URL } = require("./config");
+
 module.exports = {
   async rewrites() {
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:5000/:path*", // Proxy to Backend
+        destination: `${API_URL}/:path*`, // Proxy to Backend
       },
     ];
   },

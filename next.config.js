@@ -1,4 +1,8 @@
-const { API_URL } = require("./config");
+const isDevEnvironment = process.env.NODE_ENV === "development";
+
+const API_URL = isDevEnvironment
+  ? "http://localhost:5000"
+  : "https://jstube-api.herokuapp.com";
 
 module.exports = {
   async rewrites() {

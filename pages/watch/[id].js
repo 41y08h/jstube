@@ -55,7 +55,7 @@ export default function VideoPage({ error, data }) {
 
 export async function getServerSideProps(context) {
   try {
-    const data = await fetcher(`/videos/${context.params.id}`);
+    const data = await fetcher(`/api/videos/${context.params.id}`);
     return { props: { data } };
   } catch (error) {
     if (error.response.status === 404) return { notFound: true };

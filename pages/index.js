@@ -2,7 +2,8 @@ import Layout from "../components/Layout";
 import Head from "next/head";
 import VideoCard from "../components/VideoCard";
 import { useQuery } from "react-query";
-import { Grid, makeStyles } from "@material-ui/core";
+import { Grid, makeStyles, Typography } from "@material-ui/core";
+import { siteName } from "../config";
 
 const useStyles = makeStyles({
   gridItem: {
@@ -19,25 +20,28 @@ export default function Home() {
   return (
     <Layout>
       <Head>
-        <title>JS Tube </title>
+        <title>{siteName}</title>
       </Head>
       {isLoading && <p>Loading...</p>}
       {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
       {data && (
-        <Grid container spacing={1}>
-          {data.map((item) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              lg={3}
-              className={classes.gridItem}
-            >
-              <VideoCard key={item.id} data={item} />
-            </Grid>
-          ))}
-        </Grid>
+        <>
+          <hr />
+          <Grid container spacing={1}>
+            {data.map((item) => (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                lg={3}
+                className={classes.gridItem}
+              >
+                <VideoCard key={item.id} data={item} />
+              </Grid>
+            ))}
+          </Grid>
+        </>
       )}
     </Layout>
   );

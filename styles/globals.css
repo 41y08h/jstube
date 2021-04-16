@@ -20,3 +20,10 @@ a {
 video {
   outline: none;
 }
+
+hr {
+  background-color: #eeeeee;
+  border: none;
+  height: 4px;
+  margin-bottom: 1rem;
+}

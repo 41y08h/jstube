@@ -1,7 +1,7 @@
 import { Button } from "@material-ui/core";
 import Layout from "../components/Layout";
 import ProtectedPage from "../components/ProtectedPage";
-import { API_URL } from "../config";
+import { API_URL, siteName } from "../config";
 import Head from "next/head";
 
 export default function Login() {
@@ -9,7 +9,7 @@ export default function Login() {
     <ProtectedPage>
       <Layout>
         <Head>
-          <title>Login | JS Tube</title>
+          <title>Login | {siteName}</title>
         </Head>
         <a href={`${API_URL}/auth/google`}>
           <Button>Login with Google</Button>

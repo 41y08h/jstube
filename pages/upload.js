@@ -2,6 +2,7 @@ import Layout from "../components/Layout";
 import Head from "next/head";
 import { useRef } from "react";
 import { Button } from "@material-ui/core";
+import { siteName } from "../config";
 
 export default function Upload() {
   const fileInputRef = useRef();
@@ -13,7 +14,7 @@ export default function Upload() {
   return (
     <Layout>
       <Head>
-        <title>Upload | JS Tube</title>
+        <title>Upload | {siteName}</title>
       </Head>
       <h1>Upload a video</h1>
       <form onSubmit={handleSubmit}>

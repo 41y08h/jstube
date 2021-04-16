@@ -26,6 +26,9 @@ const useStyles = makeStyles({
     backgroundColor: "white",
     color: "#000",
     borderBottom: "1px solid #eeeeee",
+    position: "fixed",
+    top: 0,
+    left: 0,
   },
   bar: {
     justifyContent: "space-between",

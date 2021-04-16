@@ -4,7 +4,7 @@ import Header from "./Header";
 
 const useStyles = makeStyles({
   wrapper: {
-    paddingTop: 40,
+    paddingTop: 90,
   },
 });
 

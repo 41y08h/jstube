@@ -11,6 +11,13 @@ import Link from "next/link";
 const useStyles = makeStyles({
   root: {
     maxWidth: 345,
+    borderRadius: 0,
+    boxShadow: "none",
+    color: "#606060",
+  },
+  title: {
+    fontWeight: 400,
+    fontSize: "1rem",
   },
 });
 
@@ -24,12 +31,17 @@ export default function VideoCard({ data }) {
           <CardMedia
             component="img"
             alt={data.title}
-            height="190"
+            height="154"
             image={data.thumb}
-            title="Contemplative Reptile"
+            title={data.title}
           />
           <CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
+            <Typography
+              gutterBottom
+              className={classes.title}
+              variant="p"
+              component="h2"
+            >
               {data.title}
             </Typography>
             <Typography>{data.subtitle}</Typography>

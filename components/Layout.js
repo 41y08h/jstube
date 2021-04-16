@@ -3,8 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import Header from "./Header";
 
 const useStyles = makeStyles({
-  children: {
-    marginTop: 50,
+  wrapper: {
+    paddingTop: 40,
   },
 });
 
@@ -13,7 +13,9 @@ export default function Layout({ children }) {
   return (
     <>
       <Header />
-      <Container className={classes.children}>{children}</Container>
+      <div className={classes.wrapper}>
+        <Container>{children}</Container>
+      </div>
     </>
   );
 }

@@ -39,6 +39,7 @@ const useStyles = makeStyles({
   },
   logo: {
     width: 92,
+    cursor: "pointer",
   },
 });
 

@@ -6,15 +6,15 @@ import formatNumber from "../lib/formatNumber";
 export default function VideoCard({ data }) {
   return (
     <Link href={`/watch/${data.id}`}>
-      <div>
+      <div style={{ maxWidth: "280px" }}>
         <div className="relative">
           <img
-            style={{ width: "280px", height: "156px" }}
+            style={{ width: "100%", height: "148px" }}
             className="w-68 h-48 object-cover"
             src={data.thumb}
             alt={data.title}
           />
-          <span className="absolute bottom-2 right-1 bg-gray-900 py-1 px-2 text-xs text-white rounded">
+          <span className="absolute bottom-2 right-1 bg-gray-900 px-1 text-xs text-white rounded">
             {formatTime(data.duration)}
           </span>
         </div>

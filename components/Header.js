@@ -131,7 +131,6 @@ export default function Header() {
 
   return (
     <AppBar className={classes.root} position="static">
-      <Container>
         <Toolbar className={classes.bar}>
           <Link href="/">
             <Typography component="a" variant="h6">
@@ -140,7 +139,6 @@ export default function Header() {
           </Link>
           {renderContent()}
         </Toolbar>
-      </Container>
     </AppBar>
   );
 }

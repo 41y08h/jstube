@@ -37,6 +37,9 @@ const useStyles = makeStyles({
     width: 30,
     height: 30,
   },
+  logo: {
+    width: 92,
+  },
 });
 
 export default function Header() {
@@ -131,14 +134,16 @@ export default function Header() {
 
   return (
     <AppBar className={classes.root} position="static">
-        <Toolbar className={classes.bar}>
-          <Link href="/">
-            <Typography component="a" variant="h6">
-              JS Tube
-            </Typography>
-          </Link>
-          {renderContent()}
-        </Toolbar>
+      <Toolbar className={classes.bar}>
+        <Link href="/">
+          <img
+            className={classes.logo}
+            src="/jstube_logo.svg"
+            alt="jstube logo"
+          />
+        </Link>
+        {renderContent()}
+      </Toolbar>
     </AppBar>
   );
 }

@@ -1,7 +1,8 @@
-import "../styles/globals.css";
 import AuthProvider from "../contexts/auth";
 import { QueryClient, QueryClientProvider } from "react-query";
 import queryFn from "../lib/queryFn";
+import "../styles/tailwind.css";
+import "../styles/globals.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {

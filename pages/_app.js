@@ -1,5 +1,5 @@
-import AuthProvider from "../contexts/auth";
 import { QueryClient, QueryClientProvider } from "react-query";
+import AuthProvider from "../contexts/auth";
 import queryFn from "../lib/queryFn";
 import "../styles/tailwind.css";
 import "../styles/globals.css";

@@ -3,28 +3,31 @@ import Head from "next/head";
 import { useRef } from "react";
 import { Button } from "@material-ui/core";
 import { siteName } from "../config";
-import axios from "axios";
 import { useState } from "react";
+import axios from "axios";
+import { useMutation } from "react-query";
 
 export default function Upload() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef();
+  const videoUpload = useMutation((formData) =>
+    axios.post("/api/videos", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      onUploadProgress: (progressEvent) =>
+        setUploadProgress(
+          Math.round((progressEvent.loaded / progressEvent.total) * 100)
+        ),
+    })
+  );
 
   function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData();
     const file = fileInputRef.current.files[0];
     formData.append("file", file);
+    formData.append("title", "title is here");
 
-    axios.post("/api/upload", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      onUploadProgress: (progressEvent) =>
-        setUploadProgress(
-          Math.round((progressEvent.loaded / progressEvent.total) * 100)
-        ),
-    });
+    videoUpload.mutate(formData);
   }
 
   return (

@@ -27,7 +27,7 @@ export default function VideoCard({ data }) {
           </div>
           <div>
             <p className="text-sm font-medium mb-1">{data.title}</p>
-            <div className="flex flex-col text-gray-500 text-sm">
+            <div className="flex flex-col text-secondary text-sm">
               <span>{data._user.name}</span>
               <div>
                 <span>{formatNumber(data.views)} views</span>

@@ -28,10 +28,9 @@ video {
 }
 
 hr {
-  background-color: #eeeeee;
+  background-color: #dbdbdb;
   border: none;
-  height: 4px;
-  margin-bottom: 1rem;
+  height: 1px;
 }
 
 button,

@@ -33,3 +33,10 @@ hr {
   height: 4px;
   margin-bottom: 1rem;
 }
+
+button,
+input,
+textarea {
+  outline: none;
+  border: none;
+}

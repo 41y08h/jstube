@@ -15,6 +15,10 @@ class MyDocument extends Document {
             rel="stylesheet"
             href="https://fonts.googleapis.com/icon?family=Material+Icons"
           />
+          <script
+            src="https://kit.fontawesome.com/5db89d435f.js"
+            crossorigin="anonymous"
+          ></script>
         </Head>
         <body>
           <Main />

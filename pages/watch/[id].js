@@ -8,8 +8,8 @@ import {
 import Head from "next/head";
 import Layout from "../../components/Layout";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import fetcher from "../../lib/fetcher";
 import { API_URL } from "../../config";
+import axios from "axios";
 
 const useStyles = makeStyles({
   video: {
@@ -55,8 +55,9 @@ export default function VideoPage({ error, data }) {
 }
 
 export async function getServerSideProps(context) {
+  console.log(`${API_URL}/videos/${context.params.id}`);
   try {
-    const data = await fetcher(`${API_URL}/videos/${context.params.id}`);
+    const { data } = await axios(`${API_URL}/videos/${context.params.id}`);
     return { props: { data } };
   } catch (error) {
     if (error.response.status === 404) return { notFound: true };

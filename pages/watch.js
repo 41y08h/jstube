@@ -1,31 +1,24 @@
 import Head from "next/head";
-import Layout from "../../components/Layout";
-import { API_URL } from "../../config";
+import Layout from "../components/Layout";
+import { API_URL } from "../config";
 import axios from "axios";
-import numberWithCommas from "../../lib/numberWithCommas";
+import numberWithCommas from "../lib/numberWithCommas";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import ReplyIcon from "@material-ui/icons/Reply";
-import VideoAction from "../../components/VideoAction";
-import VideoChannelInfo from "../../components/VideoChannelInfo";
+import VideoAction from "../components/VideoAction";
+import VideoChannelInfo from "../components/VideoChannelInfo";
+import VideoChannelAvatar from "../components/VideoChannelAvatar";
+import Description from "../components/video/Description";
+import dateFormat from "dateformat";
 
-export default function VideoPage({ error, data }) {
-  if (error)
-    return (
-      <Layout>
-        <Head>
-          <title>{error.response.data.message}</title>
-        </Head>
-        <p>{error.response.data.message}</p>
-      </Layout>
-    );
-
+export default function VideoPage({ data }) {
   return (
     <Layout>
       <Head>
         <title>{data.title} - JS Tube</title>
       </Head>
       <div className="px-4 flex">
-        <div className="flex-2">
+        <div className="w-2/3">
           <video
             style={{ width: "853px", height: "480px" }}
             autoPlay
@@ -43,7 +36,9 @@ export default function VideoPage({ error, data }) {
               <div>
                 <span>{numberWithCommas(data.views)} views</span>
                 <span className="mx-1 font-bold text-md">·</span>
-                <span>{new Date(data.createdAt).toDateString()}</span>
+                <span>
+                  {dateFormat(new Date(data.createdAt), "mmm d, yyyy")}
+                </span>
               </div>
               <div className="flex space-x-5 items-center justify-center">
                 <div className="space-x-5 border-b-2 border-gray-500 pb-4">
@@ -60,22 +55,34 @@ export default function VideoPage({ error, data }) {
                 />
               </div>
             </div>
-            <VideoChannelInfo data={data._user} />
+            <div className="space-x-4 flex w-full mt-6">
+              <div>
+                <VideoChannelAvatar
+                  picture={data._user.picture}
+                  name={data._user.name}
+                />
+              </div>
+              <div className="mt-2 space-y-2">
+                <VideoChannelInfo data={data._user} />
+                <div className="pr-60">
+                  <Description text={data.description} />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex-1"></div>
+        <div className="w-1/3 px-8">Suggestions will go here</div>
       </div>
     </Layout>
   );
 }
 
 export async function getServerSideProps(context) {
-  console.log(`${API_URL}/videos/${context.params.id}`);
   try {
-    const { data } = await axios(`${API_URL}/videos/${context.params.id}`);
+    if (!context.query.v) throw new Error("Wrong url");
+    const { data } = await axios(`${API_URL}/videos/${context.query.v}`);
     return { props: { data } };
   } catch (error) {
-    if (error.response.status === 404) return { notFound: true };
-    return { props: { error: error } };
+    return { redirect: { destination: "/", permanent: false } };
   }
 }

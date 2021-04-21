@@ -5,7 +5,7 @@ import formatNumber from "../lib/formatNumber";
 
 export default function VideoCard({ data }) {
   return (
-    <Link href={`/watch/${data._id}`}>
+    <Link href={`/watch?v=${data._id}`}>
       <div style={{ maxWidth: "280px" }}>
         <div className="relative">
           <img

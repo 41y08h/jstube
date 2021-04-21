@@ -6,6 +6,11 @@
 
 html {
   background-color: #f9f9f9;
+  color: #030303;
+}
+
+body {
+  line-height: 1.8;
 }
 
 a {
@@ -20,6 +25,18 @@ video {
 
 input,
 textarea {
+  outline: none;
+  border: none;
+}
+
+.text-primary {
+  color: #030303;
+}
+.text-secondary {
+  color: #606060;
+}
+
+button:focus {
   outline: none;
   border: none;
 }

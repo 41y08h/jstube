@@ -1,16 +1,12 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Typography,
-} from "@material-ui/core";
 import Head from "next/head";
 import Layout from "../../components/Layout";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { API_URL } from "../../config";
 import axios from "axios";
 import numberWithCommas from "../../lib/numberWithCommas";
-import { ReactComponent as LikeIcon } from "../../assets/like.svg";
+import ThumbUpIcon from "@material-ui/icons/ThumbUp";
+import ReplyIcon from "@material-ui/icons/Reply";
+import VideoAction from "../../components/VideoAction";
+import VideoChannelInfo from "../../components/VideoChannelInfo";
 
 export default function VideoPage({ error, data }) {
   if (error)
@@ -26,7 +22,7 @@ export default function VideoPage({ error, data }) {
   return (
     <Layout>
       <Head>
-        <title>{data.title} | JS Tube</title>
+        <title>{data.title} - JS Tube</title>
       </Head>
       <div className="px-4 flex">
         <div className="flex-2">
@@ -38,25 +34,34 @@ export default function VideoPage({ error, data }) {
           />
           <div className="mt-4">
             <h1 className="text-xl font-normal">{data.title}</h1>
-            <div className="flex justify-between mt-2 text-secondary text-sm">
+            <div
+              style={{
+                borderBottom: "1px solid #dbdbdb",
+              }}
+              className="flex justify-between mt-3 text-secondary text-sm"
+            >
               <div>
                 <span>{numberWithCommas(data.views)} views</span>
                 <span className="mx-1 font-bold text-md">·</span>
                 <span>{new Date(data.createdAt).toDateString()}</span>
               </div>
-              <div className="space-x-8">
-                <span>
-                  <LikeIcon />
-                  <span className="uppercase font-bold text-base">879</span>
-                </span>
-                <span>
-                  <i className="fa fa-thumbs-down text-2xl mr-2" />
-                  <span className="uppercase font-bold text-base">149</span>
-                </span>
+              <div className="flex space-x-5 items-center justify-center">
+                <div className="space-x-5 border-b-2 border-gray-500 pb-4">
+                  <VideoAction icon={<ThumbUpIcon />} text="879" />
+                  <VideoAction
+                    icon={<ThumbUpIcon className="transform rotate-180" />}
+                    text="149"
+                  />
+                </div>
+                <VideoAction
+                  className="-mt-4"
+                  icon={<ReplyIcon style={{ transform: "scaleX(-1)" }} />}
+                  text="Share"
+                />
               </div>
             </div>
+            <VideoChannelInfo data={data._user} />
           </div>
-          <hr />
         </div>
         <div className="flex-1"></div>
       </div>

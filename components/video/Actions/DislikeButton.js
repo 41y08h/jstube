@@ -10,12 +10,16 @@ export default function DislikeButton() {
   const { video, setVideo } = useVideo();
   const { user, authAction } = useAuth();
 
-  const dislikeMutation = useMutation(
-    () => axios.patch(`/api/videos/${video._id}/dislike`),
+  const hasUserDisliked = user && video._dislikes.includes(user._id);
+
+  const dislike = useMutation(
+    () =>
+      axios(`/api/videos/${video._id}/dislike`, {
+        method: hasUserDisliked ? "delete" : "patch",
+      }),
     {
       onSuccess(res) {
-        setVideo(res.data.video);
-        toast.success("You dislike this video.");
+        setVideo(res.data);
       },
       onError(err) {
         toast.error(err.response.data.message);
@@ -25,7 +29,8 @@ export default function DislikeButton() {
 
   return (
     <Action
-      onClick={() => authAction(dislikeMutation.mutate)}
+      className={hasUserDisliked ? "text-blue-700" : ""}
+      onClick={() => authAction(dislike.mutate)}
       icon={<ThumbUpIcon className="transform rotate-180" />}
       text={video._dislikes.length}
     />

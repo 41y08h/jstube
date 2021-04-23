@@ -8,14 +8,18 @@ import Action from "./Action";
 
 export default function LikeButton() {
   const { video, setVideo } = useVideo();
-  const { authAction } = useAuth();
+  const { user, authAction } = useAuth();
+
+  const hasUserLiked = user && video._likes.includes(user._id);
 
   const likeMutation = useMutation(
-    () => axios.patch(`/api/videos/${video._id}/like`),
+    () =>
+      axios(`/api/videos/${video._id}/like`, {
+        method: hasUserLiked ? "delete" : "patch",
+      }),
     {
       onSuccess(res) {
-        setVideo(res.data.video);
-        toast.success("Added to liked videos.");
+        setVideo(res.data);
       },
       onError(err) {
         toast.error(err.response.data.message);
@@ -25,6 +29,7 @@ export default function LikeButton() {
 
   return (
     <Action
+      className={hasUserLiked ? "text-blue-700" : ""}
       onClick={() => authAction(likeMutation.mutate)}
       icon={<ThumbUpIcon />}
       text={video._likes.length}

@@ -12,7 +12,7 @@ export default function DislikeButton() {
 
   const hasUserDisliked = user && video._dislikes.includes(user._id);
 
-  const dislike = useMutation(
+  const dislikes = useMutation(
     () =>
       axios(`/api/videos/${video._id}/dislike`, {
         method: hasUserDisliked ? "delete" : "patch",
@@ -30,7 +30,8 @@ export default function DislikeButton() {
   return (
     <Action
       className={hasUserDisliked ? "text-blue-700" : ""}
-      onClick={() => authAction(dislike.mutate)}
+      onClick={() => authAction(dislikes.mutate)}
+      disabled={dislikes.isLoading}
       icon={<ThumbUpIcon className="transform rotate-180" />}
       text={video._dislikes.length}
     />

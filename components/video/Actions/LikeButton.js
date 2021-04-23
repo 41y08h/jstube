@@ -12,7 +12,7 @@ export default function LikeButton() {
 
   const hasUserLiked = user && video._likes.includes(user._id);
 
-  const likeMutation = useMutation(
+  const likes = useMutation(
     () =>
       axios(`/api/videos/${video._id}/like`, {
         method: hasUserLiked ? "delete" : "patch",
@@ -30,7 +30,8 @@ export default function LikeButton() {
   return (
     <Action
       className={hasUserLiked ? "text-blue-700" : ""}
-      onClick={() => authAction(likeMutation.mutate)}
+      onClick={() => authAction(likes.mutate)}
+      disabled={likes.isLoading}
       icon={<ThumbUpIcon />}
       text={video._likes.length}
     />

@@ -5,6 +5,7 @@ import { useVideo } from "../../../contexts/video";
 import { useAuth } from "../../../contexts/auth";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import Action from "./Action";
+import formatNumber from "../../../lib/formatNumber";
 
 export default function LikeButton() {
   const { video, setVideo } = useVideo();
@@ -33,7 +34,7 @@ export default function LikeButton() {
       onClick={() => authAction(likes.mutate)}
       disabled={likes.isLoading}
       icon={<ThumbUpIcon />}
-      text={video._likes.length}
+      text={formatNumber(video._likes.length)}
     />
   );
 }

@@ -5,6 +5,7 @@ import { useVideo } from "../../../contexts/video";
 import { useAuth } from "../../../contexts/auth";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import Action from "./Action";
+import formatNumber from "../../../lib/formatNumber";
 
 export default function DislikeButton() {
   const { video, setVideo } = useVideo();
@@ -33,7 +34,7 @@ export default function DislikeButton() {
       onClick={() => authAction(dislikes.mutate)}
       disabled={dislikes.isLoading}
       icon={<ThumbUpIcon className="transform rotate-180" />}
-      text={video._dislikes.length}
+      text={formatNumber(video._dislikes.length)}
     />
   );
 }

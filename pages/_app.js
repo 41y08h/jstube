@@ -5,6 +5,7 @@ import queryFn from "../lib/queryFn";
 import "../styles/tailwind.css";
 import "../styles/globals.css";
 import "react-toastify/dist/ReactToastify.css";
+import LoginModal from "../components/LoginModal";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,6 +20,7 @@ export default function MyApp({ Component, pageProps }) {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Component {...pageProps} />
+        <LoginModal open={true} />
       </AuthProvider>
       <ToastContainer />
     </QueryClientProvider>

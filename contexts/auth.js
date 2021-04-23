@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { useQuery } from "react-query";
 
 export const AuthContext = createContext();
@@ -8,13 +8,30 @@ export function useAuth() {
 }
 
 export default function AuthProvider({ children }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { isLoading, error, data: user } = useQuery("/api/auth/user", {
     retry: false,
     refetchOnWindowFocus: false,
   });
 
+  function authAction(actionFn) {
+    if (isLoading) return;
+    if (user) return actionFn();
+
+    setIsModalOpen(true);
+  }
+
   return (
-    <AuthContext.Provider value={{ isLoading, user, error }}>
+    <AuthContext.Provider
+      value={{
+        isLoading,
+        user,
+        error,
+        isModalOpen,
+        setIsModalOpen,
+        authAction,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

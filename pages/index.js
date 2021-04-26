@@ -17,8 +17,8 @@ export default function Home() {
       {data && (
         <div className="flex gap-4 mx-auto w-max">
           {data.map((item) => (
-            <div>
-              <VideoCard key={item._id} data={item} />
+            <div key={item._id}>
+              <VideoCard data={item} />
             </div>
           ))}
         </div>

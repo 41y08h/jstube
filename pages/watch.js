@@ -53,7 +53,7 @@ export async function getServerSideProps(ctx) {
     if (!videoId) throw new Error("Wrong url");
 
     const { data } = await axios(`${API_URL}/videos/${videoId}`, {
-      headers: ctx.req ? { cookie: ctx.req.headers.cookie } : undefined,
+      headers: ctx.req ? { cookie: ctx.req.headers.cookie || "" } : undefined,
     });
 
     return { props: { data } };

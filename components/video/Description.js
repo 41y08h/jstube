@@ -1,14 +1,18 @@
 import { useState } from "react";
+import { useVideo } from "../../contexts/video";
 
 const shortLength = 160;
 
 export default function Description({ text }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { video } = useVideo();
 
   return (
-    <>
+    <div className="pr-60">
       <p className="text-sm whitespace-pre-wrap">
-        {isExpanded ? text : text.substring(0, shortLength + 1)}
+        {isExpanded
+          ? video.description
+          : video.description.substring(0, shortLength + 1)}
       </p>
       <button
         onClick={() => setIsExpanded((prev) => !prev)}
@@ -16,6 +20,6 @@ export default function Description({ text }) {
       >
         Show {isExpanded ? "less" : "more"}
       </button>
-    </>
+    </div>
   );
 }

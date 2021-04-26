@@ -1,5 +1,5 @@
-import { useVideo } from "../contexts/video";
-import formatNumber from "../lib/formatNumber";
+import { useVideo } from "../../contexts/video";
+import formatNumber from "../../lib/formatNumber";
 
 export default function ChannelBar() {
   const { video } = useVideo();

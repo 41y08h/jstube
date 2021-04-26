@@ -15,7 +15,6 @@ export default function AuthProvider({ children }) {
   });
 
   function authAction(actionFn) {
-    console.log("ok");
     if (isLoading) return;
     if (Boolean(user)) return actionFn();
 

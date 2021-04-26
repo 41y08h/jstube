@@ -1,15 +1,15 @@
-import Head from "next/head";
-import Layout from "../components/Layout";
-import { API_URL } from "../config";
 import axios from "axios";
-import numberWithCommas from "../lib/numberWithCommas";
-import VideoChannelInfo from "../components/VideoChannelInfo";
-import VideoChannelAvatar from "../components/VideoChannelAvatar";
-import Description from "../components/Video/Description";
-import dateFormat from "dateformat";
-import Actions from "../components/Video/Actions";
-import { VideoContext } from "../contexts/video";
+import Head from "next/head";
 import { useState } from "react";
+import { API_URL } from "../config";
+import Layout from "../components/Layout";
+import Info from "../components/Video/Info";
+import { VideoContext } from "../contexts/video";
+import ChannelBar from "../components/Video/ChannelBar";
+import VideoPlayer from "../components/Video/VideoPlayer";
+import Description from "../components/Video/Description";
+import ChannelAvatar from "../components/Video/ChannelAvatar";
+import Actions from "../components/Video/Actions";
 
 export default function VideoPage({ data }) {
   const [video, setVideo] = useState(data);
@@ -18,45 +18,24 @@ export default function VideoPage({ data }) {
     <Layout>
       <VideoContext.Provider value={{ video, setVideo }}>
         <Head>
-          <title>{data.title} - JS Tube</title>
+          <title>{video.title} - JS Tube</title>
         </Head>
         <div className="px-4 flex">
           <div className="w-2/3">
-            <video
-              style={{ width: "853px", height: "480px" }}
-              autoPlay
-              controls
-              src={data.source}
-            />
+            <VideoPlayer />
             <div className="mt-4">
-              <h1 className="text-xl font-normal">{data.title}</h1>
-              <div
-                style={{
-                  borderBottom: "1px solid #dbdbdb",
-                }}
-                className="flex justify-between mt-3 text-secondary text-sm"
-              >
-                <div>
-                  <span>{numberWithCommas(data.views)} views</span>
-                  <span className="mx-1 font-bold text-md">·</span>
-                  <span>
-                    {dateFormat(new Date(data.createdAt), "mmm d, yyyy")}
-                  </span>
-                </div>
+              <h1 className="text-xl font-normal">{video.title}</h1>
+              <div className="flex justify-between mt-3 text-secondary text-sm border-b">
+                <Info />
                 <Actions />
               </div>
               <div className="space-x-4 flex w-full mt-6">
                 <div>
-                  <VideoChannelAvatar
-                    picture={data._user.picture}
-                    name={data._user.name}
-                  />
+                  <ChannelAvatar />
                 </div>
                 <div className="mt-2 space-y-2">
-                  <VideoChannelInfo data={data._user} />
-                  <div className="pr-60">
-                    <Description text={data.description} />
-                  </div>
+                  <ChannelBar />
+                  <Description />
                 </div>
               </div>
             </div>
@@ -68,10 +47,15 @@ export default function VideoPage({ data }) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(ctx) {
   try {
-    if (!context.query.v) throw new Error("Wrong url");
-    const { data } = await axios(`${API_URL}/videos/${context.query.v}`);
+    const videoId = ctx.query.v;
+    if (!videoId) throw new Error("Wrong url");
+
+    const { data } = await axios(`${API_URL}/videos/${videoId}`, {
+      headers: ctx.req ? { cookie: ctx.req.headers.cookie } : undefined,
+    });
+
     return { props: { data } };
   } catch (error) {
     return { redirect: { destination: "/", permanent: false } };

@@ -5,6 +5,7 @@ import { useAuth } from "../../../contexts/auth";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import { useMutation } from "react-query";
 import axios from "axios";
+import formatNumber from "../../../lib/formatNumber";
 
 export default function Rating() {
   const { video } = useVideo();
@@ -26,21 +27,31 @@ export default function Rating() {
   const dislike = () => authAction(() => ratingMutation.mutate("DISLIKE"));
 
   return (
-    <>
-      <Action
-        className={rating.userRating === "LIKE" ? "text-blue-700" : ""}
-        onClick={like}
-        disabled={ratingMutation.isLoading}
-        text={rating.likes}
-        icon={<ThumbUpIcon />}
-      />
-      <Action
-        className={rating.userRating === "DISLIKE" ? "text-blue-700" : ""}
-        onClick={dislike}
-        disabled={ratingMutation.isLoading}
-        text={rating.dislikes}
-        icon={<ThumbUpIcon className="transform rotate-180" />}
-      />
-    </>
+    <div className="relative">
+      <div className="space-x-5 pb-4">
+        <Action
+          className={rating.userRating === "LIKE" ? "text-blue-700" : ""}
+          onClick={like}
+          disabled={ratingMutation.isLoading}
+          text={formatNumber(rating.likes)}
+          icon={<ThumbUpIcon />}
+        />
+        <Action
+          className={rating.userRating === "DISLIKE" ? "text-blue-700" : ""}
+          onClick={dislike}
+          disabled={ratingMutation.isLoading}
+          text={formatNumber(rating.dislikes)}
+          icon={<ThumbUpIcon className="transform rotate-180" />}
+        />
+      </div>
+      <div className="absolute bg-gray-300 w-full overflow-hidden">
+        <div
+          style={{
+            width: `${(rating.likes / (rating.dislikes || 1)) * 100}%`,
+          }}
+          className="bg-gray-500 h-0.5 w-full transition-all "
+        />
+      </div>
+    </div>
   );
 }

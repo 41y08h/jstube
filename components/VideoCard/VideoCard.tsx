@@ -5,6 +5,7 @@ import { FC } from "react";
 import QueryVideo from "../../interfaces/queries/Video";
 import Thumbnail from "./Thumbnail";
 import Avatar from "./Avatar";
+import VideoInfo from "./VideoInfo";
 
 interface Props {
   data: QueryVideo;
@@ -24,9 +25,12 @@ const VideoCard: FC<Props> = ({ data }) => {
             <Avatar src={data.channel.picture} alt={data.channel.name} />
           </div>
           <div className="space-y-2 w-4/5">
-            <p className="max-h-10 pr-4 text-sm font-medium text-primary line-clamp-2 overflow-ellipsis whitespace-normal overflow-hidden">
-              {data.title}
-            </p>
+            <VideoInfo
+              title={data.title}
+              channelName={data.channel.name}
+              uploadedAt={data.uploadedAt}
+              views={data.views}
+            />
           </div>
         </div>
       </div>

@@ -40,3 +40,20 @@ button:focus {
   outline: none;
   border: none;
 }
+
+.themed-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.themed-scrollbar::-webkit-scrollbar-track {
+  background: #fff;
+  padding: "0 4px";
+}
+
+.themed-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 12px;
+}
+
+.themed-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: #dbdbdb;
+}

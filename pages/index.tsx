@@ -25,7 +25,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="p-2 flex flex-wrap justify-evenly">
+      <div className="py-4 px-6 flex flex-wrap justify-evenly">
         {data.map((video) => (
           <VideoCard key={video.id} data={video} />
         ))}

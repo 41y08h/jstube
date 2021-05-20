@@ -14,11 +14,11 @@ const Layout: FC = ({ children }) => {
       <div className="flex pt-16">
         <div
           style={{ height: "calc(100vh - 64px)" }}
-          className="fixed top-16 left-0 w-60 z-20"
+          className="fixed top-16 -left-100 lg:left-0 w-60 z-20"
         >
           <Sidebar />
         </div>
-        <div className="border-t pl-60">{children}</div>
+        <div className="border-t pl-60 pb-10">{children}</div>
       </div>
     </Fragment>
   );

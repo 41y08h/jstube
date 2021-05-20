@@ -1,6 +1,5 @@
 import { FC } from "react";
 
-// 253x142
 const LoadingCard: FC = () => (
   <div className="w-60 my-4 mx-3">
     <div className="animate-pulse space-y-3">

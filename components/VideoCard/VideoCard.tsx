@@ -1,9 +1,10 @@
 import Link from "next/link";
-import formatTime from "../lib/formatTime";
-import timeSince from "../lib/timeSince";
-import formatNumber from "../lib/formatNumber";
+import timeSince from "../../lib/timeSince";
+import formatNumber from "../../lib/formatNumber";
 import { FC } from "react";
-import QueryVideo from "../interfaces/queries/Video";
+import QueryVideo from "../../interfaces/queries/Video";
+import Thumbnail from "./Thumbnail";
+import Avatar from "./Avatar";
 
 interface Props {
   data: QueryVideo;
@@ -11,12 +12,33 @@ interface Props {
 
 const VideoCard: FC<Props> = ({ data }) => {
   return (
+    <div className="w-60 my-4 mx-3">
+      <div className="space-y-3">
+        <Thumbnail
+          src={data.thumbnail}
+          alt={data.title}
+          duration={data.duration}
+        />
+        <div className="flex space-x-2 w-full">
+          <div className="w-1/5">
+            <Avatar src={data.channel.picture} alt={data.channel.name} />
+          </div>
+          <div className="space-y-2 w-4/5">
+            <p className="max-h-10 pr-4 text-sm font-medium text-primary line-clamp-2 overflow-ellipsis whitespace-normal overflow-hidden">
+              {data.title}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
     <Link href={`/watch?v=${data.id}`}>
-      <div style={{ maxWidth: "280px" }}>
+      <div className="w-60 my-4 mx-3">
         <div className="relative">
           <img
-            style={{ width: "100%", height: "148px" }}
-            className="w-68 h-48 object-cover"
+            className="w-full h-32 object-cover rounded-sm"
             src={data.thumbnail}
             alt={data.title}
           />
@@ -25,7 +47,7 @@ const VideoCard: FC<Props> = ({ data }) => {
           </span>
         </div>
         <div className="flex space-x-3 pt-2 justify-start">
-          <div className="w-10 h-10 rounded-full overflow-hidden">
+          <div className="w-9 h-9 rounded-full overflow-hidden">
             <img
               src={data.channel.picture}
               className="h-full w-full object-cover"

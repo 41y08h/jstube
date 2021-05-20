@@ -12,6 +12,14 @@ import { ReactComponent as MusicIcon } from "../../icons/music.svg";
 import { ReactComponent as PremiumIcon } from "../../icons/premium.svg";
 import { ReactComponent as MoviesIcon } from "../../icons/movies.svg";
 import { ReactComponent as GamingIcon } from "../../icons/gaming.svg";
+import { ReactComponent as LiveIcon } from "../../icons/live.svg";
+import { ReactComponent as FashionIcon } from "../../icons/fashion.svg";
+import { ReactComponent as LearningIcon } from "../../icons/learning.svg";
+import { ReactComponent as SportsIcon } from "../../icons/sports.svg";
+import { ReactComponent as SettingsIcon } from "../../icons/settings.svg";
+import { ReactComponent as ReportHistoryIcon } from "../../icons/reportHistory.svg";
+import { ReactComponent as HelpIcon } from "../../icons/help.svg";
+import { ReactComponent as FeedbackIcon } from "../../icons/feedback.svg";
 
 const TopItems = [
   { icon: HomeIcon, active: true, text: "Home", href: "/" },
@@ -70,6 +78,56 @@ const BottomItems = [
     active: false,
     text: "Gaming",
     href: "/playlists/gaming",
+  },
+  {
+    icon: LiveIcon,
+    active: false,
+    text: "Live",
+    href: "/channels/live",
+  },
+  {
+    icon: FashionIcon,
+    active: false,
+    text: "Fashion & Beauty",
+    href: "/channels/live",
+  },
+  {
+    icon: LearningIcon,
+    active: false,
+    text: "Learning",
+    href: "/channels/live",
+  },
+  {
+    icon: SportsIcon,
+    active: false,
+    text: "Sports",
+    href: "/channels/live",
+  },
+
+  // Division
+  {
+    icon: SettingsIcon,
+    active: false,
+    text: "Settings",
+    href: "/account",
+  },
+  {
+    icon: ReportHistoryIcon,
+    active: false,
+    text: "Report history",
+    href: "/report-history",
+  },
+  {
+    icon: HelpIcon,
+    active: false,
+    text: "Help",
+    href: "/help",
+  },
+  {
+    icon: FeedbackIcon,
+    active: false,
+    text: "Send Feedback",
+    href: "/feedback",
   },
 ];
 

@@ -20,6 +20,8 @@ import { ReactComponent as SettingsIcon } from "../../icons/settings.svg";
 import { ReactComponent as ReportHistoryIcon } from "../../icons/reportHistory.svg";
 import { ReactComponent as HelpIcon } from "../../icons/help.svg";
 import { ReactComponent as FeedbackIcon } from "../../icons/feedback.svg";
+import Subscriptions from "./Subscriptions";
+import Footer from "./Footer";
 
 const TopItems = [
   { icon: HomeIcon, active: true, text: "Home", href: "/" },
@@ -59,8 +61,9 @@ const BottomItems = [
     text: "Music",
     href: "/playlists/music",
   },
+];
 
-  // More section
+const MoreItems = [
   {
     icon: PremiumIcon,
     active: false,
@@ -103,8 +106,9 @@ const BottomItems = [
     text: "Sports",
     href: "/channels/live",
   },
+];
 
-  // Division
+const OtherItems = [
   {
     icon: SettingsIcon,
     active: false,
@@ -132,7 +136,7 @@ const BottomItems = [
 ];
 
 const Sidebar: FC = () => (
-  <div className="bg-white py-4">
+  <aside className="bg-white py-4">
     {TopItems.map((props) => (
       <Item {...props} />
     ))}
@@ -140,7 +144,22 @@ const Sidebar: FC = () => (
     {BottomItems.map((props) => (
       <Item {...props} />
     ))}
-  </div>
+    <hr className="my-2" />
+    <Subscriptions />
+    <hr className="my-2" />
+    <span className="uppercase text-sm font-medium text-secondary px-6">
+      More from JsTube
+    </span>
+    {MoreItems.map((props) => (
+      <Item {...props} />
+    ))}
+    <hr className="my-2" />
+    {OtherItems.map((props) => (
+      <Item {...props} />
+    ))}
+    <hr className="my-2" />
+    <Footer />
+  </aside>
 );
 
 export default Sidebar;

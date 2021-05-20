@@ -136,7 +136,7 @@ const OtherItems = [
 ];
 
 const Sidebar: FC = () => (
-  <aside className="bg-white py-4">
+  <aside className="bg-white py-4 h-full overflow-y-auto">
     {TopItems.map((props) => (
       <Item {...props} />
     ))}

@@ -1,26 +1,21 @@
+import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastContainer } from "react-toastify";
-import AuthProvider from "../contexts/auth";
-import queryFn from "../lib/queryFn";
-import "../styles/tailwind.css";
-import "../styles/globals.css";
+import AuthProvider from "../contexts/auth/Provider";
+import queryFn from "../lib/queryFunction";
 import "react-toastify/dist/ReactToastify.css";
-import LoginModal from "../components/LoginModal";
+import "tailwindcss/tailwind.css";
+import "../styles/globals.css";
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      queryFn,
-    },
-  },
+  defaultOptions: { queries: { queryFn } },
 });
 
-export default function MyApp({ Component, pageProps }) {
+export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Component {...pageProps} />
-        <LoginModal open={true} />
       </AuthProvider>
       <ToastContainer />
     </QueryClientProvider>

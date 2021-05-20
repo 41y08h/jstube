@@ -2,10 +2,16 @@ import Link from "next/link";
 import formatTime from "../lib/formatTime";
 import timeSince from "../lib/timeSince";
 import formatNumber from "../lib/formatNumber";
+import { FC } from "react";
+import QueryVideo from "../interfaces/queries/Video";
 
-export default function VideoCard({ data }) {
+interface Props {
+  data: QueryVideo;
+}
+
+const VideoCard: FC<Props> = ({ data }) => {
   return (
-    <Link href={`/watch?v=${data._id}`}>
+    <Link href={`/watch?v=${data.id}`}>
       <div style={{ maxWidth: "280px" }}>
         <div className="relative">
           <img
@@ -21,18 +27,18 @@ export default function VideoCard({ data }) {
         <div className="flex space-x-3 pt-2 justify-start">
           <div className="w-10 h-10 rounded-full overflow-hidden">
             <img
-              src={data._user.picture}
+              src={data.channel.picture}
               className="h-full w-full object-cover"
             />
           </div>
           <div>
             <p className="text-sm font-medium mb-1">{data.title}</p>
             <div className="flex flex-col text-secondary text-sm">
-              <span>{data._user.name}</span>
+              <span>{data.channel.name}</span>
               <div>
                 <span>{formatNumber(data.views)} views</span>
                 <span className="mx-1 font-bold text-md">·</span>
-                <span>{timeSince(new Date(data.createdAt))}</span>
+                <span>{timeSince(new Date(data.uploadedAt))}</span>
               </div>
             </div>
           </div>
@@ -40,4 +46,6 @@ export default function VideoCard({ data }) {
       </div>
     </Link>
   );
-}
+};
+
+export default VideoCard;

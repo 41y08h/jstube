@@ -1,21 +1,23 @@
-import { Fragment, useRef } from "react";
+import { Fragment, useRef, FC } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { useAuth } from "../contexts/auth";
 
-export default function LoginModal() {
-  const { isModalOpen, setIsModalOpen } = useAuth();
+interface Props {
+  isOpen: boolean;
+  setIsOpen(value: boolean): void;
+}
 
+const LoginModal: FC<Props> = ({ isOpen, setIsOpen }) => {
   const cancelButtonRef = useRef();
 
   return (
-    <Transition.Root show={isModalOpen} as={Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog
         as="div"
         static
         className="fixed z-10 inset-0 overflow-y-auto"
         initialFocus={cancelButtonRef}
-        open={isModalOpen}
-        onClose={setIsModalOpen}
+        open={isOpen}
+        onClose={setIsOpen}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
@@ -69,4 +71,6 @@ export default function LoginModal() {
       </Dialog>
     </Transition.Root>
   );
-}
+};
+
+export default LoginModal;

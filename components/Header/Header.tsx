@@ -1,6 +1,8 @@
-import Link from "next/link";
-import { FC } from "react";
 import { ReactComponent as MenuIcon } from "../../icons/menu.svg";
+import Link from "next/link";
+import SearchBar from "./SearchBar";
+import { FC } from "react";
+import SignInButton from "./SignInButton";
 
 interface Props {
   toggleMenu: Function;
@@ -17,6 +19,8 @@ const Header: FC<Props> = ({ toggleMenu }) => {
           </a>
         </Link>
       </div>
+      <SearchBar />
+      <SignInButton />
     </div>
   );
 };

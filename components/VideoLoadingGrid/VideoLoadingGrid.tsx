@@ -6,8 +6,8 @@ const VideoLoadingGrid: FC = () => (
   <div className="p-2 flex flex-wrap justify-center bg-gray-100">
     {Array(4 * 6)
       .fill("card")
-      .map(() => (
-        <LoadingCard />
+      .map((value, i) => (
+        <LoadingCard key={i} />
       ))}
   </div>
 );

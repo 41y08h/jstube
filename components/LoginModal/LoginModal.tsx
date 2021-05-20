@@ -14,7 +14,7 @@ const LoginModal: FC<Props> = ({ isOpen, setIsOpen }) => {
       <Dialog
         as="div"
         static
-        className="fixed z-10 inset-0 overflow-y-auto"
+        className="fixed z-50 inset-0 overflow-y-auto"
         initialFocus={cancelButtonRef}
         open={isOpen}
         onClose={setIsOpen}
@@ -58,7 +58,7 @@ const LoginModal: FC<Props> = ({ isOpen, setIsOpen }) => {
                     Sign in to continue
                   </Dialog.Title>
                   <a
-                    className="text-align-center bg-gray-200 rounded-md m-4 ml-0 p-4 w-100 block"
+                    className="text-align-center bg-gray-200 rounded-md m-4 ml-0 p-4 w-100 block outline-none"
                     href="/api/auth/google"
                   >
                     Continue with Google

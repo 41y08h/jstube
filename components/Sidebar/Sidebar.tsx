@@ -137,12 +137,12 @@ const OtherItems = [
 
 const Sidebar: FC = () => (
   <aside className="bg-white pt-1 h-full overflow-y-auto themed-scrollbar">
-    {TopItems.map((props) => (
-      <Item {...props} />
+    {TopItems.map((props, i) => (
+      <Item key={i} {...props} />
     ))}
     <hr className="my-3" />
-    {BottomItems.map((props) => (
-      <Item {...props} />
+    {BottomItems.map((props, i) => (
+      <Item key={i} {...props} />
     ))}
     <hr className="my-3" />
     <Subscriptions />
@@ -150,12 +150,12 @@ const Sidebar: FC = () => (
     <span className="uppercase text-sm font-medium text-secondary px-6">
       More from JsTube
     </span>
-    {MoreItems.map((props) => (
-      <Item {...props} />
+    {MoreItems.map((props, i) => (
+      <Item key={i} {...props} />
     ))}
     <hr className="my-3" />
-    {OtherItems.map((props) => (
-      <Item {...props} />
+    {OtherItems.map((props, i) => (
+      <Item key={i} {...props} />
     ))}
     <hr className="my-3" />
     <Footer />

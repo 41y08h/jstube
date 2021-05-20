@@ -1,18 +1,21 @@
-import AuthContext from ".";
+import { AxiosError } from "axios";
 import { FC, useState } from "react";
+import { useQuery } from "react-query";
+import User from "../../interfaces/User";
+import AuthContext from ".";
 import LoginModal from "../../components/LoginModal";
-import { useQuery, UseQueryOptions } from "react-query";
 
 const AuthProvider: FC = ({ children }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  const options: UseQueryOptions = {
-    retry: false,
-    refetchOnWindowFocus: false,
-  };
-  const { isLoading, error, data: user } = useQuery("/api/auth/user", options);
+  const { isLoading, error, data } = useQuery<User, AxiosError>(
+    "/api/auth/user",
+    { retry: false, refetchOnWindowFocus: false }
+  );
 
-  function authenticatedAction(action: Function) {
+  const user = data;
+
+  const authenticatedAction = (action: Function) => () => {
     // The auth status is loading
     if (isLoading) return;
 
@@ -22,14 +25,9 @@ const AuthProvider: FC = ({ children }) => {
 
     // The user is not authenticated
     setIsLoginModalOpen(true);
-  }
-
-  const value = {
-    isLoading,
-    error,
-    user,
-    authenticatedAction,
   };
+
+  const value = { isLoading, error, authenticatedAction, user };
 
   return (
     <AuthContext.Provider value={value}>

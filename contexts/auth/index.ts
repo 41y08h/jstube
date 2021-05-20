@@ -4,9 +4,9 @@ import User from "../../interfaces/User";
 
 interface AuthContext {
   isLoading: boolean;
-  error: AxiosError;
+  error: AxiosError<any>;
   user: User;
-  authenticatedAction(action: Function): void;
+  authenticatedAction(action: Function): () => any;
 }
 
 const AuthContext = createContext<AuthContext>(undefined);

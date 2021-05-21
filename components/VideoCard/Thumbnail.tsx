@@ -1,17 +1,25 @@
+import Link from "next/link";
 import { FC } from "react";
+import QueryVideo from "../../interfaces/queries/Video";
 import formatTime from "../../lib/formatTime";
 
 interface Props {
-  src: string;
-  alt: string;
-  duration: number;
+  data: QueryVideo;
 }
 
-const Thumbnail: FC<Props> = ({ src, alt, duration }) => (
+const Thumbnail: FC<Props> = ({ data }) => (
   <div className="relative">
-    <img className="w-full h-32 object-cover" src={src} alt={alt} />
+    <Link href={`/watch?v=${data.id}`}>
+      <a>
+        <img
+          className="w-full h-32 object-cover"
+          src={data.thumbnail}
+          alt={data.title}
+        />
+      </a>
+    </Link>
     <span className="absolute bottom-1 right-1 bg-gray-900 px-1 text-xs text-white rounded-sm">
-      {formatTime(duration)}
+      {formatTime(data.duration)}
     </span>
   </div>
 );

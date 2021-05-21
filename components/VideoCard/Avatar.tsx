@@ -1,9 +1,21 @@
-import { FC, ImgHTMLAttributes } from "react";
+import Link from "next/link";
+import User from "../../interfaces/User";
+import { FC } from "react";
 
-const Avatar: FC<ImgHTMLAttributes<any>> = ({ className, ...props }) => (
-  <div className="rounded-full h-9 w-9 bg-gray-300 overflow-hidden">
-    <img className={className + " h-full w-full"} {...props} />
-  </div>
+interface Props {
+  channel: User;
+}
+
+const Avatar: FC<Props> = ({ channel }) => (
+  <Link href={`/channel/${channel.id}`}>
+    <a className="block rounded-full h-9 w-9 bg-gray-300 overflow-hidden">
+      <img
+        className=" h-full w-full"
+        src={channel.picture}
+        alt={channel.name}
+      />
+    </a>
+  </Link>
 );
 
 export default Avatar;

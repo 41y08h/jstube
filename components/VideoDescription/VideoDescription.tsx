@@ -9,7 +9,7 @@ const VideoDescription: FC<Props> = ({ text }) => {
 
   const shortLength = 160;
   return (
-    <div className="pr-60">
+    <div className="pr-24">
       <p className="text-sm whitespace-pre-wrap">
         {isExpanded ? text : text.substring(0, shortLength + 1)}
       </p>

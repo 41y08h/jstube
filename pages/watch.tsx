@@ -38,7 +38,9 @@ const Watch: FC<Props> = ({ data }) => {
               <VideoActions data={video} />
             </div>
             <ChannelBar channel={video.channel} />
-            <VideoDescription text={video.description} />
+            <div className="pl-16">
+              <VideoDescription text={video.description} />
+            </div>
           </div>
           <div className="w-1/3">Suggestions will go here</div>
         </div>

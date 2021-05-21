@@ -11,7 +11,7 @@ interface Props {
 const ChannelBar: FC<Props> = ({ channel }) => {
   return (
     <div className="flex justify-between items-center my-4">
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-4">
         <ChannelAvatar channel={channel} />
         <div className="flex flex-col">
           <Link href={`/channel/${channel.id}`}>

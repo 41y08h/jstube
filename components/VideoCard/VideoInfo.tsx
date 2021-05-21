@@ -3,6 +3,7 @@ import { FC } from "react";
 import QueryVideo from "../../interfaces/queries/Video";
 import formatNumber from "../../lib/formatNumber";
 import timeSince from "../../lib/timeSince";
+import VideoDetail from "./VideoDetail";
 
 interface Props {
   data: QueryVideo;
@@ -21,11 +22,7 @@ const VideoInfo: FC<Props> = ({ data }) => (
           {data.channel.name}
         </a>
       </Link>
-      <div>
-        <span>{formatNumber(data.views)} views</span>
-        <span className="mx-1 font-bold text-md">·</span>
-        <span>{timeSince(new Date(data.uploadedAt))}</span>
-      </div>
+      <VideoDetail views={data.views} uploadedAt={data.updatedAt} />
     </div>
   </div>
 );

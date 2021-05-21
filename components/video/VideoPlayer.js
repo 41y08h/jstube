@@ -8,7 +8,7 @@ export default function VideoPlayer(props) {
       style={{ width: "853px", height: "480px" }}
       autoPlay
       controls
-      src={video.source}
+      src={video.src}
     />
   );
 }

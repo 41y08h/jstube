@@ -25,10 +25,10 @@ const Watch: FC<Props> = ({ data }) => {
         <Head>
           <title>{video.title} - JS Tube</title>
         </Head>
-        <div className="p-6 px-8">
-          <VideoPlayer src={video.src} />
-          <div className="mt-4">
-            <h1 className="text-xl font-normal">{video.title}</h1>
+        <div className="p-6 px-8 flex">
+          <div className="w-2/3">
+            <VideoPlayer src={video.src} />
+            <h1 className="mt-4 text-xl font-normal">{video.title}</h1>
             <div className="flex justify-between mt-3 text-secondary text-sm border-b">
               <VideoDetail
                 exactDate
@@ -38,7 +38,9 @@ const Watch: FC<Props> = ({ data }) => {
               <VideoActions data={video} />
             </div>
             <ChannelBar channel={video.channel} />
+            <VideoDescription text={video.description} />
           </div>
+          <div className="w-1/3">Suggestions will go here</div>
         </div>
       </VideoContext.Provider>
     </Layout>

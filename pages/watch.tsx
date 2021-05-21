@@ -7,7 +7,6 @@ import VideoContext from "../contexts/video";
 import ChannelBar from "../components/ChannelBar";
 import VideoPlayer from "../components/VideoPlayer";
 import VideoDescription from "../components/VideoDescription";
-import ChannelAvatar from "../components/ChannelAvatar";
 import QueryVideo from "../interfaces/queries/Video";
 import { GetServerSideProps } from "next";
 import VideoDetail from "../components/VideoCard/VideoDetail";
@@ -36,20 +35,9 @@ const Watch: FC<Props> = ({ data }) => {
                 views={video.views}
                 uploadedAt={video.updatedAt}
               />
-              <VideoActions rating={video.rating} />
+              <VideoActions data={video} />
             </div>
-            <div className="space-x-4 flex w-full mt-6">
-              <div>
-                <ChannelAvatar
-                  picture={video.channel.picture}
-                  name={video.channel.name}
-                />
-              </div>
-              <div className="mt-2 space-y-2">
-                <ChannelBar />
-                <VideoDescription text={video.description} />
-              </div>
-            </div>
+            <ChannelBar channel={video.channel} />
           </div>
         </div>
       </VideoContext.Provider>

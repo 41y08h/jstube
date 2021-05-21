@@ -36,7 +36,7 @@ const Watch: FC<Props> = ({ data }) => {
                 views={video.views}
                 uploadedAt={video.updatedAt}
               />
-              <VideoActions />
+              <VideoActions rating={video.rating} />
             </div>
             <div className="space-x-4 flex w-full mt-6">
               <div>

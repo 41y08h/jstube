@@ -11,11 +11,13 @@ interface Props {
 
 const VideoDetail: FC<Props> = ({ views, uploadedAt, exactDate = false }) => (
   <div>
-    <span>{formatNumber(views)} views</span>
+    <span>
+      {formatNumber(views)} view{views === 1 ? "" : "s"}
+    </span>
     <span className="mx-1 font-bold text-md">·</span>
     <span>
       {exactDate
-        ? dateformat(new Date(uploadedAt), "mmm d, yyyy")
+        ? dateformat(uploadedAt, "mmm d, yyyy")
         : timeSince(new Date(uploadedAt))}
     </span>
   </div>

@@ -1,14 +1,17 @@
+import { FC, useState } from "react";
 import Link from "next/link";
-import { FC } from "react";
-import User from "../../interfaces/User";
-import formatNumber from "../../lib/formatNumber";
 import ChannelAvatar from "./ChannelAvatar";
+import formatNumber from "../../lib/formatNumber";
+import SubscribeButton from "./SubscribeButton";
+import Channel from "../../interfaces/Channel";
 
 interface Props {
-  channel: User;
+  channel: Channel;
 }
 
 const ChannelBar: FC<Props> = ({ channel }) => {
+  const [subscription, setSubscription] = useState(channel.subscription);
+
   return (
     <div className="flex justify-between items-center my-4">
       <div className="flex items-center space-x-4">
@@ -18,13 +21,12 @@ const ChannelBar: FC<Props> = ({ channel }) => {
             <a className="text-sm font-medium">{channel.name}</a>
           </Link>
           <span className="text-xs text-secondary">
-            {formatNumber(5154)} subscribers
+            {formatNumber(subscription.subscribers)} subscriber
+            {subscription.subscribers === 1 ? "" : "s"}
           </span>
         </div>
       </div>
-      <button className="uppercase bg-red-700 px-4 py-0 text-white h-9 font-medium text-sm">
-        Subscribe
-      </button>
+      <SubscribeButton {...{ channel, subscription, setSubscription }} />
     </div>
   );
 };

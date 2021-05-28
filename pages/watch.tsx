@@ -41,6 +41,7 @@ const Watch: FC<Props> = ({ data }) => {
             <div className="pl-16">
               <VideoDescription text={video.description} />
             </div>
+            <hr className="h-2 my-4" />
           </div>
           <div className="w-1/3">Suggestions will go here</div>
         </div>

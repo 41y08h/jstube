@@ -1,9 +1,9 @@
 import { FC } from "react";
 import Link from "next/link";
-import Channel from "../../interfaces/Channel";
+import User from "../../interfaces/User";
 
 interface Props {
-  channel: Channel;
+  channel: User;
 }
 
 const ChannelAvatar: FC<Props> = ({ channel }) => {

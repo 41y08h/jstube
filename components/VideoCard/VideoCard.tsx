@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { FC } from "react";
-import QueryVideo from "../../interfaces/queries/Video";
 import Thumbnail from "./Thumbnail";
 import Avatar from "./Avatar";
 import VideoInfo from "./VideoInfo";
+import QVideo from "../../interfaces/queries/Video";
 
 interface Props {
-  data: QueryVideo;
+  data: QVideo;
 }
 
 const VideoCard: FC<Props> = ({ data }) => {

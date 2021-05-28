@@ -1,28 +1,32 @@
-import axios, { AxiosRequestConfig } from "axios";
-import { FC, useState } from "react";
+import axios from "axios";
+import { FC } from "react";
 import { useMutation } from "react-query";
-import Channel from "../../interfaces/Channel";
-import Subscription from "../../interfaces/Subscription";
+import { Channel } from "../../interfaces/User";
+import Subscribers from "../../interfaces/Subscribers";
 
 interface Props {
   channel: Channel;
-  subscription: Subscription;
-  setSubscription: Function;
+  subscribers: Subscribers;
+  setSubscribers: Function;
 }
 
 const SubscribeButton: FC<Props> = (props) => {
-  const { channel, subscription, setSubscription } = props;
-  const { hasUserSubscribed } = subscription;
+  const { channel, subscribers, setSubscribers } = props;
+  const { isUserSubscribed } = subscribers;
 
-  const subscriptionMutation = useMutation(async (toUnsubscribe: boolean) => {
-    const method = toUnsubscribe ? "DELETE" : "POST";
-    const res = await axios(`/api/subscription/${channel.id}`, { method });
-    setSubscription(res.data);
-  });
+  const subscribersMutation = useMutation(
+    (toUnsubscribe: boolean) => {
+      const url = `/api/subscription/${channel.id}`;
+      return toUnsubscribe
+        ? axios.delete<Subscribers>(url)
+        : axios.post<Subscribers>(url);
+    },
+    { onSuccess: (data) => setSubscribers(data) }
+  );
 
-  const onClick = () => subscriptionMutation.mutate(hasUserSubscribed);
+  const onClick = () => subscribersMutation.mutate(isUserSubscribed);
 
-  const conditionalCName = hasUserSubscribed
+  const conditionalCName = isUserSubscribed
     ? "bg-gray-200 text-secondary"
     : "bg-red-700 text-white";
 
@@ -34,9 +38,9 @@ const SubscribeButton: FC<Props> = (props) => {
     <button
       onClick={onClick}
       className={className}
-      disabled={subscriptionMutation.isLoading}
+      disabled={subscribersMutation.isLoading}
     >
-      {subscription.hasUserSubscribed ? "Subscribed" : "Subscribe"}
+      {subscribers.isUserSubscribed ? "Subscribed" : "Subscribe"}
     </button>
   );
 };

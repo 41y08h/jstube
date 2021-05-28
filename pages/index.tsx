@@ -1,13 +1,13 @@
 import Layout from "../components/Layout";
 import VideoCard from "../components/VideoCard";
-import QueryVideo from "../interfaces/queries/Video";
 import { useQuery } from "react-query";
 import { AxiosError } from "axios";
 import VideoLoadingGrid from "../components/VideoLoadingGrid";
+import { QVideo } from "../interfaces/Video";
 
 export default function Home() {
   const { isLoading, error, data } =
-    useQuery<QueryVideo[], AxiosError>("/api/videos");
+    useQuery<QVideo[], AxiosError>("/api/videos");
 
   if (isLoading)
     return (

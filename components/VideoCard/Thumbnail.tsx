@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { FC } from "react";
-import QueryVideo from "../../interfaces/queries/Video";
+import QVideo from "../../interfaces/queries/Video";
 import formatTime from "../../lib/formatTime";
 
 interface Props {
-  data: QueryVideo;
+  data: QVideo;
 }
 
 const Thumbnail: FC<Props> = ({ data }) => (

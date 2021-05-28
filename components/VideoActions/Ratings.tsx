@@ -4,25 +4,29 @@ import { useMutation } from "react-query";
 import ActionButton from "./ActionButton";
 import { useAuth } from "../../contexts/auth";
 import formatNumber from "../../lib/formatNumber";
-import QueryVideo from "../../interfaces/queries/Video";
 import { ReactComponent as LikeIcon } from "../../icons/like.svg";
 import { ReactComponent as DislikeIcon } from "../../icons/dislike.svg";
+import { QVideoDetailed } from "../../interfaces/Video";
+import Ratings from "../../interfaces/Ratings";
 
 interface Props {
-  data: QueryVideo;
+  data: QVideoDetailed;
 }
 
 const Ratings: FC<Props> = ({ data }) => {
-  const [rating, setRating] = useState(data.rating);
+  const [ratings, setRatings] = useState(data.ratings);
   const { authenticatedAction } = useAuth();
 
-  const ratingMutation = useMutation(async (type: string) => {
-    const res = await axios.post(`/api/ratings/videos/${data.id}/${type}`);
-    setRating(res.data);
-  });
+  const ratingMutation = useMutation(
+    (type: string) =>
+      axios
+        .post<Ratings>(`/api/ratings/videos/${data.id}/${type}`)
+        .then((res) => res.data),
+    { onSuccess: setRatings }
+  );
 
-  const hightlightLikeButton = rating.userRatingStatus === "LIKED";
-  const hightlightDisLikeButton = rating.userRatingStatus === "DISLIKED";
+  const hightlightLikeButton = ratings.userRatingStatus === "LIKED";
+  const hightlightDisLikeButton = ratings.userRatingStatus === "DISLIKED";
 
   return (
     <div className="flex border-b-2 border-gray-500 space-x-5 pb-4">
@@ -32,7 +36,7 @@ const Ratings: FC<Props> = ({ data }) => {
         disabled={ratingMutation.isLoading}
         onClick={authenticatedAction(() => ratingMutation.mutate("like"))}
       >
-        {formatNumber(rating.likes)}
+        {formatNumber(ratings.count.likes)}
       </ActionButton>
       <ActionButton
         icon={DislikeIcon}
@@ -40,7 +44,7 @@ const Ratings: FC<Props> = ({ data }) => {
         highlight={hightlightDisLikeButton}
         onClick={authenticatedAction(() => ratingMutation.mutate("dislike"))}
       >
-        {formatNumber(rating.dislikes)}
+        {formatNumber(ratings.count.dislikes)}
       </ActionButton>
     </div>
   );

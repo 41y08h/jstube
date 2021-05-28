@@ -1,5 +1,5 @@
 import Link from "next/link";
-import User from "../../interfaces/User";
+import User from "../../interfaces/entities/User";
 import { FC } from "react";
 
 interface Props {

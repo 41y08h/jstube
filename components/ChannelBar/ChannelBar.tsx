@@ -3,14 +3,14 @@ import Link from "next/link";
 import ChannelAvatar from "./ChannelAvatar";
 import formatNumber from "../../lib/formatNumber";
 import SubscribeButton from "./SubscribeButton";
-import Channel from "../../interfaces/Channel";
+import { Channel } from "../../interfaces/User";
 
 interface Props {
   channel: Channel;
 }
 
 const ChannelBar: FC<Props> = ({ channel }) => {
-  const [subscription, setSubscription] = useState(channel.subscription);
+  const [subscribers, setSubscribers] = useState(channel.subscribers);
 
   return (
     <div className="flex justify-between items-center my-4">
@@ -21,8 +21,8 @@ const ChannelBar: FC<Props> = ({ channel }) => {
             <a className="text-sm font-medium">{channel.name}</a>
           </Link>
           <span className="text-xs text-secondary">
-            {formatNumber(subscription.subscribers)} subscriber
-            {subscription.subscribers === 1 ? "" : "s"}
+            {formatNumber(subscribers.count)} subscriber
+            {subscribers.count === 1 ? "" : "s"}
           </span>
         </div>
       </div>

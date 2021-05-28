@@ -1,7 +1,8 @@
-import Ratings from "./Ratings";
-import User, { Channel } from "./User";
+import { IComments } from "./Comment";
+import IRatings from "./Ratings";
+import User, { IChannel } from "./User";
 
-export default interface Video {
+export default interface IVideo {
   id: number;
   title: string;
   description: string;
@@ -14,11 +15,12 @@ export default interface Video {
   updatedAt: Date;
 }
 
-export interface QVideo extends Video {
+export interface QVideo extends IVideo {
   channel: User;
 }
 
-export interface QVideoDetailed extends Video {
-  channel: Channel;
-  ratings: Ratings;
+export interface QVideoDetailed extends IVideo {
+  channel: IChannel;
+  ratings: IRatings;
+  comments: IComments;
 }

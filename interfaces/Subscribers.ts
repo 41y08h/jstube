@@ -1,4 +1,4 @@
-export default interface Subscribers {
+export default interface ISubscribers {
   count: number;
   isUserSubscribed: boolean;
 }

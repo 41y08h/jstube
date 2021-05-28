@@ -26,7 +26,7 @@ const ChannelBar: FC<Props> = ({ channel }) => {
           </span>
         </div>
       </div>
-      <SubscribeButton {...{ channel, subscription, setSubscription }} />
+      <SubscribeButton {...{ channel, subscribers, setSubscribers }} />
     </div>
   );
 };

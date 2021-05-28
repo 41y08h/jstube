@@ -1,4 +1,4 @@
-export default interface Ratings {
+export default interface IRatings {
   count: {
     likes: number;
     dislikes: number;

@@ -1,11 +1,11 @@
-import Subscribers from "./Subscribers";
+import ISubscribers from "./Subscribers";
 
-export default interface User {
+export default interface IUser {
   id: number;
   name: string;
   picture: string;
 }
 
-export interface Channel extends User {
-  subscribers: Subscribers;
+export interface IChannel extends IUser {
+  subscribers: ISubscribers;
 }

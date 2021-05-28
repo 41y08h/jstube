@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import QueryVideo from "../../interfaces/queries/Video";
+import QueryVideo from "../../interfaces/queries/VideoWatch";
 
 const VideoContext = createContext(undefined);
 export default VideoContext;

@@ -7,7 +7,7 @@ import Layout from "../components/Layout";
 import VideoContext from "../contexts/video";
 import ChannelBar from "../components/ChannelBar";
 import VideoPlayer from "../components/VideoPlayer";
-import QueryVideo from "../interfaces/queries/Video";
+import QueryVideo from "../interfaces/queries/VideoWatch";
 import VideoDetail from "../components/VideoCard/VideoDetail";
 import VideoActions from "../components/VideoActions";
 import VideoDescription from "../components/VideoDescription";

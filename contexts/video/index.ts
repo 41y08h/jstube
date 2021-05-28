@@ -1,11 +1,11 @@
 import { createContext, useContext } from "react";
-import QueryVideo from "../../interfaces/queries/VideoWatch";
+import { QVideoDetailed } from "../../interfaces/Video";
 
-const VideoContext = createContext(undefined);
+const VideoContext = createContext<any>(undefined);
 export default VideoContext;
 
 interface Value {
-  video: QueryVideo;
+  video: QVideoDetailed;
   setVideo: (value: boolean) => void;
 }
 

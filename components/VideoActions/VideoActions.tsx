@@ -1,11 +1,11 @@
 import { FC } from "react";
 import Ratings from "./Ratings";
 import ActionButton from "./ActionButton";
-import QueryVideo from "../../interfaces/queries/VideoWatch";
 import { ReactComponent as ShareIcon } from "../../icons/share.svg";
+import { QVideoDetailed } from "../../interfaces/Video";
 
 interface Props {
-  data: QueryVideo;
+  data: QVideoDetailed;
 }
 
 const VideoActions: FC<Props> = ({ data }) => (

@@ -13,7 +13,7 @@ interface Props {
   data: QVideoDetailed;
 }
 
-const Ratings: FC<Props> = ({ data }) => {
+const RatingActions: FC<Props> = ({ data }) => {
   const [ratings, setRatings] = useState(data.ratings);
   const { authenticatedAction } = useAuth();
 
@@ -50,4 +50,4 @@ const Ratings: FC<Props> = ({ data }) => {
   );
 };
 
-export default Ratings;
+export default RatingActions;

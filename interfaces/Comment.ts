@@ -8,7 +8,7 @@ export default interface IComment {
   ratings: IRatings;
 }
 
-export interface IComments {
+export interface ICommentPage {
   total: number;
   count: number;
   page: number;

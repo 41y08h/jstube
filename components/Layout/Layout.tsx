@@ -5,7 +5,7 @@ import Header from "../Header";
 import Head from "next/head";
 
 const Layout: FC = ({ children }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const sidebarStyles = {
     height: "calc(100vh - 64px)",

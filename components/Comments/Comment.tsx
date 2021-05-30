@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FC, useState } from "react";
+import { forwardRef, useState } from "react";
 import { useMutation } from "react-query";
 import { useAuth } from "../../contexts/auth";
 import IComment from "../../interfaces/Comment";
@@ -9,7 +9,7 @@ interface Props {
   data: IComment;
 }
 
-const Comment: FC<Props> = ({ data }) => {
+const Comment = forwardRef<HTMLDivElement, Props>(({ data }, ref) => {
   const [ratings, setRatings] = useState(data.ratings);
   const { authenticatedAction } = useAuth();
 
@@ -44,7 +44,7 @@ const Comment: FC<Props> = ({ data }) => {
       : ratingMutation.mutate("DISLIKE")
   );
   return (
-    <div>
+    <div ref={ref}>
       <img src={data.author.picture} alt={data.author.name} />
       <span>{data.text}</span>
       <button
@@ -71,6 +71,6 @@ const Comment: FC<Props> = ({ data }) => {
       </button>
     </div>
   );
-};
+});
 
 export default Comment;

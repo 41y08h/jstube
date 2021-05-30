@@ -4,7 +4,7 @@ import Document, { Html, Head, Main, NextScript } from "next/document";
 class MyDocument extends Document {
   render() {
     return (
-      <Html className="themed-scrollbar" lang="en">
+      <Html lang="en">
         <Head>
           <link
             rel="stylesheet"

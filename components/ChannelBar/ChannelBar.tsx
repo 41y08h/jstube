@@ -3,10 +3,10 @@ import Link from "next/link";
 import ChannelAvatar from "./ChannelAvatar";
 import formatNumber from "../../lib/formatNumber";
 import SubscribeButton from "./SubscribeButton";
-import { Channel } from "../../interfaces/User";
+import { IChannel } from "../../interfaces/User";
 
 interface Props {
-  channel: Channel;
+  channel: IChannel;
 }
 
 const ChannelBar: FC<Props> = ({ channel }) => {
@@ -26,7 +26,11 @@ const ChannelBar: FC<Props> = ({ channel }) => {
           </span>
         </div>
       </div>
-      <SubscribeButton {...{ channel, subscribers, setSubscribers }} />
+      <SubscribeButton
+        channelId={channel.id}
+        subscribers={subscribers}
+        setSubscribers={setSubscribers}
+      />
     </div>
   );
 };

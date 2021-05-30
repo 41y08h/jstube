@@ -1,44 +1,46 @@
 import axios from "axios";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import { useMutation } from "react-query";
-import { Channel } from "../../interfaces/User";
-import Subscribers from "../../interfaces/Subscribers";
+import { useAuth } from "../../contexts/auth";
+import ISubscribers from "../../interfaces/Subscribers";
 
 interface Props {
-  channel: Channel;
-  subscribers: Subscribers;
-  setSubscribers: Function;
+  channelId: number;
+  subscribers: ISubscribers;
+  setSubscribers: Dispatch<SetStateAction<ISubscribers>>;
 }
 
-const SubscribeButton: FC<Props> = (props) => {
-  const { channel, subscribers, setSubscribers } = props;
-  const { isUserSubscribed } = subscribers;
-
+const SubscribeButton: FC<Props> = ({
+  channelId,
+  subscribers,
+  setSubscribers,
+}) => {
+  const { authenticatedAction } = useAuth();
   const subscribersMutation = useMutation(
-    (toUnsubscribe: boolean) => {
-      const url = `/api/subscription/${channel.id}`;
-      return toUnsubscribe
-        ? axios.delete<Subscribers>(url)
-        : axios.post<Subscribers>(url);
+    (unsubscribe: boolean) => {
+      const url = `/api/subscribers/${channelId}`;
+      return unsubscribe
+        ? axios.delete<ISubscribers>(url).then((res) => res.data)
+        : axios.post<ISubscribers>(url).then((res) => res.data);
     },
-    { onSuccess: (data) => setSubscribers(data) }
+    { onSuccess: setSubscribers }
   );
-
-  const onClick = () => subscribersMutation.mutate(isUserSubscribed);
-
-  const conditionalCName = isUserSubscribed
-    ? "bg-gray-200 text-secondary"
-    : "bg-red-700 text-white";
 
   const className =
     "uppercase px-4 py-0 h-9 font-medium text-sm rounded-sm " +
-    conditionalCName;
+    (subscribers.isUserSubscribed
+      ? "bg-gray-200 text-secondary"
+      : "bg-red-700 text-white");
+
+  const onSubscribe = authenticatedAction(() =>
+    subscribersMutation.mutate(subscribers.isUserSubscribed)
+  );
 
   return (
     <button
-      onClick={onClick}
       className={className}
       disabled={subscribersMutation.isLoading}
+      onClick={onSubscribe}
     >
       {subscribers.isUserSubscribed ? "Subscribed" : "Subscribe"}
     </button>

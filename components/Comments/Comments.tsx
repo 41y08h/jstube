@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { useQuery } from "react-query";
+import { useInfiniteQuery, useQuery } from "react-query";
 import IComment, { IComments } from "../../interfaces/Comment";
 import Comment from "./Comment";
 import CommentInput from "./CommentInput";
@@ -11,7 +11,7 @@ interface Props {
 const Comments: FC<Props> = ({ videoId }) => {
   const [comments, setComments] = useState<IComment[]>([]);
 
-  const { data, isLoading, isError } = useQuery<IComments>(
+  const { data, isLoading, isError } = useInfiniteQuery<IComments>(
     `/api/comments/${videoId}`,
     { onSuccess: (data) => setComments(data.items), staleTime: Infinity }
   );

@@ -43,7 +43,7 @@ const Watch: FC<Props> = ({ data }) => {
               <VideoDescription text={video.description} />
             </div>
             <hr className="h-2 my-4" />
-            <Comments comments={data.comments} />
+            <Comments videoId={data.id} />
           </div>
           <div className="w-1/3">Suggestions will go here</div>
         </div>

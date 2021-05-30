@@ -1,21 +1,28 @@
-import { FC } from "react";
+import { AxiosError } from "axios";
+import { FC, useState } from "react";
+import { useQuery } from "react-query";
 import { IComments } from "../../interfaces/Comment";
+import Comment from "./Comment";
 
 interface Props {
-  comments: IComments;
+  videoId: number;
 }
 
-const Comments: FC<Props> = ({ comments }) => {
+const Comments: FC<Props> = ({ videoId }) => {
+  const {
+    data: comments,
+    isLoading,
+    isError,
+  } = useQuery<IComments>(`/api/comments/${videoId}`);
+
+  if (isLoading) return <>Loading...</>;
+  if (!comments || isError) return <>Error :(</>;
+
   return (
     <div>
-      <span>{comments.count} Comments</span>
+      <span>{comments.total} Comments</span>
       {comments.items.map((item) => (
-        <div>
-          <img src={item.author.picture} alt={item.author.name} />
-          <span>{item.text}</span>
-          <button>{item.ratings.count.likes} Likes</button>
-          <button>{item.ratings.count.dislikes} Dislikes</button>
-        </div>
+        <Comment key={item.id} data={item} />
       ))}
     </div>
   );

@@ -52,6 +52,7 @@ const Comments: FC<Props> = ({ videoId }) => {
 
   return (
     <div>
+      <CommentInput videoId={videoId} setComments={setComments} />
       <span>{latestPage.total} Comments</span>
       {comments.map((comment) => (
         <Comment data={comment} />

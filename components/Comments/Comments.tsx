@@ -1,6 +1,7 @@
 import axios from "axios";
 import { FC, useEffect, useRef, useState } from "react";
-import { useInfiniteQuery, useQuery } from "react-query";
+import { useInView } from "react-intersection-observer";
+import { InfiniteData, useInfiniteQuery, useQuery } from "react-query";
 import useOnScreen from "../../hooks/useOnScreen";
 import IComment, { ICommentPage } from "../../interfaces/Comment";
 import Comment from "./Comment";
@@ -11,34 +12,52 @@ interface Props {
 }
 
 const Comments: FC<Props> = ({ videoId }) => {
-  const bottomRef = useRef<HTMLDivElement>(null);
-  const { isLoading, data, fetchNextPage } = useInfiniteQuery(
-    "comments",
-    ({ pageParam = 1 }) =>
-      axios
-        .get<ICommentPage>(`/api/comments/${videoId}`, {
-          params: { page: pageParam },
-        })
-        .then((res) => res.data),
-    { staleTime: Infinity, getNextPageParam: (lastPage) => lastPage.page + 1 }
-  );
+  const { data, isLoading, fetchNextPage, isFetchingNextPage } =
+    useInfiniteQuery(
+      "comments",
+      ({ pageParam = 1 }) =>
+        axios
+          .get<ICommentPage>(`/api/comments/${videoId}`, {
+            params: { page: pageParam },
+          })
+          .then((res) => res.data),
+      {
+        staleTime: Infinity,
+        getNextPageParam: (latestPage) =>
+          latestPage.hasMore ? latestPage.page + 1 : undefined,
+      }
+    );
+  const [bottomRef, scrolledToBottom] = useInView();
+  const [comments, setComments] = useState<IComment[]>([]);
 
-  const latestPage = data?.pages[data.pages.length - 1];
-  useOnScreen({
-    target: bottomRef,
-    onIntersect: fetchNextPage,
-    enabled: latestPage?.hasMore,
-  });
+  useEffect(() => {
+    if (scrolledToBottom) fetchNextPage();
+  }, [scrolledToBottom, fetchNextPage]);
 
-  if (!data || isLoading) return null;
+  // Keep comments in sync with pages items
+  useEffect(() => {
+    // Terminate early if no page has been loaded
+    if (!data) return;
+
+    // Exactract comment items from each page and
+    // push it to comments array
+    const { pages } = data;
+    pages.map((page) => setComments((prev) => [...prev, ...page.items]));
+  }, [data]);
+
+  if (isLoading) return <>Loading...</>;
+
+  const { pages } = data as InfiniteData<ICommentPage>;
+  const latestPage = pages[pages.length - 1];
 
   return (
     <div>
-      <span>{data.pages[0].total} Comments</span>
-      {data.pages.map((page) =>
-        page.items.map((comment) => <Comment key={comment.id} data={comment} />)
-      )}
-      <div ref={bottomRef}>Loading...</div>
+      <span>{latestPage.total} Comments</span>
+      {comments.map((comment) => (
+        <Comment data={comment} />
+      ))}
+      <div ref={bottomRef} />
+      {isFetchingNextPage && <p className="text-5xl">...</p>}
     </div>
   );
 };

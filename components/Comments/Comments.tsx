@@ -1,23 +1,23 @@
 import axios from "axios";
-import { FC, useEffect, useRef, useState } from "react";
+import { createContext, FC, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { InfiniteData, useInfiniteQuery, useQuery } from "react-query";
-import useOnScreen from "../../hooks/useOnScreen";
+import { useComments } from "../../contexts/Comments";
+import { useVideo } from "../../contexts/video";
 import IComment, { ICommentPage } from "../../interfaces/Comment";
 import Comment from "./Comment";
 import CommentInput from "./CommentInput";
 
-interface Props {
-  videoId: number;
-}
+const Comments: FC = () => {
+  const { video } = useVideo();
+  const { comments, setComments } = useComments();
 
-const Comments: FC<Props> = ({ videoId }) => {
   const { data, isLoading, fetchNextPage, isFetchingNextPage } =
     useInfiniteQuery(
       "comments",
       ({ pageParam = 1 }) =>
         axios
-          .get<ICommentPage>(`/api/comments/${videoId}`, {
+          .get<ICommentPage>(`/api/comments/${video.id}`, {
             params: { page: pageParam },
           })
           .then((res) => res.data),
@@ -28,7 +28,6 @@ const Comments: FC<Props> = ({ videoId }) => {
       }
     );
   const [bottomRef, scrolledToBottom] = useInView();
-  const [comments, setComments] = useState<IComment[]>([]);
 
   useEffect(() => {
     if (scrolledToBottom) fetchNextPage();
@@ -52,7 +51,7 @@ const Comments: FC<Props> = ({ videoId }) => {
 
   return (
     <div>
-      <CommentInput videoId={videoId} setComments={setComments} />
+      <CommentInput />
       <span>{latestPage.total} Comments</span>
       {comments.map((comment) => (
         <Comment data={comment} />

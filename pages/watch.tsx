@@ -12,6 +12,7 @@ import VideoActions from "../components/VideoActions";
 import VideoDescription from "../components/VideoDescription";
 import { QVideoDetailed } from "../interfaces/Video";
 import Comments from "../components/Comments";
+import CommentsProvider from "../contexts/Comments";
 
 interface Props {
   data: QVideoDetailed;
@@ -43,7 +44,9 @@ const Watch: FC<Props> = ({ data }) => {
               <VideoDescription text={video.description} />
             </div>
             <hr className="h-2 my-4" />
-            <Comments videoId={data.id} />
+            <CommentsProvider>
+              <Comments />
+            </CommentsProvider>
           </div>
           <div className="w-1/3">Suggestions will go here</div>
         </div>

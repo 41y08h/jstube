@@ -6,6 +6,7 @@ export default interface IComment {
   text: string;
   author: User;
   ratings: IRatings;
+  replyCount: number;
 }
 
 export interface ICommentPage {

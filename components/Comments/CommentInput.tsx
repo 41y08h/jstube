@@ -1,19 +1,19 @@
 import axios from "axios";
 import { Dispatch, FC, FormEventHandler, SetStateAction, useRef } from "react";
 import { useMutation } from "react-query";
+import { useComments } from "../../contexts/Comments";
+import { useVideo } from "../../contexts/video";
 import IComment from "../../interfaces/Comment";
 
-interface Props {
-  videoId: number;
-  setComments: Dispatch<SetStateAction<IComment[]>>;
-}
-
-const CommentInput: FC<Props> = ({ videoId, setComments }) => {
+const CommentInput: FC = () => {
+  const { video } = useVideo();
+  const { setComments } = useComments();
   const inputRef = useRef<HTMLInputElement>(null);
+
   const commentsMutation = useMutation(
     (text: string) =>
       axios
-        .post<IComment>(`/api/comments/${videoId}`, { text })
+        .post<IComment>(`/api/comments/${video.id}`, { text })
         .then((res) => res.data),
     { onSuccess: (newComment) => setComments((prev) => [newComment, ...prev]) }
   );

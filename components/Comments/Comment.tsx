@@ -1,7 +1,9 @@
+import { Edit } from "@material-ui/icons";
 import axios from "axios";
-import { forwardRef, useState } from "react";
+import { FC, FormEventHandler, forwardRef, useRef, useState } from "react";
 import { useMutation } from "react-query";
 import { useAuth } from "../../contexts/auth";
+import { useComments } from "../../contexts/Comments";
 import IComment from "../../interfaces/Comment";
 import IRatings from "../../interfaces/Ratings";
 
@@ -9,68 +11,88 @@ interface Props {
   data: IComment;
 }
 
-const Comment = forwardRef<HTMLDivElement, Props>(({ data }, ref) => {
-  const [ratings, setRatings] = useState(data.ratings);
-  const { authenticatedAction } = useAuth();
+const Comment: FC<Props> = ({ data }) => {
+  const { setComments } = useComments();
+  const [isEditing, setIsEditing] = useState(false);
+  const editInputRef = useRef<HTMLInputElement>(null);
+  const { authenticatedAction, user } = useAuth();
 
-  const ratingMutation = useMutation(
-    async (type: "LIKE" | "DISLIKE" | "REMOVE") => {
+  const ratingsMutation = useMutation(
+    async (type: "like" | "dislike" | "remove") => {
       const url = `/api/ratings/comments/${data.id}`;
-
       switch (type) {
-        case "LIKE":
-          const res = await axios.post<IRatings>(`${url}/like`);
-          return res.data;
-        case "DISLIKE":
-          const res_1 = await axios.post<IRatings>(`${url}/dislike`);
-          return res_1.data;
-        case "REMOVE":
-          const res_2 = await axios.delete<IRatings>(url);
-          return res_2.data;
+        case "like":
+          return axios.post<IRatings>(`${url}/like`).then((res) => res.data);
+        case "dislike":
+          return axios.post<IRatings>(`${url}/dislike`).then((res) => res.data);
+        case "dislike":
+          return axios.delete<IRatings>(url).then((res) => res.data);
       }
-    },
-    { onSuccess: setRatings }
+    }
+  );
+  const like = authenticatedAction(() => ratingsMutation.mutate("like"));
+  const dislike = authenticatedAction(() => ratingsMutation.mutate("dislike"));
+  const removeRating = authenticatedAction(() =>
+    ratingsMutation.mutate("remove")
   );
 
-  const onLike = authenticatedAction(() =>
-    ratings.userRatingStatus === "LIKED"
-      ? ratingMutation.mutate("REMOVE")
-      : ratingMutation.mutate("LIKE")
+  const editMutation = useMutation(async (text: string) =>
+    axios.patch<IComment>(`/api/comments/${data.id}`, { text })
   );
 
-  const onDislike = authenticatedAction(() =>
-    ratings.userRatingStatus === "DISLIKED"
-      ? ratingMutation.mutate("REMOVE")
-      : ratingMutation.mutate("DISLIKE")
-  );
+  const toggleEdit = () => {
+    setIsEditing((prev) => !prev);
+  };
+
+  const handleEditSubmit: FormEventHandler = async (event) => {
+    event.preventDefault();
+    const editInput = editInputRef.current;
+    if (!editInput) return;
+    const { data } = await editMutation.mutateAsync(editInput.value);
+    setComments((previousComments) =>
+      previousComments.map((comment) =>
+        comment.id === data.id ? data : comment
+      )
+    );
+  };
+
+  const hasLiked = data.ratings.userRatingStatus === "LIKED";
+  const hasDisliked = data.ratings.userRatingStatus === "DISLIKED";
+  const isAuthorUser = user.id === data.author.id;
+
   return (
-    <div ref={ref}>
-      <img src={data.author.picture} alt={data.author.name} />
-      <span>{data.text}</span>
+    <div>
+      <img className="w-8" src={data.author.picture} alt={data.author.name} />
+      {isAuthorUser && (
+        <button className="bg-gray-200 p-2" onClick={toggleEdit}>
+          edit
+        </button>
+      )}
+      {isEditing ? (
+        <form onSubmit={handleEditSubmit}>
+          <input autoFocus ref={editInputRef} defaultValue={data.text} />
+          <button onClick={toggleEdit}>discard</button>
+          <button type="submit">Submit</button>
+        </form>
+      ) : (
+        <span>{data.text}</span>
+      )}
       <button
-        onClick={onLike}
-        disabled={ratingMutation.isLoading}
-        className={
-          "p-4 " +
-          (ratings.userRatingStatus === "LIKED" ? "bg-gray-700" : "bg-gray-200")
-        }
+        onClick={hasLiked ? removeRating : like}
+        disabled={ratingsMutation.isLoading}
+        className={"p-4 " + (hasLiked ? "bg-gray-700" : "bg-gray-200")}
       >
-        {ratings.count.likes} Likes
+        {data.ratings.count.likes} Likes
       </button>
       <button
-        onClick={onDislike}
-        disabled={ratingMutation.isLoading}
-        className={
-          "p-4 " +
-          (ratings.userRatingStatus === "DISLIKED"
-            ? "bg-gray-700"
-            : "bg-gray-200")
-        }
+        onClick={hasDisliked ? removeRating : dislike}
+        disabled={ratingsMutation.isLoading}
+        className={"p-4 " + (hasDisliked ? "bg-gray-700" : "bg-gray-200")}
       >
-        {ratings.count.dislikes} Dislikes
+        {data.ratings.count.dislikes} Dislikes
       </button>
     </div>
   );
-});
+};
 
 export default Comment;

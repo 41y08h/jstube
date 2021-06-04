@@ -5,13 +5,13 @@ import User from "../../interfaces/User";
 interface AuthContext {
   isLoading: boolean;
   error: AxiosError<any>;
-  user: User;
+  user?: User;
   authenticatedAction(action: Function): () => any;
 }
 
-const AuthContext = createContext<AuthContext>(undefined);
+const AuthContext = createContext<any>(undefined);
 
-export function useAuth() {
+export function useAuth(): AuthContext {
   return useContext(AuthContext);
 }
 

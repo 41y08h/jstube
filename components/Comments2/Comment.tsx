@@ -7,6 +7,7 @@ import IRatings from "../../interfaces/Ratings";
 
 interface Props {
   data: IComment;
+  onDeleted: (id: number) => void;
 }
 
 type RType = "like" | "dislike" | "remove";
@@ -35,17 +36,23 @@ const Comment: FC<Props> = (props) => {
     },
     { onSuccess: (ratings) => setData((prev) => ({ ...prev, ratings })) }
   );
-  const editMutation = useMutation(async (text: string) => {
-    const res = await axios.patch<IComment>(`/api/comments/${data.id}`, {
-      text,
-    });
-    return res.data;
-  });
+  const editMutation = useMutation(
+    async (text: string) => {
+      const res = await axios.patch<IComment>(`/api/comments/${data.id}`, {
+        text,
+      });
+      return res.data;
+    },
+    { onSuccess: () => props.onDeleted(data.id) }
+  );
+  const deleteMutation = useMutation(async () =>
+    axios.delete(`/api/comments/${data.id}`)
+  );
 
   // Derived data
   const hasUserLiked = data.ratings.userRatingStatus === "LIKED";
   const hasUserDisliked = data.ratings.userRatingStatus === "DISLIKED";
-  const isAuthorUser = data.author.id === user.id;
+  const isAuthorUser = data.author.id === user?.id;
 
   // User Actions
   const onLike = authenticatedAction(() =>
@@ -57,6 +64,7 @@ const Comment: FC<Props> = (props) => {
   const toggleEdit = () => setIsEditing((e) => !e);
   const onEditFormSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
+    console.log("hey");
     const inputValue = editInputRef.current?.value;
     if (!inputValue) return;
 
@@ -71,12 +79,18 @@ const Comment: FC<Props> = (props) => {
         {isEditing ? (
           <form onSubmit={onEditFormSubmit}>
             <input ref={editInputRef} required defaultValue={data.text} />
-            <button className="bg-gray-200 p-1" type="submit">
+            <button
+              disabled={editMutation.isLoading}
+              className="bg-gray-200 p-1"
+              type="submit"
+            >
               save
             </button>
           </form>
         ) : (
-          <span className="p-2">{data.text}</span>
+          <span className="p-2">
+            {data.text} - {data.replyCount} replies
+          </span>
         )}
         <div className="ml-auto">
           <button
@@ -97,9 +111,18 @@ const Comment: FC<Props> = (props) => {
       </div>
       <div>
         {isAuthorUser && (
-          <button onClick={toggleEdit} className="bg-gray-200 p-2">
-            ✏
-          </button>
+          <div>
+            <button onClick={toggleEdit} className="bg-gray-200 p-2">
+              ✏
+            </button>
+            <button
+              disabled={deleteMutation.isLoading}
+              onClick={() => deleteMutation.mutate()}
+              className="bg-gray-200 p-2"
+            >
+              ❌
+            </button>
+          </div>
         )}
       </div>
     </div>

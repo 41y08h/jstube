@@ -1,14 +1,14 @@
-import axios from "axios";
-import { FC, FormEventHandler, useEffect, useRef } from "react";
-import { useInView } from "react-intersection-observer";
 import {
   InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from "react-query";
-import IComment, { ICommentPage } from "../../interfaces/Comment";
+import axios from "axios";
 import Comment from "./Comment";
+import { useInView } from "react-intersection-observer";
+import { FC, FormEventHandler, useEffect, useRef } from "react";
+import IComment, { ICommentPage } from "../../interfaces/Comment";
 
 interface Props {
   videoId: number;
@@ -22,13 +22,12 @@ const Comments: FC<Props> = ({ videoId }) => {
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery(
       queryKey,
-      async ({ pageParam = 1 }) => {
-        const { data } = await axios.get<ICommentPage>(
-          `/api/comments/${videoId}`,
-          { params: { page: pageParam } }
-        );
-        return data;
-      },
+      async ({ pageParam = 1 }) =>
+        axios
+          .get<ICommentPage>(`/api/comments/${videoId}`, {
+            params: { page: pageParam },
+          })
+          .then((res) => res.data),
       {
         staleTime: Infinity,
         getNextPageParam: (lastPage) =>

@@ -1,139 +1,95 @@
-import axios from "axios";
-import { FC, FormEventHandler, useRef, useState } from "react";
-import { useInfiniteQuery, useMutation } from "react-query";
-import { useAuth } from "../../contexts/Auth";
-import IComment, { ICommentPage } from "../../interfaces/Comment";
-import IRatings from "../../interfaces/Ratings";
+import Button from "../Button";
 import Replies from "./Replies";
+import EditForm from "./EditForm";
+import EditInput from "./EditInput";
+import { FC, useState } from "react";
+import CommentText from "./CommentText";
+import useComment from "../../hooks/useComment";
+import IComment from "../../interfaces/Comment";
 
 interface Props {
   data: IComment;
-  onDeleted: (id: number) => void;
-  isReply?: boolean;
+  onDeleted: (id: number) => any;
 }
 
-type RType = "like" | "dislike" | "remove";
-
-const Comment: FC<Props> = ({ isReply = false, ...props }) => {
-  const { authenticate, user } = useAuth();
-  const [isEditing, setIsEditing] = useState(false);
+const Comment: FC<Props> = (props) => {
+  const {
+    data,
+    onLike,
+    onDislike,
+    isEditing,
+    toggleEdit,
+    isAuthorUser,
+    editInputRef,
+    editMutation,
+    hasUserLiked,
+    deleteMutation,
+    ratingsMutation,
+    hasUserDisliked,
+    onEditFormSubmit,
+  } = useComment({ initialData: props.data, onDeleted: props.onDeleted });
   const [isViewingReplies, setIsViewingReplies] = useState(false);
-  const editInputRef = useRef<HTMLInputElement>(null);
-  const [data, setData] = useState(props.data);
-  const ratingsMutation = useMutation(
-    async (type: RType) => {
-      const baseUrl = `/api/ratings/comments/${data.id}`;
-      switch (type) {
-        case "like":
-          const { data } = await axios.post<IRatings>(`${baseUrl}/like`);
-          return data;
-        case "dislike":
-          const { data: data2 } = await axios.post<IRatings>(
-            `${baseUrl}/dislike`
-          );
-          return data2;
-        case "remove":
-          const { data: data3 } = await axios.delete<IRatings>(`${baseUrl}`);
-          return data3;
-      }
-    },
-    { onSuccess: (ratings) => setData((prev) => ({ ...prev, ratings })) }
-  );
-  const editMutation = useMutation(async (text: string) => {
-    const res = await axios.patch<IComment>(`/api/comments/${data.id}`, {
-      text,
-    });
-    return res.data;
-  });
-  const deleteMutation = useMutation(
-    async () => axios.delete(`/api/comments/${data.id}`),
-    { onSuccess: () => props.onDeleted(data.id) }
-  );
-
-  // Derived data
-  const hasUserLiked = data.ratings.userRatingStatus === "LIKED";
-  const hasUserDisliked = data.ratings.userRatingStatus === "DISLIKED";
-  const isAuthorUser = data.author.id === user?.id;
-
-  // User Actions
-  const onLike = authenticate(() =>
-    ratingsMutation.mutate(hasUserLiked ? "remove" : "like")
-  );
-  const onDislike = authenticate(() =>
-    ratingsMutation.mutate(hasUserDisliked ? "remove" : "dislike")
-  );
-  const toggleEdit = () => setIsEditing((e) => !e);
-  const toggleRepliesView = () => setIsViewingReplies((e) => !e);
-  const onEditFormSubmit: FormEventHandler = async (event) => {
-    event.preventDefault();
-    console.log("hey");
-    const inputValue = editInputRef.current?.value;
-    if (!inputValue) return;
-
-    const data = await editMutation.mutateAsync(inputValue);
-    setData(data);
-    setIsEditing(false);
-  };
+  const toggleRepliesView = () => setIsViewingReplies((prev) => !prev);
 
   return (
     <div className="border border-black my-2">
       <div className="flex">
         {isEditing ? (
-          <form onSubmit={onEditFormSubmit}>
-            <input ref={editInputRef} required defaultValue={data.text} />
-            <button
-              disabled={editMutation.isLoading}
-              className="bg-gray-200 p-1"
+          <EditForm onSubmit={onEditFormSubmit}>
+            <EditInput required ref={editInputRef} defaultValue={data.text} />
+            <Button
               type="submit"
+              className="bg-gray-200 p-1 uppercase"
+              disabled={editMutation.isLoading}
             >
-              save
-            </button>
-          </form>
+              Save
+            </Button>
+          </EditForm>
         ) : (
-          <span className="p-2">
+          <CommentText className="p-2">
             {data.text} - {data.replyCount} replies
-          </span>
+          </CommentText>
         )}
         <div className="ml-auto">
-          <button
-            disabled={ratingsMutation.isLoading}
+          <Button
             className="bg-gray-200 p-2"
+            disabled={ratingsMutation.isLoading}
             onClick={onLike}
           >
             {data.ratings.count.likes} {hasUserLiked ? "👍🏽" : "👍"}
-          </button>
-          <button
-            disabled={ratingsMutation.isLoading}
+          </Button>
+          <Button
             className="bg-gray-200 p-2"
+            disabled={ratingsMutation.isLoading}
             onClick={onDislike}
           >
             {data.ratings.count.dislikes} {hasUserDisliked ? "👎🏽" : "👎"}
-          </button>
+          </Button>
         </div>
       </div>
       <div>
         {isAuthorUser && (
           <div>
-            <button onClick={toggleEdit} className="bg-gray-200 p-2">
+            <Button className="bg-gray-200 p-2" onClick={toggleEdit}>
               ✏
-            </button>
-            <button
+            </Button>
+            <Button
+              className="bg-gray-200 p-2"
               disabled={deleteMutation.isLoading}
               onClick={() => deleteMutation.mutate()}
-              className="bg-gray-200 p-2"
             >
               ❌
-            </button>
+            </Button>
           </div>
         )}
-        {!isReply && Boolean(data.replyCount) && (
+        {Boolean(data.replyCount) && (
           <div>
-            <button onClick={toggleRepliesView}>
+            <Button onClick={() => toggleRepliesView()}>
               {isViewingReplies
                 ? `Hide ${data.replyCount} replies`
                 : `View ${data.replyCount} replies`}
-            </button>
-            {isViewingReplies && <Replies commentId={data.id} />}
+            </Button>
+            {isViewingReplies && <Replies commentId={props.data.id} />}
           </div>
         )}
       </div>

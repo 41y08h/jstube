@@ -4,6 +4,7 @@ import { useInfiniteQuery, useMutation } from "react-query";
 import { useAuth } from "../../contexts/Auth";
 import IComment, { ICommentPage } from "../../interfaces/Comment";
 import IRatings from "../../interfaces/Ratings";
+import Replies from "./Replies";
 
 interface Props {
   data: IComment;
@@ -19,21 +20,6 @@ const Comment: FC<Props> = ({ isReply = false, ...props }) => {
   const [isViewingReplies, setIsViewingReplies] = useState(false);
   const editInputRef = useRef<HTMLInputElement>(null);
   const [data, setData] = useState(props.data);
-  const repliesQuery = useInfiniteQuery(
-    `comments/${data.id}/replies`,
-    async ({ pageParam = 1 }) =>
-      axios
-        .get<ICommentPage>(`/api/comments/${data.id}/replies`, {
-          params: { page: pageParam },
-        })
-        .then((res) => res.data),
-    {
-      staleTime: Infinity,
-      getNextPageParam: (lastPage) =>
-        lastPage.hasMore ? lastPage.page + 1 : undefined,
-      enabled: isViewingReplies,
-    }
-  );
   const ratingsMutation = useMutation(
     async (type: RType) => {
       const baseUrl = `/api/ratings/comments/${data.id}`;
@@ -147,27 +133,7 @@ const Comment: FC<Props> = ({ isReply = false, ...props }) => {
                 ? `Hide ${data.replyCount} replies`
                 : `View ${data.replyCount} replies`}
             </button>
-            {isViewingReplies && (
-              <div className="pl-20">
-                {repliesQuery.data?.pages.map((page) =>
-                  page.items.map((reply) => (
-                    <Comment
-                      isReply
-                      key={reply.id}
-                      data={reply}
-                      onDeleted={() => {}}
-                    />
-                  ))
-                )}
-                {repliesQuery.hasNextPage &&
-                  !repliesQuery.isFetchingNextPage && (
-                    <button onClick={() => repliesQuery.fetchNextPage()}>
-                      Show more replies
-                    </button>
-                  )}
-                {repliesQuery.isFetchingNextPage && <div>...</div>}
-              </div>
-            )}
+            {isViewingReplies && <Replies commentId={data.id} />}
           </div>
         )}
       </div>

@@ -1,3 +1,7 @@
-# JsTube
+# 🟦 JsTube
 
-📺 YouTube Clone written entirely in 💻 Typescript.
+## Technologies used
++ Next.js
++ Tailwind CSS
++ React Query
++ TypeScript

@@ -159,7 +159,12 @@ const Comment: FC<Props> = ({ isReply = false, ...props }) => {
                     />
                   ))
                 )}
-                {/* {repliesQuery.} */}
+                {repliesQuery.hasNextPage &&
+                  !repliesQuery.isFetchingNextPage && (
+                    <button onClick={() => repliesQuery.fetchNextPage()}>
+                      Show more replies
+                    </button>
+                  )}
                 {repliesQuery.isFetchingNextPage && <div>...</div>}
               </div>
             )}

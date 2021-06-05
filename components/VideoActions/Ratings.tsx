@@ -2,7 +2,7 @@ import axios from "axios";
 import { FC, useState } from "react";
 import { useMutation } from "react-query";
 import ActionButton from "./ActionButton";
-import { useAuth } from "../../contexts/auth";
+import { useAuth } from "../../contexts/Auth";
 import formatNumber from "../../lib/formatNumber";
 import { ReactComponent as LikeIcon } from "../../icons/like.svg";
 import { ReactComponent as DislikeIcon } from "../../icons/dislike.svg";
@@ -15,7 +15,7 @@ interface Props {
 
 const RatingActions: FC<Props> = ({ data }) => {
   const [ratings, setRatings] = useState(data.ratings);
-  const { authenticatedAction } = useAuth();
+  const { authenticate } = useAuth();
 
   const ratingMutation = useMutation(
     async (type: "LIKE" | "DISLIKE" | "REMOVE") => {
@@ -36,13 +36,13 @@ const RatingActions: FC<Props> = ({ data }) => {
     { onSuccess: setRatings }
   );
 
-  const onLike = authenticatedAction(() =>
+  const onLike = authenticate(() =>
     ratings.userRatingStatus === "LIKED"
       ? ratingMutation.mutate("REMOVE")
       : ratingMutation.mutate("LIKE")
   );
 
-  const onDislike = authenticatedAction(() =>
+  const onDislike = authenticate(() =>
     ratings.userRatingStatus === "DISLIKED"
       ? ratingMutation.mutate("REMOVE")
       : ratingMutation.mutate("DISLIKE")

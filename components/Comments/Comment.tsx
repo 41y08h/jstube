@@ -2,7 +2,7 @@ import { Edit } from "@material-ui/icons";
 import axios from "axios";
 import { FC, FormEventHandler, forwardRef, useRef, useState } from "react";
 import { useMutation } from "react-query";
-import { useAuth } from "../../contexts/auth";
+import { useAuth } from "../../contexts/Auth";
 import { useComments } from "../../contexts/Comments";
 import IComment from "../../interfaces/Comment";
 import IRatings from "../../interfaces/Ratings";
@@ -15,7 +15,7 @@ const Comment: FC<Props> = ({ data }) => {
   const { setComments } = useComments();
   const [isEditing, setIsEditing] = useState(false);
   const editInputRef = useRef<HTMLInputElement>(null);
-  const { authenticatedAction, user } = useAuth();
+  const { authenticate, user } = useAuth();
 
   const ratingsMutation = useMutation(
     async (type: "like" | "dislike" | "remove") => {
@@ -30,11 +30,9 @@ const Comment: FC<Props> = ({ data }) => {
       }
     }
   );
-  const like = authenticatedAction(() => ratingsMutation.mutate("like"));
-  const dislike = authenticatedAction(() => ratingsMutation.mutate("dislike"));
-  const removeRating = authenticatedAction(() =>
-    ratingsMutation.mutate("remove")
-  );
+  const like = authenticate(() => ratingsMutation.mutate("like"));
+  const dislike = authenticate(() => ratingsMutation.mutate("dislike"));
+  const removeRating = authenticate(() => ratingsMutation.mutate("remove"));
 
   const editMutation = useMutation(async (text: string) =>
     axios.patch<IComment>(`/api/comments/${data.id}`, { text })

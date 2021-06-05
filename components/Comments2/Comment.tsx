@@ -1,7 +1,7 @@
 import axios from "axios";
 import { FC, FormEventHandler, useRef, useState } from "react";
 import { useMutation } from "react-query";
-import { useAuth } from "../../contexts/auth";
+import { useAuth } from "../../contexts/Auth";
 import IComment from "../../interfaces/Comment";
 import IRatings from "../../interfaces/Ratings";
 
@@ -13,7 +13,7 @@ interface Props {
 type RType = "like" | "dislike" | "remove";
 
 const Comment: FC<Props> = (props) => {
-  const { authenticatedAction, user } = useAuth();
+  const { authenticate, user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const editInputRef = useRef<HTMLInputElement>(null);
   const [data, setData] = useState(props.data);
@@ -53,10 +53,10 @@ const Comment: FC<Props> = (props) => {
   const isAuthorUser = data.author.id === user?.id;
 
   // User Actions
-  const onLike = authenticatedAction(() =>
+  const onLike = authenticate(() =>
     ratingsMutation.mutate(hasUserLiked ? "remove" : "like")
   );
-  const onDislike = authenticatedAction(() =>
+  const onDislike = authenticate(() =>
     ratingsMutation.mutate(hasUserDisliked ? "remove" : "dislike")
   );
   const toggleEdit = () => setIsEditing((e) => !e);

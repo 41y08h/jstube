@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Dispatch, FC, SetStateAction } from "react";
 import { useMutation } from "react-query";
-import { useAuth } from "../../contexts/auth";
+import { useAuth } from "../../contexts/Auth";
 import ISubscribers from "../../interfaces/Subscribers";
 
 interface Props {
@@ -15,7 +15,7 @@ const SubscribeButton: FC<Props> = ({
   subscribers,
   setSubscribers,
 }) => {
-  const { authenticatedAction } = useAuth();
+  const { authenticate } = useAuth();
   const subscribersMutation = useMutation(
     (unsubscribe: boolean) => {
       const url = `/api/subscribers/${channelId}`;
@@ -32,7 +32,7 @@ const SubscribeButton: FC<Props> = ({
       ? "bg-gray-200 text-secondary"
       : "bg-red-700 text-white");
 
-  const onSubscribe = authenticatedAction(() =>
+  const onSubscribe = authenticate(() =>
     subscribersMutation.mutate(subscribers.isUserSubscribed)
   );
 

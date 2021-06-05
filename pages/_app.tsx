@@ -5,7 +5,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "tailwindcss/tailwind.css";
-import AuthProvider from "../contexts/auth/Provider";
+import { AuthProvider } from "../contexts/Auth";
 import queryFn from "../lib/queryFunction";
 import "../styles/globals.css";
 

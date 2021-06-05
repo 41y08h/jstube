@@ -1,22 +1,39 @@
 import axios from "axios";
 import { FC, FormEventHandler, useRef, useState } from "react";
-import { useMutation } from "react-query";
+import { useInfiniteQuery, useMutation } from "react-query";
 import { useAuth } from "../../contexts/Auth";
-import IComment from "../../interfaces/Comment";
+import IComment, { ICommentPage } from "../../interfaces/Comment";
 import IRatings from "../../interfaces/Ratings";
 
 interface Props {
   data: IComment;
   onDeleted: (id: number) => void;
+  isReply?: boolean;
 }
 
 type RType = "like" | "dislike" | "remove";
 
-const Comment: FC<Props> = (props) => {
+const Comment: FC<Props> = ({ isReply = false, ...props }) => {
   const { authenticate, user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const [isViewingReplies, setIsViewingReplies] = useState(false);
   const editInputRef = useRef<HTMLInputElement>(null);
   const [data, setData] = useState(props.data);
+  const repliesQuery = useInfiniteQuery(
+    `comments/${data.id}/replies`,
+    async ({ pageParam = 1 }) =>
+      axios
+        .get<ICommentPage>(`/api/comments/${data.id}/replies`, {
+          params: { page: pageParam },
+        })
+        .then((res) => res.data),
+    {
+      staleTime: Infinity,
+      getNextPageParam: (lastPage) =>
+        lastPage.hasMore ? lastPage.page + 1 : undefined,
+      enabled: isViewingReplies,
+    }
+  );
   const ratingsMutation = useMutation(
     async (type: RType) => {
       const baseUrl = `/api/ratings/comments/${data.id}`;
@@ -60,6 +77,7 @@ const Comment: FC<Props> = (props) => {
     ratingsMutation.mutate(hasUserDisliked ? "remove" : "dislike")
   );
   const toggleEdit = () => setIsEditing((e) => !e);
+  const toggleRepliesView = () => setIsViewingReplies((e) => !e);
   const onEditFormSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
     console.log("hey");
@@ -120,6 +138,31 @@ const Comment: FC<Props> = (props) => {
             >
               ❌
             </button>
+          </div>
+        )}
+        {!isReply && Boolean(data.replyCount) && (
+          <div>
+            <button onClick={toggleRepliesView}>
+              {isViewingReplies
+                ? `Hide ${data.replyCount} replies`
+                : `View ${data.replyCount} replies`}
+            </button>
+            {isViewingReplies && (
+              <div className="pl-20">
+                {repliesQuery.data?.pages.map((page) =>
+                  page.items.map((reply) => (
+                    <Comment
+                      isReply
+                      key={reply.id}
+                      data={reply}
+                      onDeleted={() => {}}
+                    />
+                  ))
+                )}
+                {/* {repliesQuery.} */}
+                {repliesQuery.isFetchingNextPage && <div>...</div>}
+              </div>
+            )}
           </div>
         )}
       </div>

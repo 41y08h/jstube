@@ -9,11 +9,13 @@ interface Props {
   videoId: number;
 }
 
+const queryKey = "comments";
+
 const Comments: FC<Props> = ({ videoId }) => {
   const queryClient = useQueryClient();
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery(
-      "comments",
+      queryKey,
       async ({ pageParam = 1 }) => {
         const { data } = await axios.get<ICommentPage>(
           `/api/comments/${videoId}`,
@@ -47,13 +49,10 @@ const Comments: FC<Props> = ({ videoId }) => {
         };
       }) ?? [];
 
-    queryClient.setQueryData<InfiniteData<ICommentPage>>(
-      "comments",
-      (data) => ({
-        pages,
-        pageParams: data?.pageParams ?? [],
-      })
-    );
+    queryClient.setQueryData<InfiniteData<ICommentPage>>(queryKey, (data) => ({
+      pages,
+      pageParams: data?.pageParams ?? [],
+    }));
   };
 
   if (isLoading) return <>Loading...</>;

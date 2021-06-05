@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 import { API_URL } from "../config";
 import { GetServerSideProps } from "next";
 import Layout from "../components/Layout";
-import VideoContext from "../contexts/video";
+import { VideoContext } from "../contexts/Video";
 import ChannelBar from "../components/ChannelBar";
 import VideoPlayer from "../components/VideoPlayer";
 import VideoDetail from "../components/VideoCard/VideoDetail";

@@ -9,6 +9,7 @@ import Comment from "./Comment";
 import { useInView } from "react-intersection-observer";
 import { FC, FormEventHandler, useEffect, useRef } from "react";
 import IComment, { ICommentPage } from "../../interfaces/Comment";
+import { useAuth } from "../../contexts/Auth";
 
 interface Props {
   videoId: number;
@@ -18,6 +19,7 @@ const queryKey = "comments";
 
 const Comments: FC<Props> = ({ videoId }) => {
   const queryClient = useQueryClient();
+  const { authenticate } = useAuth();
   const commentInputRef = useRef<HTMLInputElement>(null);
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery(
@@ -98,8 +100,10 @@ const Comments: FC<Props> = ({ videoId }) => {
 
   const handleCommentSubmit: FormEventHandler = (event) => {
     event.preventDefault();
-    const text = commentInputRef?.current?.value;
-    if (text) commentsMutation.mutate(text);
+    authenticate(() => {
+      const text = commentInputRef?.current?.value;
+      if (text) commentsMutation.mutate(text);
+    })();
   };
 
   if (isLoading) return <>Loading...</>;

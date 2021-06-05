@@ -5,14 +5,9 @@ import EditInput from "./EditInput";
 import { FC, useState } from "react";
 import CommentText from "./CommentText";
 import useComment from "../../hooks/useComment";
-import IComment from "../../interfaces/Comment";
+import CommentProps from "../../types/CommentProps";
 
-interface Props {
-  data: IComment;
-  onDeleted: (id: number) => any;
-}
-
-const Comment: FC<Props> = (props) => {
+const Comment: FC<CommentProps> = (props) => {
   const {
     data,
     onLike,

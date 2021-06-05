@@ -1,7 +1,7 @@
 import axios from "axios";
 import { FC, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { useInfiniteQuery, useQueryClient } from "react-query";
+import { InfiniteData, useInfiniteQuery, useQueryClient } from "react-query";
 import { ICommentPage } from "../../interfaces/Comment";
 import Comment from "./Comment";
 
@@ -34,7 +34,26 @@ const Comments: FC<Props> = ({ videoId }) => {
   }, [isScrolledToBottom, fetchNextPage]);
 
   const onDeleted = (deletedCommentId: number) => {
-    queryClient.invalidateQueries("comments");
+    const pages: ICommentPage[] =
+      data?.pages.map((page) => {
+        const items = page.items.filter(
+          (comment) => comment.id !== deletedCommentId
+        );
+        return {
+          ...page,
+          total: data?.pages[data?.pages.length - 1].total - 1,
+          items: items,
+          count: items.length,
+        };
+      }) ?? [];
+
+    queryClient.setQueryData<InfiniteData<ICommentPage>>(
+      "comments",
+      (data) => ({
+        pages,
+        pageParams: data?.pageParams ?? [],
+      })
+    );
   };
 
   if (isLoading) return <>Loading...</>;

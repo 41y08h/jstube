@@ -36,17 +36,15 @@ const Comment: FC<Props> = (props) => {
     },
     { onSuccess: (ratings) => setData((prev) => ({ ...prev, ratings })) }
   );
-  const editMutation = useMutation(
-    async (text: string) => {
-      const res = await axios.patch<IComment>(`/api/comments/${data.id}`, {
-        text,
-      });
-      return res.data;
-    },
+  const editMutation = useMutation(async (text: string) => {
+    const res = await axios.patch<IComment>(`/api/comments/${data.id}`, {
+      text,
+    });
+    return res.data;
+  });
+  const deleteMutation = useMutation(
+    async () => axios.delete(`/api/comments/${data.id}`),
     { onSuccess: () => props.onDeleted(data.id) }
-  );
-  const deleteMutation = useMutation(async () =>
-    axios.delete(`/api/comments/${data.id}`)
   );
 
   // Derived data

@@ -38,9 +38,7 @@ const Reply: FC<CommentProps> = (props) => {
             </Button>
           </EditForm>
         ) : (
-          <CommentText className="p-2">
-            {data.text} - {data.replyCount} replies
-          </CommentText>
+          <CommentText className="p-2">{data.text}</CommentText>
         )}
         <div className="ml-auto">
           <Button

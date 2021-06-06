@@ -9,6 +9,8 @@ export default interface IComment {
   replyCount: number;
   originalCommentId: null;
   replyToCommentId: null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IReply {
@@ -19,6 +21,8 @@ export interface IReply {
   replyCount: number;
   originalCommentId: number;
   replyToCommentId: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ICommentPage {

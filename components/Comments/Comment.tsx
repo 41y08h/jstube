@@ -13,6 +13,8 @@ import IComment, {
   IReplyPage,
 } from "../../interfaces/Comment";
 import { useAuth } from "../../contexts/Auth";
+import Avatar from "../Avatar";
+import timeSince from "../../lib/timeSince";
 
 interface Props {
   data: IComment;
@@ -100,7 +102,18 @@ const Comment: FC<Props> = (props) => {
             </Button>
           </EditForm>
         ) : (
-          <CommentText className="p-2">{data.text}</CommentText>
+          <div className="flex space-x-4">
+            <Avatar src={data.author.picture} alt={data.author.name} />
+            <div className="flex flex-col">
+              <div className="space-x-2 mb-1">
+                <span className="text-bold text-sm">{data.author.name}</span>
+                <span className="text-bold text-sm text-secondary">
+                  {timeSince(new Date(data.createdAt))}
+                </span>
+              </div>
+              <CommentText>{data.text}</CommentText>
+            </div>
+          </div>
         )}
         <div className="ml-auto">
           <Button

@@ -5,6 +5,11 @@ import EditInput from "./EditInput";
 import CommentText from "./CommentText";
 import useComment from "../../hooks/useComment";
 import CommentProps from "../../types/CommentProps";
+import { IReply } from "../../interfaces/Comment";
+
+interface Props extends CommentProps {
+  data: IReply;
+}
 
 const Reply: FC<CommentProps> = (props) => {
   const {

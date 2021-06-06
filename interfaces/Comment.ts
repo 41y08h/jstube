@@ -11,9 +11,14 @@ export default interface IComment {
   replyToCommentId: null;
 }
 
-export interface IReply extends IComment {
-  originalCommentId: null;
-  replyToCommentId: null;
+export interface IReply {
+  id: number;
+  text: string;
+  author: User;
+  ratings: IRatings;
+  replyCount: number;
+  originalCommentId: number;
+  replyToCommentId: number;
 }
 
 export interface ICommentPage {
@@ -24,6 +29,10 @@ export interface ICommentPage {
   items: IComment[];
 }
 
-export interface IReplyPage extends ICommentPage {
+export interface IReplyPage {
+  total: number;
+  count: number;
+  page: number;
+  hasMore: boolean;
   items: IReply[];
 }

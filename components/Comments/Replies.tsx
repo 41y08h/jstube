@@ -1,7 +1,7 @@
 import axios from "axios";
 import { FC } from "react";
 import { useInfiniteQuery } from "react-query";
-import { ICommentPage } from "../../interfaces/Comment";
+import { ICommentPage, IReplyPage } from "../../interfaces/Comment";
 import Reply from "./Reply";
 
 interface Props {
@@ -14,7 +14,7 @@ const Replies: FC<Props> = ({ commentId }) => {
       `comments/${commentId}/replies`,
       async ({ pageParam = 1 }) =>
         axios
-          .get<ICommentPage>(`/api/comments/${commentId}/replies`, {
+          .get<IReplyPage>(`/api/comments/${commentId}/replies`, {
             params: { page: pageParam },
           })
           .then((res) => res.data),

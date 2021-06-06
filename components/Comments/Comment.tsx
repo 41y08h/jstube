@@ -2,10 +2,14 @@ import Button from "../Button";
 import Replies from "./Replies";
 import EditForm from "./EditForm";
 import EditInput from "./EditInput";
-import { FC, useState } from "react";
+import { FC, FormEventHandler, useState, useRef } from "react";
 import CommentText from "./CommentText";
 import useComment from "../../hooks/useComment";
 import CommentProps from "../../types/CommentProps";
+import { InfiniteData, useMutation, useQueryClient } from "react-query";
+import axios from "axios";
+import IComment, { ICommentPage } from "../../interfaces/Comment";
+import { useAuth } from "../../contexts/Auth";
 
 const Comment: FC<CommentProps> = (props) => {
   const {
@@ -23,8 +27,55 @@ const Comment: FC<CommentProps> = (props) => {
     hasUserDisliked,
     onEditFormSubmit,
   } = useComment({ initialData: props.data, onDeleted: props.onDeleted });
+  const queryClient = useQueryClient();
+  const { authenticate } = useAuth();
+  const replyInputRef = useRef<HTMLInputElement>(null);
+  const repliesMutation = useMutation(
+    async (text: string) =>
+      axios
+        .post<IComment>(`/api/comments/${data.id}/replies`, { text })
+        .then((res) => res.data),
+    {
+      onSuccess(newReply) {
+        queryClient.setQueryData<InfiniteData<ICommentPage>>(
+          `comments/${data.id}/replies`,
+          (data) => {
+            const oldPages = data?.pages ?? [];
+            const firstPage = oldPages[0];
+            const lastPage = oldPages[oldPages.length - 1];
+
+            const items = [newReply, ...firstPage.items];
+            const updatedFirstPage: ICommentPage = {
+              ...firstPage,
+              items,
+              count: items.length,
+            };
+
+            const updatedPages = [updatedFirstPage, ...oldPages.slice(1)].map(
+              (page) => ({ ...page, total: lastPage.total + 1 })
+            );
+
+            return {
+              pages: updatedPages,
+              pageParams: data?.pageParams ?? [],
+            };
+          }
+        );
+      },
+    }
+  );
   const [isViewingReplies, setIsViewingReplies] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
   const toggleRepliesView = () => setIsViewingReplies((prev) => !prev);
+  const toggleIsReplying = () => setIsReplying((prev) => !prev);
+
+  const handleReplySubmit: FormEventHandler = (event) => {
+    event.preventDefault();
+    authenticate(() => {
+      const text = replyInputRef?.current?.value;
+      if (text) repliesMutation.mutate(text);
+    })();
+  };
 
   return (
     <div className="border border-black my-2">
@@ -73,14 +124,22 @@ const Comment: FC<CommentProps> = (props) => {
             >
               ❌
             </Button>
-            <Button
-              className="bg-gray-200 p-2"
-              disabled={deleteMutation.isLoading}
-              onClick={() => deleteMutation.mutate()}
-            >
-              ⤵
+            <Button className="bg-gray-200 p-2" onClick={toggleIsReplying}>
+              {isReplying ? "⤴" : "⤵"}
             </Button>
           </div>
+        )}
+        {isReplying && (
+          <form onSubmit={handleReplySubmit}>
+            <input
+              required
+              ref={replyInputRef}
+              placeholder="Add a public reply..."
+            />
+            <Button className="bg-gray-200 p-2" type="submit">
+              REPLY
+            </Button>
+          </form>
         )}
         {Boolean(data.replyCount) && (
           <div>
@@ -89,7 +148,9 @@ const Comment: FC<CommentProps> = (props) => {
                 ? `Hide ${data.replyCount} replies`
                 : `View ${data.replyCount} replies`}
             </Button>
-            {isViewingReplies && <Replies commentId={props.data.id} />}
+            {isViewingReplies && (
+              <Replies key={props.data.id} commentId={props.data.id} />
+            )}
           </div>
         )}
       </div>

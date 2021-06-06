@@ -31,7 +31,9 @@ const Replies: FC<Props> = ({ commentId }) => {
     <div>
       <div className="pl-20">
         {data?.pages.map((page) =>
-          page.items.map((reply) => <Reply data={reply} />)
+          page.items.map((reply) => (
+            <Reply key={reply.id} data={reply} onDeleted={() => {}} />
+          ))
         )}
         {isFetchingNextPage ? (
           <div>...</div>

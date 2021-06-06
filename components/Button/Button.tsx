@@ -54,7 +54,7 @@ const Button = forwardRef<HTMLButtonElement, Props>(
     return (
       <button
         ref={ref}
-        className={`${"px-5 py-2 rounded"} ${appearanceClassName} ${sizeClassName} ${className}`}
+        className={`${"px-4 py-2 rounded"} ${appearanceClassName} ${sizeClassName} ${className}`}
         {...props}
       />
     );

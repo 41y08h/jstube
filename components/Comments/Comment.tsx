@@ -13,8 +13,10 @@ import IComment, {
   IReplyPage,
 } from "../../interfaces/Comment";
 import { useAuth } from "../../contexts/Auth";
-import Avatar from "../Avatar";
 import timeSince from "../../lib/timeSince";
+import Avatar from "../Avatar";
+import { ReactComponent as LikeIcon } from "../../icons/like.svg";
+import { ReactComponent as DislikeIcon } from "../../icons/dislike.svg";
 
 interface Props {
   data: IComment;
@@ -105,32 +107,52 @@ const Comment: FC<Props> = (props) => {
           <div className="flex space-x-4">
             <Avatar src={data.author.picture} alt={data.author.name} />
             <div className="flex flex-col">
-              <div className="space-x-2 mb-1">
+              <div className="space-x-2">
                 <span className="text-bold text-sm">{data.author.name}</span>
                 <span className="text-bold text-sm text-secondary">
                   {timeSince(new Date(data.createdAt))}
                 </span>
               </div>
               <CommentText>{data.text}</CommentText>
+              <div className="mt-2 flex space-x-4">
+                <button
+                  className="text-secondary text-xs flex space-x-2 items-center"
+                  disabled={ratingsMutation.isLoading}
+                  onClick={onLike}
+                >
+                  <LikeIcon
+                    className={`${"w-4 h-4"} ${
+                      hasUserLiked ? "text-blue-600" : ""
+                    }`}
+                  />
+                  {!!data.ratings.count.likes && (
+                    <span>{data.ratings.count.likes}</span>
+                  )}
+                </button>
+                <button
+                  className="text-secondary text-xs flex space-x-2 items-center"
+                  disabled={ratingsMutation.isLoading}
+                  onClick={onDislike}
+                >
+                  <DislikeIcon
+                    className={`${"w-4 h-4"} ${
+                      hasUserDisliked ? "text-blue-600" : ""
+                    }`}
+                  />
+                </button>
+                <Button
+                  appearance="none"
+                  size="xs"
+                  className="uppercase text-secondary text-semibold"
+                  type="submit"
+                  onClick={toggleIsReplying}
+                >
+                  Reply
+                </Button>
+              </div>
             </div>
           </div>
         )}
-        <div className="ml-auto">
-          <Button
-            className="bg-gray-200 p-2"
-            disabled={ratingsMutation.isLoading}
-            onClick={onLike}
-          >
-            {data.ratings.count.likes} {hasUserLiked ? "👍🏽" : "👍"}
-          </Button>
-          <Button
-            className="bg-gray-200 p-2"
-            disabled={ratingsMutation.isLoading}
-            onClick={onDislike}
-          >
-            {data.ratings.count.dislikes} {hasUserDisliked ? "👎🏽" : "👎"}
-          </Button>
-        </div>
       </div>
       <div>
         {isAuthorUser && (

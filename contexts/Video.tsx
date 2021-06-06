@@ -1,8 +1,7 @@
 import { createContext, useContext } from "react";
 import { QVideoDetailed } from "../interfaces/Video";
 
-const VideoContext = createContext<any>(undefined);
-export default VideoContext;
+export const VideoContext = createContext<any>(undefined);
 
 interface Value {
   video: QVideoDetailed;

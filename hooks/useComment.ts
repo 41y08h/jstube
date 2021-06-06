@@ -61,7 +61,6 @@ export default function useComment({ initialData, onDeleted }: Config) {
   const toggleEdit = () => setIsEditing((e) => !e);
   const onEditFormSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
-    console.log("hey");
     const inputValue = editInputRef.current?.value;
     if (!inputValue) return;
 
@@ -71,18 +70,18 @@ export default function useComment({ initialData, onDeleted }: Config) {
   };
 
   return {
+    data,
+    onLike,
+    onDislike,
     isEditing,
-    onEditFormSubmit,
+    toggleEdit,
     editInputRef,
     editMutation,
-    data,
-    ratingsMutation,
-    onLike,
     hasUserLiked,
-    onDislike,
-    hasUserDisliked,
     isAuthorUser,
-    toggleEdit,
     deleteMutation,
+    ratingsMutation,
+    hasUserDisliked,
+    onEditFormSubmit,
   };
 }

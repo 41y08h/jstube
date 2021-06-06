@@ -73,6 +73,13 @@ const Comment: FC<CommentProps> = (props) => {
             >
               ❌
             </Button>
+            <Button
+              className="bg-gray-200 p-2"
+              disabled={deleteMutation.isLoading}
+              onClick={() => deleteMutation.mutate()}
+            >
+              ⤵
+            </Button>
           </div>
         )}
         {Boolean(data.replyCount) && (

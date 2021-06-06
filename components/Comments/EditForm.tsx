@@ -5,6 +5,6 @@ type Props = DetailedHTMLProps<
   FormHTMLAttributes<HTMLFormElement>,
   HTMLFormElement
 >;
-const EditForm: FC<Props> = (...props) => <form {...props}></form>;
+const EditForm: FC<Props> = (props) => <form {...props}></form>;
 
 export default EditForm;

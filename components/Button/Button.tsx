@@ -1,9 +1,8 @@
-import { ButtonHTMLAttributes, DetailedHTMLProps, FC } from "react";
+import { ButtonHTMLAttributes, DetailedHTMLProps, forwardRef } from "react";
 
-const Button: FC<
+const Button = forwardRef<
+  HTMLButtonElement,
   DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
-> = (props) => {
-  return <button {...props} />;
-};
+>((props, ref) => <button ref={ref} {...props} />);
 
 export default Button;

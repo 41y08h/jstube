@@ -60,7 +60,7 @@ const Comments: FC<Props> = ({ videoId }) => {
             };
 
             const updatedPages = [updatedFirstPage, ...oldPages.slice(1)].map(
-              (page) => ({ ...page, total: lastPage.total - 1 })
+              (page) => ({ ...page, total: lastPage.total + 1 })
             );
 
             return {

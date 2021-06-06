@@ -22,6 +22,7 @@ import { ReactComponent as EditIcon } from "../../icons/edit.svg";
 import { ReactComponent as DeleteIcon } from "../../icons/delete.svg";
 import { Menu } from "@headlessui/react";
 import Input from "../Input";
+import Loading from "../Loading";
 
 interface Props {
   data: IComment;
@@ -94,7 +95,9 @@ const Comment: FC<Props> = (props) => {
     })();
   };
 
-  return (
+  return deleteMutation.isLoading ? (
+    <Loading className="my-6" />
+  ) : (
     <div className="my-6">
       <div className="flex relative w-full">
         <div className="flex space-x-4">
@@ -104,32 +107,37 @@ const Comment: FC<Props> = (props) => {
               className="flex flex-col w-full"
               onSubmit={onEditFormSubmit}
             >
-              <Input
-                autoFocus
-                className="w-full"
-                required
-                ref={editInputRef}
-                defaultValue={data.text}
-              />
-              <div className="flex justify-end pt-3 space-x-2">
-                <Button
-                  size="sm"
-                  appearance="none"
-                  className="uppercase font-medium text-secondary"
-                  onClick={toggleEdit}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  size="sm"
-                  type="submit"
-                  appearance="primary"
-                  className="uppercase font-medium"
-                  disabled={editMutation.isLoading}
-                >
-                  Save
-                </Button>
-              </div>
+              {editMutation.isLoading ? (
+                <Loading className="my-4" />
+              ) : (
+                <div>
+                  <Input
+                    autoFocus
+                    className="w-full"
+                    required
+                    ref={editInputRef}
+                    defaultValue={data.text}
+                  />
+                  <div className="flex  justify-end pt-3 space-x-2">
+                    <Button
+                      size="sm"
+                      appearance="none"
+                      className="uppercase font-medium text-secondary"
+                      onClick={toggleEdit}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      size="sm"
+                      type="submit"
+                      appearance="primary"
+                      className="uppercase font-medium"
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              )}
             </EditForm>
           ) : (
             <div className="flex flex-col">
@@ -137,7 +145,7 @@ const Comment: FC<Props> = (props) => {
                 <Menu.Button>
                   <TridotIcon className="w-5 h-5 text-secondary" />
                 </Menu.Button>
-                <Menu.Items as="div" className="py-2 shadow rounded">
+                <Menu.Items as="div" className="py-2 shadow rounded bg-white">
                   <Menu.Item as="div" className="flex flex-col">
                     {({ active }) => (
                       <button
@@ -154,6 +162,7 @@ const Comment: FC<Props> = (props) => {
                   <Menu.Item>
                     {({ active }) => (
                       <button
+                        onClick={() => deleteMutation.mutate()}
                         className={`${
                           active && "bg-gray-200"
                         } w-full text-left px-6 pr-8 py-2 flex space-x-3`}
@@ -170,6 +179,11 @@ const Comment: FC<Props> = (props) => {
                 <span className="text-bold text-sm text-secondary">
                   {timeSince(new Date(data.createdAt))}
                 </span>
+                {data.updatedAt !== data.createdAt && (
+                  <span className="text-bold text-sm text-secondary">
+                    (edited)
+                  </span>
+                )}
               </div>
               <CommentText>{data.text}</CommentText>
               <div className="mt-2 flex space-x-4">

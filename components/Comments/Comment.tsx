@@ -17,6 +17,11 @@ import timeSince from "../../lib/timeSince";
 import Avatar from "../Avatar";
 import { ReactComponent as LikeIcon } from "../../icons/like.svg";
 import { ReactComponent as DislikeIcon } from "../../icons/dislike.svg";
+import { ReactComponent as TridotIcon } from "../../icons/tridot.svg";
+import { ReactComponent as EditIcon } from "../../icons/edit.svg";
+import { ReactComponent as DeleteIcon } from "../../icons/delete.svg";
+import { Menu } from "@headlessui/react";
+import Input from "../Input";
 
 interface Props {
   data: IComment;
@@ -90,23 +95,76 @@ const Comment: FC<Props> = (props) => {
   };
 
   return (
-    <div className="my-2">
-      <div className="flex">
-        {isEditing ? (
-          <EditForm onSubmit={onEditFormSubmit}>
-            <EditInput required ref={editInputRef} defaultValue={data.text} />
-            <Button
-              type="submit"
-              className="bg-gray-200 p-1 uppercase"
-              disabled={editMutation.isLoading}
+    <div className="my-6">
+      <div className="flex relative w-full">
+        <div className="flex space-x-4">
+          <Avatar src={data.author.picture} alt={data.author.name} />
+          {isEditing ? (
+            <EditForm
+              className="flex flex-col w-full"
+              onSubmit={onEditFormSubmit}
             >
-              Save
-            </Button>
-          </EditForm>
-        ) : (
-          <div className="flex space-x-4">
-            <Avatar src={data.author.picture} alt={data.author.name} />
+              <Input
+                autoFocus
+                className="w-full"
+                required
+                ref={editInputRef}
+                defaultValue={data.text}
+              />
+              <div className="flex justify-end pt-3 space-x-2">
+                <Button
+                  size="sm"
+                  appearance="none"
+                  className="uppercase font-medium text-secondary"
+                  onClick={toggleEdit}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  type="submit"
+                  appearance="primary"
+                  className="uppercase font-medium"
+                  disabled={editMutation.isLoading}
+                >
+                  Save
+                </Button>
+              </div>
+            </EditForm>
+          ) : (
             <div className="flex flex-col">
+              <Menu as="div" className="absolute top-0 right-0 text-right">
+                <Menu.Button>
+                  <TridotIcon className="w-5 h-5 text-secondary" />
+                </Menu.Button>
+                <Menu.Items as="div" className="py-2 shadow rounded">
+                  <Menu.Item as="div" className="flex flex-col">
+                    {({ active }) => (
+                      <button
+                        onClick={toggleEdit}
+                        className={`${
+                          active && "bg-gray-200"
+                        } w-full text-left px-6 pr-8 py-2 flex space-x-3`}
+                      >
+                        <EditIcon className="w-6 h-6 text-secondary" />
+                        <span>Edit</span>
+                      </button>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        className={`${
+                          active && "bg-gray-200"
+                        } w-full text-left px-6 pr-8 py-2 flex space-x-3`}
+                      >
+                        <DeleteIcon className="w-6 h-6 text-secondary" />
+                        <span>Delete</span>
+                      </button>
+                    )}
+                  </Menu.Item>
+                </Menu.Items>
+              </Menu>
               <div className="space-x-2">
                 <span className="text-bold text-sm">{data.author.name}</span>
                 <span className="text-bold text-sm text-secondary">
@@ -151,27 +209,10 @@ const Comment: FC<Props> = (props) => {
                 </Button>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
       <div>
-        {isAuthorUser && (
-          <div>
-            <Button className="bg-gray-200 p-2" onClick={toggleEdit}>
-              ✏
-            </Button>
-            <Button
-              className="bg-gray-200 p-2"
-              disabled={deleteMutation.isLoading}
-              onClick={() => deleteMutation.mutate()}
-            >
-              ❌
-            </Button>
-            <Button className="bg-gray-200 p-2" onClick={toggleIsReplying}>
-              {isReplying ? "⤴" : "⤵"}
-            </Button>
-          </div>
-        )}
         {isReplying && (
           <form onSubmit={handleReplySubmit}>
             <input

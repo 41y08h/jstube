@@ -6,23 +6,29 @@ import {
 } from "react-query";
 import axios from "axios";
 import Comment from "./Comment";
-import { useInView } from "react-intersection-observer";
-import { FC, FormEventHandler, useEffect, useRef, useState } from "react";
-import IComment, { ICommentPage } from "../../interfaces/Comment";
 import { useAuth } from "../../contexts/Auth";
+import { useInView } from "react-intersection-observer";
+import IComment, { ICommentPage } from "../../interfaces/Comment";
+import { FC, FormEventHandler, useEffect, useRef, useState } from "react";
+import Button from "../Button";
+import Avatar from "../Avatar";
+import Input from "../Input";
 
 interface Props {
   videoId: number;
 }
 
-const queryKey = "comments";
-
 const Comments: FC<Props> = ({ videoId }) => {
-  const { authenticate } = useAuth();
+  const { authenticate, user } = useAuth();
   const queryClient = useQueryClient();
-  const commentInputRef = useRef<HTMLInputElement>(null);
+  const [bottomRef, isAtBottom] = useInView();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [total, setTotal] = useState<number | undefined>();
-  const [addedComments, setAddedComments] = useState<IComment[]>([]);
+  const [isCommenting, setIsCommenting] = useState(false);
+
+  const queryKey = `/api/comments/${videoId}`;
+  const [newComments, setnewComments] = useState<IComment[]>([]);
+
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery(
       queryKey,
@@ -39,84 +45,87 @@ const Comments: FC<Props> = ({ videoId }) => {
         onSuccess: (data) => setTotal(data.pages[data.pages.length - 1].total),
       }
     );
-  const commentsMutation = useMutation(
-    async (text: string) =>
-      axios
-        .post<IComment>(`/api/comments/${videoId}`, { text })
-        .then((res) => res.data),
-
-    {
-      onSuccess: (newComment) =>
-        setAddedComments((prev) => [newComment, ...prev]),
-    }
+  const commentsMutation = useMutation(async (text: string) =>
+    axios.post<IComment>(queryKey, { text }).then((res) => res.data)
   );
-  const [bottomRef, isScrolledToBottom] = useInView();
 
   useEffect(() => {
-    if (isScrolledToBottom) fetchNextPage();
-  }, [isScrolledToBottom, fetchNextPage]);
+    if (isAtBottom) fetchNextPage();
+  }, [isAtBottom, fetchNextPage]);
 
-  const onDeleted = (deletedCommentId: number) => {
-    const pages: ICommentPage[] =
-      data?.pages.map((page) => {
-        const items = page.items.filter(
-          (comment) => comment.id !== deletedCommentId
-        );
-        return {
-          ...page,
-          total: data?.pages[data?.pages.length - 1].total - 1,
-          items: items,
-          count: items.length,
-        };
-      }) ?? [];
+  const increaseTotal = () => setTotal((old) => old && old + 1);
+  const decreaseTotal = () => setTotal((old) => old && old - 1);
+  const toggleIsCommenting = () => setIsCommenting((old) => !old);
 
-    queryClient.setQueryData<InfiniteData<ICommentPage>>(queryKey, (data) => ({
-      pages,
+  const handleSubmit: FormEventHandler = (event) => {
+    event.preventDefault();
+
+    const submit = authenticate(async () => {
+      const text = inputRef?.current?.value;
+      if (!text) return;
+
+      const newComment = await commentsMutation.mutateAsync(text);
+      setnewComments((old) => [newComment, ...old]);
+
+      increaseTotal();
+      toggleIsCommenting();
+    });
+
+    submit();
+  };
+
+  function onDeleted(id: number) {
+    // Remove from pages cache
+    type T = InfiniteData<ICommentPage>;
+    queryClient.setQueryData<T>(queryKey, (data) => ({
+      pages:
+        data?.pages.map((page) => {
+          const items = page.items.filter((c) => c.id !== id);
+          return { ...page, items };
+        }) ?? [],
       pageParams: data?.pageParams ?? [],
     }));
-  };
 
-  const handleCommentSubmit: FormEventHandler = (event) => {
-    event.preventDefault();
-    authenticate(() => {
-      const text = commentInputRef?.current?.value;
-      if (text) commentsMutation.mutate(text);
-    })();
-  };
+    decreaseTotal();
+  }
 
   if (isLoading) return <>Loading...</>;
 
-  const lastPage = data?.pages[data.pages.length - 1];
-
   return (
-    <div>
+    <div className="p-4">
       {total && <p className="block">{total} Comments</p>}
-      <form onSubmit={handleCommentSubmit}>
-        <input
-          required
-          ref={commentInputRef}
-          placeholder="Add a public comment..."
-        />
-        <button type="submit">Comment</button>
+
+      <form className="h-20 relative" onSubmit={handleSubmit}>
+        <div className="flex space-x-4">
+          <Avatar src={user?.picture} alt={user?.name} />
+          <Input
+            required
+            ref={inputRef}
+            onClick={() => setIsCommenting(true)}
+            placeholder="Add a public comment..."
+          />
+        </div>
+        {isCommenting && (
+          <div>
+            <Button onClick={toggleIsCommenting}>Cancel</Button>
+            <Button type="submit">Comment</Button>
+          </div>
+        )}
       </form>
-      {addedComments.map((addedComment) => (
-        <Comment
-          key={addedComment.id}
-          data={addedComment}
-          onDeleted={onDeleted}
-        />
+      {newComments.map((newComment) => (
+        <Comment key={newComment.id} data={newComment} onDeleted={onDeleted} />
       ))}
       {data?.pages.map((page) =>
         page.items.map((comment) =>
-          addedComments.find(
-            (addedComment) => addedComment.id === comment.id
+          newComments.find(
+            (newComment) => newComment.id === comment.id
           ) ? null : (
             <Comment key={comment.id} data={comment} onDeleted={onDeleted} />
           )
         )
       )}
       <div ref={bottomRef} />
-      {isFetchingNextPage && <div>...</div>}
+      {isFetchingNextPage && <div>Loading...</div>}
     </div>
   );
 };

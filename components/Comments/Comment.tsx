@@ -8,7 +8,11 @@ import useComment from "../../hooks/useComment";
 import CommentProps from "../../types/CommentProps";
 import { InfiniteData, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
-import IComment, { ICommentPage } from "../../interfaces/Comment";
+import IComment, {
+  ICommentPage,
+  IReply,
+  IReplyPage,
+} from "../../interfaces/Comment";
 import { useAuth } from "../../contexts/Auth";
 
 const Comment: FC<CommentProps> = (props) => {
@@ -33,11 +37,11 @@ const Comment: FC<CommentProps> = (props) => {
   const repliesMutation = useMutation(
     async (text: string) =>
       axios
-        .post<IComment>(`/api/comments/${data.id}/replies`, { text })
+        .post<IReply>(`/api/comments/${data.id}/replies`, { text })
         .then((res) => res.data),
     {
       onSuccess(newReply) {
-        queryClient.setQueryData<InfiniteData<ICommentPage>>(
+        queryClient.setQueryData<InfiniteData<IReplyPage>>(
           `comments/${data.id}/replies`,
           (data) => {
             const oldPages = data?.pages ?? [];

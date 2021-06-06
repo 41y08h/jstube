@@ -7,6 +7,13 @@ export default interface IComment {
   author: User;
   ratings: IRatings;
   replyCount: number;
+  originalCommentId: null;
+  replyToCommentId: null;
+}
+
+export interface IReply extends IComment {
+  originalCommentId: null;
+  replyToCommentId: null;
 }
 
 export interface ICommentPage {
@@ -15,4 +22,8 @@ export interface ICommentPage {
   page: number;
   hasMore: boolean;
   items: IComment[];
+}
+
+export interface IReplyPage extends ICommentPage {
+  items: IReply[];
 }

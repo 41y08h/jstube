@@ -1,7 +1,7 @@
 import axios from "axios";
 import { FC } from "react";
 import { useInfiniteQuery } from "react-query";
-import { ICommentPage, IReplyPage } from "../../interfaces/Comment";
+import { IReplyPage } from "../../interfaces/Comment";
 import Reply from "./Reply";
 
 interface Props {

@@ -4,14 +4,14 @@ import EditForm from "./EditForm";
 import EditInput from "./EditInput";
 import CommentText from "./CommentText";
 import useComment from "../../hooks/useComment";
-import CommentProps from "../../types/CommentProps";
 import { IReply } from "../../interfaces/Comment";
 
-interface Props extends CommentProps {
+interface Props {
   data: IReply;
+  onDeleted(id: number): any;
 }
 
-const Reply: FC<CommentProps> = (props) => {
+const Reply: FC<Props> = (props) => {
   const {
     data,
     onLike,

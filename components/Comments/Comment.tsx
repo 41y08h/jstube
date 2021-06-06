@@ -5,7 +5,6 @@ import EditInput from "./EditInput";
 import { FC, FormEventHandler, useState, useRef } from "react";
 import CommentText from "./CommentText";
 import useComment from "../../hooks/useComment";
-import CommentProps from "../../types/CommentProps";
 import { InfiniteData, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import IComment, {
@@ -15,7 +14,12 @@ import IComment, {
 } from "../../interfaces/Comment";
 import { useAuth } from "../../contexts/Auth";
 
-const Comment: FC<CommentProps> = (props) => {
+interface Props {
+  data: IComment;
+  onDeleted(id: number): any;
+}
+
+const Comment: FC<Props> = (props) => {
   const {
     data,
     onLike,
@@ -49,7 +53,7 @@ const Comment: FC<CommentProps> = (props) => {
             const lastPage = oldPages[oldPages.length - 1];
 
             const items = [newReply, ...firstPage.items];
-            const updatedFirstPage: ICommentPage = {
+            const updatedFirstPage: IReplyPage = {
               ...firstPage,
               items,
               count: items.length,

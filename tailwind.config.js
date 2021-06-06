@@ -5,7 +5,9 @@ module.exports = {
     extend: {},
   },
   variants: {
-    extend: {},
+    extend: {
+      backgroundColor: ["disabled"],
+    },
   },
   plugins: [require("@tailwindcss/line-clamp")],
 };

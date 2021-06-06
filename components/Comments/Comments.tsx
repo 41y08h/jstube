@@ -153,7 +153,7 @@ const Comments: FC<Props> = ({ videoId }) => {
         )}
       </div>
       <div ref={bottomRef} />
-      {isFetchingNextPage && <div>Loading...</div>}
+      {isFetchingNextPage && <Loading className="my-4" />}
     </div>
   );
 };

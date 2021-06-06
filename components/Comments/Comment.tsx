@@ -86,7 +86,7 @@ const Comment: FC<Props> = (props) => {
   };
 
   return (
-    <div className="border border-black my-2">
+    <div className="my-2">
       <div className="flex">
         {isEditing ? (
           <EditForm onSubmit={onEditFormSubmit}>

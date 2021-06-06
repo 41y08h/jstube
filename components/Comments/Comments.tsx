@@ -7,7 +7,7 @@ import {
 import axios from "axios";
 import Comment from "./Comment";
 import { useInView } from "react-intersection-observer";
-import { FC, FormEventHandler, useEffect, useRef } from "react";
+import { FC, FormEventHandler, useEffect, useRef, useState } from "react";
 import IComment, { ICommentPage } from "../../interfaces/Comment";
 import { useAuth } from "../../contexts/Auth";
 
@@ -18,9 +18,11 @@ interface Props {
 const queryKey = "comments";
 
 const Comments: FC<Props> = ({ videoId }) => {
-  const queryClient = useQueryClient();
   const { authenticate } = useAuth();
+  const queryClient = useQueryClient();
   const commentInputRef = useRef<HTMLInputElement>(null);
+  const [total, setTotal] = useState<number | undefined>();
+  const [addedComments, setAddedComments] = useState<IComment[]>([]);
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery(
       queryKey,
@@ -34,42 +36,18 @@ const Comments: FC<Props> = ({ videoId }) => {
         staleTime: Infinity,
         getNextPageParam: (lastPage) =>
           lastPage.hasMore ? lastPage.page + 1 : undefined,
+        onSuccess: (data) => setTotal(data.pages[data.pages.length - 1].total),
       }
     );
   const commentsMutation = useMutation(
-    async (text: string) => {
-      const { data } = await axios.post<IComment>(`/api/comments/${videoId}`, {
-        text,
-      });
-      return data;
-    },
+    async (text: string) =>
+      axios
+        .post<IComment>(`/api/comments/${videoId}`, { text })
+        .then((res) => res.data),
+
     {
-      onSuccess(newComment) {
-        queryClient.setQueryData<InfiniteData<ICommentPage>>(
-          queryKey,
-          (data) => {
-            const oldPages = data?.pages ?? [];
-            const firstPage = oldPages[0];
-            const lastPage = oldPages[oldPages.length - 1];
-
-            const items = [newComment, ...firstPage.items];
-            const updatedFirstPage: ICommentPage = {
-              ...firstPage,
-              items,
-              count: items.length,
-            };
-
-            const updatedPages = [updatedFirstPage, ...oldPages.slice(1)].map(
-              (page) => ({ ...page, total: lastPage.total + 1 })
-            );
-
-            return {
-              pages: updatedPages,
-              pageParams: data?.pageParams ?? [],
-            };
-          }
-        );
-      },
+      onSuccess: (newComment) =>
+        setAddedComments((prev) => [newComment, ...prev]),
     }
   );
   const [bottomRef, isScrolledToBottom] = useInView();
@@ -112,7 +90,7 @@ const Comments: FC<Props> = ({ videoId }) => {
 
   return (
     <div>
-      {lastPage && <p className="block">{lastPage.total} Comments</p>}
+      {total && <p className="block">{total} Comments</p>}
       <form onSubmit={handleCommentSubmit}>
         <input
           required
@@ -121,10 +99,21 @@ const Comments: FC<Props> = ({ videoId }) => {
         />
         <button type="submit">Comment</button>
       </form>
+      {addedComments.map((addedComment) => (
+        <Comment
+          key={addedComment.id}
+          data={addedComment}
+          onDeleted={onDeleted}
+        />
+      ))}
       {data?.pages.map((page) =>
-        page.items.map((comment) => (
-          <Comment key={comment.id} data={comment} onDeleted={onDeleted} />
-        ))
+        page.items.map((comment) =>
+          addedComments.find(
+            (addedComment) => addedComment.id === comment.id
+          ) ? null : (
+            <Comment key={comment.id} data={comment} onDeleted={onDeleted} />
+          )
+        )
       )}
       <div ref={bottomRef} />
       {isFetchingNextPage && <div>...</div>}

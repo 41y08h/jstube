@@ -1,10 +1,13 @@
-import { FC } from "react";
+import axios from "axios";
+import { FC, useState, useRef, FormEventHandler } from "react";
+import { useQueryClient, useMutation, InfiniteData } from "react-query";
 import Button from "../Button";
 import EditForm from "./EditForm";
 import EditInput from "./EditInput";
 import CommentText from "./CommentText";
 import useComment from "../../hooks/useComment";
-import { IReply } from "../../interfaces/Comment";
+import { IReply, IReplyPage } from "../../interfaces/Comment";
+import { useAuth } from "../../contexts/Auth";
 
 interface Props {
   data: IReply;
@@ -27,6 +30,54 @@ const Reply: FC<Props> = (props) => {
     hasUserDisliked,
     onEditFormSubmit,
   } = useComment({ initialData: props.data, onDeleted: props.onDeleted });
+  const queryClient = useQueryClient();
+  const { authenticate } = useAuth();
+  const replyInputRef = useRef<HTMLInputElement>(null);
+  const repliesMutation = useMutation(
+    async (text: string) =>
+      axios
+        .post<IReply>(`/api/comments/${data.id}/replies`, { text })
+        .then((res) => res.data),
+    {
+      onSuccess(newReply) {
+        queryClient.setQueryData<InfiniteData<IReplyPage>>(
+          `comments/${newReply.originalCommentId}/replies`,
+          (data) => {
+            const oldPages = data?.pages ?? [];
+            const firstPage = oldPages[0];
+            const lastPage = oldPages[oldPages.length - 1];
+
+            const items = [newReply, ...firstPage.items];
+            const updatedFirstPage: IReplyPage = {
+              ...firstPage,
+              items,
+              count: items.length,
+            };
+
+            const updatedPages = [updatedFirstPage, ...oldPages.slice(1)].map(
+              (page) => ({ ...page, total: lastPage.total + 1 })
+            );
+
+            return {
+              pages: updatedPages,
+              pageParams: data?.pageParams ?? [],
+            };
+          }
+        );
+      },
+    }
+  );
+  const [isReplying, setIsReplying] = useState(false);
+
+  const toggleIsReplying = () => setIsReplying((prev) => !prev);
+
+  const handleReplySubmit: FormEventHandler = (event) => {
+    event.preventDefault();
+    authenticate(() => {
+      const text = replyInputRef?.current?.value;
+      if (text) repliesMutation.mutate(text);
+    })();
+  };
 
   return (
     <div className="border border-black my-2">
@@ -75,7 +126,22 @@ const Reply: FC<Props> = (props) => {
             >
               ❌
             </Button>
+            <Button className="bg-gray-200 p-2" onClick={toggleIsReplying}>
+              {isReplying ? "⤴" : "⤵"}
+            </Button>
           </div>
+        )}
+        {isReplying && (
+          <form onSubmit={handleReplySubmit}>
+            <input
+              required
+              ref={replyInputRef}
+              placeholder="Add a public reply..."
+            />
+            <Button className="bg-gray-200 p-2" type="submit">
+              REPLY
+            </Button>
+          </form>
         )}
       </div>
     </div>

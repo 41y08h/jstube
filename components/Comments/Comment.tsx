@@ -82,9 +82,7 @@ const Comment: FC<Props> = (props) => {
       },
     }
   );
-  const [isViewingReplies, setIsViewingReplies] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
-  const toggleRepliesView = () => setIsViewingReplies((prev) => !prev);
   const toggleIsReplying = () => setIsReplying((prev) => !prev);
 
   const handleReplySubmit: FormEventHandler = (event) => {
@@ -98,182 +96,168 @@ const Comment: FC<Props> = (props) => {
   return deleteMutation.isLoading ? (
     <Loading className="my-6" />
   ) : (
-    <div className="my-6">
-      <div className="flex relative w-full">
-        <div className="flex w-full space-x-4">
-          <Avatar src={data.author.picture} alt={data.author.name} />
-          {isEditing ? (
-            <EditForm
-              className="flex flex-col w-full"
-              onSubmit={onEditFormSubmit}
-            >
-              {editMutation.isLoading ? (
-                <Loading className="my-4" />
-              ) : (
-                <div>
+    <div className="flex relative w-full">
+      <div className="flex w-full space-x-4">
+        <Avatar src={data.author.picture} alt={data.author.name} />
+        {isEditing ? (
+          <EditForm
+            className="flex flex-col w-full"
+            onSubmit={onEditFormSubmit}
+          >
+            {editMutation.isLoading ? (
+              <Loading className="my-4" />
+            ) : (
+              <div>
+                <Input
+                  autoFocus
+                  className="w-full"
+                  required
+                  ref={editInputRef}
+                  defaultValue={data.text}
+                />
+                <div className="flex  justify-end pt-3 space-x-2">
+                  <Button
+                    size="sm"
+                    appearance="none"
+                    className="uppercase font-medium text-secondary"
+                    onClick={toggleEdit}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    type="submit"
+                    appearance="primary"
+                    className="uppercase font-medium"
+                  >
+                    Save
+                  </Button>
+                </div>
+              </div>
+            )}
+          </EditForm>
+        ) : (
+          <div className="flex flex-col w-full">
+            <Menu as="div" className="absolute top-0 right-0 text-right">
+              <Menu.Button>
+                <TridotIcon className="w-5 h-5 text-secondary" />
+              </Menu.Button>
+              <Menu.Items as="div" className="py-2 shadow rounded bg-white">
+                <Menu.Item as="div" className="flex flex-col">
+                  {({ active }) => (
+                    <button
+                      onClick={toggleEdit}
+                      className={`${
+                        active && "bg-gray-200"
+                      } w-full text-left px-6 pr-8 py-2 flex space-x-3`}
+                    >
+                      <EditIcon className="w-6 h-6 text-secondary" />
+                      <span>Edit</span>
+                    </button>
+                  )}
+                </Menu.Item>
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      onClick={() => deleteMutation.mutate()}
+                      className={`${
+                        active && "bg-gray-200"
+                      } w-full text-left px-6 pr-8 py-2 flex space-x-3`}
+                    >
+                      <DeleteIcon className="w-6 h-6 text-secondary" />
+                      <span>Delete</span>
+                    </button>
+                  )}
+                </Menu.Item>
+              </Menu.Items>
+            </Menu>
+            <div className="space-x-2">
+              <span className="text-bold text-sm">{data.author.name}</span>
+              <span className="text-bold text-sm text-secondary">
+                {timeSince(new Date(data.createdAt))}
+              </span>
+              {data.updatedAt !== data.createdAt && (
+                <span className="text-bold text-sm text-secondary">
+                  (edited)
+                </span>
+              )}
+            </div>
+            <CommentText>{data.text}</CommentText>
+            <div className="mt-2 flex space-x-4">
+              <button
+                className="text-secondary text-xs flex space-x-2 items-center"
+                disabled={ratingsMutation.isLoading}
+                onClick={onLike}
+              >
+                <LikeIcon
+                  className={`${"w-4 h-4"} ${
+                    hasUserLiked ? "text-blue-600" : ""
+                  }`}
+                />
+                {!!data.ratings.count.likes && (
+                  <span>{data.ratings.count.likes}</span>
+                )}
+              </button>
+              <button
+                className="text-secondary text-xs flex space-x-2 items-center"
+                disabled={ratingsMutation.isLoading}
+                onClick={onDislike}
+              >
+                <DislikeIcon
+                  className={`${"w-4 h-4"} ${
+                    hasUserDisliked ? "text-blue-600" : ""
+                  }`}
+                />
+              </button>
+              <Button
+                appearance="none"
+                size="xs"
+                className="uppercase text-secondary text-semibold"
+                type="submit"
+                onClick={toggleIsReplying}
+              >
+                Reply
+              </Button>
+            </div>
+            {isReplying && (
+              <form
+                className="flex space-x-3 w-full mt-2"
+                onSubmit={handleReplySubmit}
+              >
+                <Avatar size="sm" src={user?.picture} alt={user?.name} />
+                <div className="flex flex-col w-full space-y-2">
                   <Input
-                    autoFocus
-                    className="w-full"
                     required
-                    ref={editInputRef}
-                    defaultValue={data.text}
+                    autoFocus
+                    ref={replyInputRef}
+                    placeholder="Add a public reply..."
                   />
-                  <div className="flex  justify-end pt-3 space-x-2">
+                  <div className="flex justify-end space-x-2">
                     <Button
                       size="sm"
                       appearance="none"
                       className="uppercase font-medium text-secondary"
-                      onClick={toggleEdit}
+                      onClick={toggleIsReplying}
                     >
                       Cancel
                     </Button>
                     <Button
-                      size="sm"
-                      type="submit"
                       appearance="primary"
+                      size="sm"
                       className="uppercase font-medium"
+                      type="submit"
                     >
-                      Save
+                      Reply
                     </Button>
                   </div>
                 </div>
-              )}
-            </EditForm>
-          ) : (
-            <div className="flex flex-col w-full">
-              <Menu as="div" className="absolute top-0 right-0 text-right">
-                <Menu.Button>
-                  <TridotIcon className="w-5 h-5 text-secondary" />
-                </Menu.Button>
-                <Menu.Items as="div" className="py-2 shadow rounded bg-white">
-                  <Menu.Item as="div" className="flex flex-col">
-                    {({ active }) => (
-                      <button
-                        onClick={toggleEdit}
-                        className={`${
-                          active && "bg-gray-200"
-                        } w-full text-left px-6 pr-8 py-2 flex space-x-3`}
-                      >
-                        <EditIcon className="w-6 h-6 text-secondary" />
-                        <span>Edit</span>
-                      </button>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <button
-                        onClick={() => deleteMutation.mutate()}
-                        className={`${
-                          active && "bg-gray-200"
-                        } w-full text-left px-6 pr-8 py-2 flex space-x-3`}
-                      >
-                        <DeleteIcon className="w-6 h-6 text-secondary" />
-                        <span>Delete</span>
-                      </button>
-                    )}
-                  </Menu.Item>
-                </Menu.Items>
-              </Menu>
-              <div className="space-x-2">
-                <span className="text-bold text-sm">{data.author.name}</span>
-                <span className="text-bold text-sm text-secondary">
-                  {timeSince(new Date(data.createdAt))}
-                </span>
-                {data.updatedAt !== data.createdAt && (
-                  <span className="text-bold text-sm text-secondary">
-                    (edited)
-                  </span>
-                )}
-              </div>
-              <CommentText>{data.text}</CommentText>
-              <div className="mt-2 flex space-x-4">
-                <button
-                  className="text-secondary text-xs flex space-x-2 items-center"
-                  disabled={ratingsMutation.isLoading}
-                  onClick={onLike}
-                >
-                  <LikeIcon
-                    className={`${"w-4 h-4"} ${
-                      hasUserLiked ? "text-blue-600" : ""
-                    }`}
-                  />
-                  {!!data.ratings.count.likes && (
-                    <span>{data.ratings.count.likes}</span>
-                  )}
-                </button>
-                <button
-                  className="text-secondary text-xs flex space-x-2 items-center"
-                  disabled={ratingsMutation.isLoading}
-                  onClick={onDislike}
-                >
-                  <DislikeIcon
-                    className={`${"w-4 h-4"} ${
-                      hasUserDisliked ? "text-blue-600" : ""
-                    }`}
-                  />
-                </button>
-                <Button
-                  appearance="none"
-                  size="xs"
-                  className="uppercase text-secondary text-semibold"
-                  type="submit"
-                  onClick={toggleIsReplying}
-                >
-                  Reply
-                </Button>
-              </div>
-              {isReplying && (
-                <form
-                  className="flex space-x-3 w-full mt-2"
-                  onSubmit={handleReplySubmit}
-                >
-                  <Avatar size="sm" src={user?.picture} alt={user?.name} />
-                  <div className="flex flex-col w-full space-y-2">
-                    <Input
-                      required
-                      autoFocus
-                      ref={replyInputRef}
-                      placeholder="Add a public reply..."
-                    />
-                    <div className="flex justify-end space-x-2">
-                      <Button
-                        size="sm"
-                        appearance="none"
-                        className="uppercase font-medium text-secondary"
-                        onClick={toggleIsReplying}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        appearance="primary"
-                        size="sm"
-                        className="uppercase font-medium"
-                        type="submit"
-                      >
-                        Reply
-                      </Button>
-                    </div>
-                  </div>
-                </form>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-      <div>
-        {Boolean(data.replyCount) && (
-          <div className="pl-14">
-            <button
-              className="text-blue-600 text-sm font-medium tracking-wide"
-              onClick={() => toggleRepliesView()}
-            >
-              {isViewingReplies
-                ? `◤ Hide ${data.replyCount} replies`
-                : `◢ View ${data.replyCount} replies`}
-            </button>
-            {isViewingReplies && (
-              <Replies key={props.data.id} commentId={props.data.id} />
+              </form>
             )}
+            <Replies
+              key={props.data.id}
+              total={props.data.replyCount}
+              commentId={props.data.id}
+            />
           </div>
         )}
       </div>

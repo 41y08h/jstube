@@ -134,7 +134,7 @@ const Comments: FC<Props> = ({ videoId }) => {
         )}
       </form>
 
-      <div>
+      <div className="space-y-5">
         {newComments.map((newComment) => (
           <Comment
             key={newComment.id}

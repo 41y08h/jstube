@@ -46,7 +46,7 @@ const Comment: FC<Props> = (props) => {
     onEditFormSubmit,
   } = useComment({ initialData: props.data, onDeleted: props.onDeleted });
   const queryClient = useQueryClient();
-  const { authenticate } = useAuth();
+  const { authenticate, user } = useAuth();
   const replyInputRef = useRef<HTMLInputElement>(null);
   const repliesMutation = useMutation(
     async (text: string) =>
@@ -140,7 +140,7 @@ const Comment: FC<Props> = (props) => {
               )}
             </EditForm>
           ) : (
-            <div className="flex flex-col">
+            <div className="flex flex-col w-full">
               <Menu as="div" className="absolute top-0 right-0 text-right">
                 <Menu.Button>
                   <TridotIcon className="w-5 h-5 text-secondary" />
@@ -222,27 +222,49 @@ const Comment: FC<Props> = (props) => {
                   Reply
                 </Button>
               </div>
+              {isReplying && (
+                <form
+                  className="flex space-x-3 w-full mt-2"
+                  onSubmit={handleReplySubmit}
+                >
+                  <Avatar size="sm" src={user?.picture} alt={user?.name} />
+                  <div className="flex flex-col w-full space-y-2">
+                    <Input
+                      required
+                      autoFocus
+                      ref={replyInputRef}
+                      placeholder="Add a public reply..."
+                    />
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        size="sm"
+                        appearance="none"
+                        className="uppercase font-medium text-secondary"
+                        onClick={toggleIsReplying}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        appearance="primary"
+                        size="sm"
+                        className="uppercase font-medium"
+                        type="submit"
+                      >
+                        Reply
+                      </Button>
+                    </div>
+                  </div>
+                </form>
+              )}
             </div>
           )}
         </div>
       </div>
       <div>
-        {isReplying && (
-          <form onSubmit={handleReplySubmit}>
-            <input
-              required
-              ref={replyInputRef}
-              placeholder="Add a public reply..."
-            />
-            <Button className="bg-gray-200 p-2" type="submit">
-              REPLY
-            </Button>
-          </form>
-        )}
         {Boolean(data.replyCount) && (
           <div className="pl-14">
             <button
-              className="text-blue-600 text-sm font-medium"
+              className="text-blue-600 text-sm font-medium tracking-wide"
               onClick={() => toggleRepliesView()}
             >
               {isViewingReplies

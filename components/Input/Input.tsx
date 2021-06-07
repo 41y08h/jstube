@@ -7,7 +7,7 @@ const Input = forwardRef<
 >(({ className, ...props }, ref) => (
   <input
     ref={ref}
-    className={`${"border-b w-full bg-transparent outline-none"} ${className}`}
+    className={`border-b w-full bg-transparent outline-none ${className}`}
     {...props}
   />
 ));

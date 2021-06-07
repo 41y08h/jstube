@@ -95,7 +95,7 @@ const Reply: FC<Props> = (props) => {
   ) : (
     <div className="flex relative w-full">
       <div className="flex w-full space-x-4">
-        <Avatar src={data.author.picture} alt={data.author.name} />
+        <Avatar size="sm" src={data.author.picture} alt={data.author.name} />
         {isEditing ? (
           <EditForm
             className="flex flex-col w-full"

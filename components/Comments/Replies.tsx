@@ -46,7 +46,7 @@ const Replies: FC<Props> = ({ commentId, total }) => {
         (isLoading ? (
           <Loading align="left" className="my-4" />
         ) : (
-          <div>
+          <div className="space-y-5 my-4">
             {data?.pages.map((page) =>
               page.items.map((reply) => (
                 <Reply key={reply.id} data={reply} onDeleted={() => {}} />

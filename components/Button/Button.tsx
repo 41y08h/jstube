@@ -31,7 +31,7 @@ const Button = forwardRef<HTMLButtonElement, Props>(
         case "success":
           return "bg-green-600 text-white";
         case "none":
-          return "bg-transparent text-primary";
+          return "bg-transparent";
       }
     };
     const getSize = () => {

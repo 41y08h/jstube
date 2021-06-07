@@ -3,6 +3,7 @@ import { FC } from "react";
 import { useInfiniteQuery } from "react-query";
 import { IReplyPage } from "../../interfaces/Comment";
 import Reply from "./Reply";
+import Loading from "../Loading";
 
 interface Props {
   commentId: number;
@@ -25,7 +26,7 @@ const Replies: FC<Props> = ({ commentId }) => {
       }
     );
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <Loading align="left" className="my-4" />;
 
   return (
     <div>

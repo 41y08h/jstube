@@ -90,7 +90,7 @@ const Comments: FC<Props> = ({ videoId }) => {
     decreaseTotal();
   }
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <Loading className="my-8" />;
 
   return (
     <div className="p-4">

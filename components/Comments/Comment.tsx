@@ -100,7 +100,7 @@ const Comment: FC<Props> = (props) => {
   ) : (
     <div className="my-6">
       <div className="flex relative w-full">
-        <div className="flex space-x-4">
+        <div className="flex w-full space-x-4">
           <Avatar src={data.author.picture} alt={data.author.name} />
           {isEditing ? (
             <EditForm
@@ -240,12 +240,15 @@ const Comment: FC<Props> = (props) => {
           </form>
         )}
         {Boolean(data.replyCount) && (
-          <div>
-            <Button onClick={() => toggleRepliesView()}>
+          <div className="pl-14">
+            <button
+              className="text-blue-600 text-sm font-medium"
+              onClick={() => toggleRepliesView()}
+            >
               {isViewingReplies
-                ? `Hide ${data.replyCount} replies`
-                : `View ${data.replyCount} replies`}
-            </Button>
+                ? `◤ Hide ${data.replyCount} replies`
+                : `◢ View ${data.replyCount} replies`}
+            </button>
             {isViewingReplies && (
               <Replies key={props.data.id} commentId={props.data.id} />
             )}

@@ -104,6 +104,7 @@ const Comments: FC<Props> = ({ videoId }) => {
             <div className="flex space-x-4">
               <Avatar src={user?.picture} alt={user?.name} />
               <Input
+                value={comment}
                 onChange={setComment}
                 onClick={() => setIsCommenting(true)}
                 placeholder="Add a public comment..."

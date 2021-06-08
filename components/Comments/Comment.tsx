@@ -15,11 +15,11 @@ import IComment, {
 import { useAuth } from "../../contexts/Auth";
 import timeSince from "../../lib/timeSince";
 import Avatar from "../Avatar";
-import { ReactComponent as LikeIcon } from "../../icons/like.svg";
-import { ReactComponent as DislikeIcon } from "../../icons/dislike.svg";
-import { ReactComponent as TridotIcon } from "../../icons/tridot.svg";
-import { ReactComponent as EditIcon } from "../../icons/edit.svg";
-import { ReactComponent as DeleteIcon } from "../../icons/delete.svg";
+import LikeIcon from "../../icons/like.svg";
+import DislikeIcon from "../../icons/dislike.svg";
+import TridotIcon from "../../icons/tridot.svg";
+import EditIcon from "../../icons/edit.svg";
+import DeleteIcon from "../../icons/delete.svg";
 import { Menu } from "@headlessui/react";
 import Input from "../Input";
 import Loading from "../Loading";
@@ -183,7 +183,7 @@ const Comment: FC<Props> = (props) => {
               )}
             </div>
             <CommentText className="whitespace-pre-wrap">
-              {data.text}
+              {data.text.trim()}
             </CommentText>
             <div className="mt-2 flex space-x-4">
               <button

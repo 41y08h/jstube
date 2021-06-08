@@ -6,15 +6,16 @@ type Div = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 interface Props extends Omit<Div, "onChange"> {
   plceholder?: string;
   onChange?: (value: string) => any;
+  value?: string;
 }
 const Input = forwardRef<HTMLDivElement, Props>(
-  ({ className, placeholder = "", onChange, ...props }, ref) => {
+  ({ className, placeholder = "", value = "", onChange, ...props }, ref) => {
     const [isPlaceholderShowing, setIsPlaceholderShowing] = useState(
       !!placeholder
     );
 
     const onInput = (e) => {
-      const value = e.target.innerText;
+      const value = e.target.innerHTML;
       setIsPlaceholderShowing(!value);
       onChange && onChange(value);
     };
@@ -26,11 +27,12 @@ const Input = forwardRef<HTMLDivElement, Props>(
             {placeholder}
           </span>
         )}
-        <div
+        <ContentEditable
           {...props}
           ref={ref}
           onInput={onInput}
           contentEditable
+          dangerouslySetInnerHTML={{ __html: value }}
           className={`border-b w-full bg-transparent outline-none ${className}`}
           style={{ minHeight: "24px" }}
         />

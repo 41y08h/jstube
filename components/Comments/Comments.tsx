@@ -23,7 +23,7 @@ const Comments: FC<Props> = ({ videoId }) => {
   const { authenticate, user } = useAuth();
   const queryClient = useQueryClient();
   const [bottomRef, isAtBottom] = useInView();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [comment, setComment] = useState("");
   const [total, setTotal] = useState<number | undefined>();
   const [isCommenting, setIsCommenting] = useState(false);
 
@@ -56,16 +56,17 @@ const Comments: FC<Props> = ({ videoId }) => {
 
   const increaseTotal = () => setTotal((old) => old && old + 1);
   const decreaseTotal = () => setTotal((old) => old && old - 1);
-  const toggleIsCommenting = () => setIsCommenting((old) => !old);
+  const toggleIsCommenting = () => {
+    setComment("");
+    setIsCommenting((old) => !old);
+  };
 
   const handleSubmit: FormEventHandler = (event) => {
     event.preventDefault();
 
     const submit = authenticate(async () => {
-      const text = inputRef?.current?.value;
-      if (!text) return;
-
-      const newComment = await commentsMutation.mutateAsync(text);
+      if (!comment) return;
+      const newComment = await commentsMutation.mutateAsync(comment);
       setnewComments((old) => [newComment, ...old]);
 
       increaseTotal();
@@ -103,8 +104,7 @@ const Comments: FC<Props> = ({ videoId }) => {
             <div className="flex space-x-4">
               <Avatar src={user?.picture} alt={user?.name} />
               <Input
-                required
-                ref={inputRef}
+                onChange={setComment}
                 onClick={() => setIsCommenting(true)}
                 placeholder="Add a public comment..."
               />
@@ -124,7 +124,7 @@ const Comments: FC<Props> = ({ videoId }) => {
                   type="submit"
                   appearance="primary"
                   className="uppercase font-medium"
-                  disabled={!!inputRef?.current?.value}
+                  disabled={!comment}
                 >
                   Comment
                 </Button>

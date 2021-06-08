@@ -1,8 +1,9 @@
 import { FormEventHandler, useRef, useState } from "react";
 import { DetailedHTMLProps, forwardRef, HTMLAttributes } from "react";
 
-interface Props
-  extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+type Div = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+
+interface Props extends Omit<Div, "onChange"> {
   plceholder?: string;
   onChange?: (value: string) => any;
 }
@@ -26,12 +27,12 @@ const Input = forwardRef<HTMLDivElement, Props>(
           </span>
         )}
         <div
+          {...props}
           ref={ref}
           onInput={onInput}
           contentEditable
           className={`border-b w-full bg-transparent outline-none ${className}`}
           style={{ minHeight: "24px" }}
-          {...props}
         />
       </div>
     );

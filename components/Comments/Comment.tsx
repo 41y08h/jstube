@@ -182,7 +182,9 @@ const Comment: FC<Props> = (props) => {
                 </span>
               )}
             </div>
-            <CommentText>{data.text}</CommentText>
+            <CommentText className="whitespace-pre-wrap">
+              {data.text}
+            </CommentText>
             <div className="mt-2 flex space-x-4">
               <button
                 className="text-secondary text-xs flex space-x-2 items-center"

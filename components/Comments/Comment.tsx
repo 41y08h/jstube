@@ -49,7 +49,7 @@ const Comment: FC<Props> = (props) => {
   const { authenticate, user } = useAuth();
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
   const [totalReplies, setTotalReplies] = useState(props.data.replyCount);
-  const [newReplies, setNewReplies] = useState<IReply>([]);
+  const [newReplies, setNewReplies] = useState<IReply[]>([]);
   const repliesMutation = useMutation(async (text: string) =>
     axios
       .post<IReply>(`/api/comments/${data.id}/replies`, { text })
@@ -65,6 +65,7 @@ const Comment: FC<Props> = (props) => {
       if (!text) return;
 
       const newReply = await repliesMutation.mutateAsync(text);
+      toggleIsReplying();
       setNewReplies((old) => [newReply, ...old]);
       setTotalReplies((old) => old + 1);
     });

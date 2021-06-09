@@ -19,6 +19,7 @@ import DislikeIcon from "../../icons/dislike.svg";
 import TridotIcon from "../../icons/tridot.svg";
 import EditIcon from "../../icons/edit.svg";
 import DeleteIcon from "../../icons/delete.svg";
+import MultilineInput from "../MultilineInput";
 
 interface Props {
   data: IReply;
@@ -43,7 +44,7 @@ const Reply: FC<Props> = (props) => {
   } = useComment({ initialData: props.data, onDeleted: props.onDeleted });
   const queryClient = useQueryClient();
   const { authenticate, user } = useAuth();
-  const replyInputRef = useRef<HTMLInputElement>(null);
+  const replyInputRef = useRef<HTMLTextAreaElement>(null);
   const repliesMutation = useMutation(
     async (text: string) =>
       axios
@@ -105,7 +106,7 @@ const Reply: FC<Props> = (props) => {
               <Loading className="my-4" />
             ) : (
               <div>
-                <Input
+                <MultilineInput
                   autoFocus
                   className="w-full"
                   required
@@ -225,7 +226,7 @@ const Reply: FC<Props> = (props) => {
               >
                 <Avatar size="sm" src={user?.picture} alt={user?.name} />
                 <div className="flex flex-col w-full space-y-2">
-                  <Input
+                  <MultilineInput
                     required
                     autoFocus
                     ref={replyInputRef}

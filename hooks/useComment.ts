@@ -14,7 +14,7 @@ interface Config {
 export default function useComment({ initialData, onDeleted }: Config) {
   const { authenticate, user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const editInputRef = useRef<HTMLInputElement>(null);
+  const editInputRef = useRef<HTMLTextAreaElement>(null);
   const [data, setData] = useState(initialData);
   const ratingsMutation = useMutation(
     async (type: RType) => {

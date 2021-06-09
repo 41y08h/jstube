@@ -23,6 +23,7 @@ import DeleteIcon from "../../icons/delete.svg";
 import { Menu } from "@headlessui/react";
 import Input from "../Input";
 import Loading from "../Loading";
+import MultilineInput from "../MultilineInput";
 
 interface Props {
   data: IComment;
@@ -47,7 +48,7 @@ const Comment: FC<Props> = (props) => {
   } = useComment({ initialData: props.data, onDeleted: props.onDeleted });
   const queryClient = useQueryClient();
   const { authenticate, user } = useAuth();
-  const replyInputRef = useRef<HTMLInputElement>(null);
+  const replyInputRef = useRef<HTMLTextAreaElement>(null);
   const repliesMutation = useMutation(
     async (text: string) =>
       axios
@@ -108,7 +109,7 @@ const Comment: FC<Props> = (props) => {
               <Loading className="my-4" />
             ) : (
               <div>
-                <Input
+                <MultilineInput
                   autoFocus
                   className="w-full"
                   required
@@ -228,7 +229,7 @@ const Comment: FC<Props> = (props) => {
               >
                 <Avatar size="sm" src={user?.picture} alt={user?.name} />
                 <div className="flex flex-col w-full space-y-2">
-                  <Input
+                  <MultilineInput
                     required
                     autoFocus
                     ref={replyInputRef}

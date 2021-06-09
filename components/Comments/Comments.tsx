@@ -14,6 +14,7 @@ import Button from "../Button";
 import Avatar from "../Avatar";
 import Input from "../Input";
 import Loading from "../Loading";
+import MultilineInput from "../MultilineInput";
 
 interface Props {
   videoId: number;
@@ -23,7 +24,7 @@ const Comments: FC<Props> = ({ videoId }) => {
   const { authenticate, user } = useAuth();
   const queryClient = useQueryClient();
   const [bottomRef, isAtBottom] = useInView();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [total, setTotal] = useState<number | undefined>();
   const [isCommenting, setIsCommenting] = useState(false);
 
@@ -104,7 +105,7 @@ const Comments: FC<Props> = ({ videoId }) => {
           <div>
             <div className="flex space-x-4">
               <Avatar src={user?.picture} alt={user?.name} />
-              <Input
+              <MultilineInput
                 required
                 ref={inputRef}
                 onClick={() => setIsCommenting(true)}

@@ -28,7 +28,7 @@ const Comments: FC<Props> = ({ videoId }) => {
   const [isCommenting, setIsCommenting] = useState(false);
 
   const queryKey = `/api/comments/${videoId}`;
-  const [newComments, setnewComments] = useState<IComment[]>([]);
+  const [newComments, setNewComments] = useState<IComment[]>([]);
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery(
@@ -69,7 +69,7 @@ const Comments: FC<Props> = ({ videoId }) => {
       if (!text) return;
 
       const newComment = await commentsMutation.mutateAsync(text);
-      setnewComments((old) => [newComment, ...old]);
+      setNewComments((old) => [newComment, ...old]);
 
       increaseTotal();
       toggleIsCommenting();
@@ -89,6 +89,10 @@ const Comments: FC<Props> = ({ videoId }) => {
         }) ?? [],
       pageParams: data?.pageParams ?? [],
     }));
+
+    setNewComments((comments) =>
+      comments.filter((comment) => comment.id !== id)
+    );
 
     decreaseTotal();
   }

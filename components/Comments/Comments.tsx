@@ -57,6 +57,7 @@ const Comments: FC<Props> = ({ videoId }) => {
   const increaseTotal = () => setTotal((old) => old && old + 1);
   const decreaseTotal = () => setTotal((old) => old && old - 1);
   const toggleIsCommenting = () => {
+    if (inputRef.current) inputRef.current.value = "";
     setIsCommenting((old) => !old);
   };
 

@@ -133,39 +133,41 @@ const Reply: FC<Props> = (props) => {
           </EditForm>
         ) : (
           <div className="flex flex-col w-full">
-            <Menu as="div" className="absolute top-0 right-0 text-right">
-              <Menu.Button>
-                <TridotIcon className="w-5 h-5 text-secondary" />
-              </Menu.Button>
-              <Menu.Items as="div" className="py-2 shadow rounded bg-white">
-                <Menu.Item as="div" className="flex flex-col">
-                  {({ active }) => (
-                    <button
-                      onClick={toggleEdit}
-                      className={`${
-                        active && "bg-gray-200"
-                      } w-full text-left px-6 pr-8 py-2 flex space-x-3`}
-                    >
-                      <EditIcon className="w-6 h-6 text-secondary" />
-                      <span>Edit</span>
-                    </button>
-                  )}
-                </Menu.Item>
-                <Menu.Item>
-                  {({ active }) => (
-                    <button
-                      onClick={() => deleteMutation.mutate()}
-                      className={`${
-                        active && "bg-gray-200"
-                      } w-full text-left px-6 pr-8 py-2 flex space-x-3`}
-                    >
-                      <DeleteIcon className="w-6 h-6 text-secondary" />
-                      <span>Delete</span>
-                    </button>
-                  )}
-                </Menu.Item>
-              </Menu.Items>
-            </Menu>
+            {isAuthorUser && (
+              <Menu as="div" className="absolute top-0 right-0 text-right">
+                <Menu.Button>
+                  <TridotIcon className="w-5 h-5 text-secondary" />
+                </Menu.Button>
+                <Menu.Items as="div" className="py-2 shadow rounded bg-white">
+                  <Menu.Item as="div" className="flex flex-col">
+                    {({ active }) => (
+                      <button
+                        onClick={toggleEdit}
+                        className={`${
+                          active && "bg-gray-200"
+                        } w-full text-left px-6 pr-8 py-2 flex space-x-3`}
+                      >
+                        <EditIcon className="w-6 h-6 text-secondary" />
+                        <span>Edit</span>
+                      </button>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        onClick={() => deleteMutation.mutate()}
+                        className={`${
+                          active && "bg-gray-200"
+                        } w-full text-left px-6 pr-8 py-2 flex space-x-3`}
+                      >
+                        <DeleteIcon className="w-6 h-6 text-secondary" />
+                        <span>Delete</span>
+                      </button>
+                    )}
+                  </Menu.Item>
+                </Menu.Items>
+              </Menu>
+            )}
             <div className="space-x-2">
               <span className="text-bold text-sm">{data.author.name}</span>
               <span className="text-bold text-sm text-secondary">

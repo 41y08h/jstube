@@ -21,7 +21,6 @@ import TridotIcon from "../../icons/tridot.svg";
 import EditIcon from "../../icons/edit.svg";
 import DeleteIcon from "../../icons/delete.svg";
 import { Menu } from "@headlessui/react";
-import Input from "../Input";
 import Loading from "../Loading";
 import MultilineInput from "../MultilineInput";
 

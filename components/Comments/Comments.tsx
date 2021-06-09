@@ -12,7 +12,6 @@ import IComment, { ICommentPage } from "../../interfaces/Comment";
 import { FC, FormEventHandler, useEffect, useRef, useState } from "react";
 import Button from "../Button";
 import Avatar from "../Avatar";
-import Input from "../Input";
 import Loading from "../Loading";
 import MultilineInput from "../MultilineInput";
 

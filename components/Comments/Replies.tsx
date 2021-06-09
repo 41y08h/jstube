@@ -8,9 +8,10 @@ import Loading from "../Loading";
 interface Props {
   commentId: number;
   total: number;
+  newReplies: IReply[];
 }
 
-const Replies: FC<Props> = ({ commentId, total }) => {
+const Replies: FC<Props> = ({ commentId, total, newReplies }) => {
   const [isViewingReplies, setIsViewingReplies] = useState(false);
   const toggleRepliesView = () => setIsViewingReplies((prev) => !prev);
   const { isLoading, data, hasNextPage, isFetchingNextPage, fetchNextPage } =
@@ -26,7 +27,7 @@ const Replies: FC<Props> = ({ commentId, total }) => {
         staleTime: Infinity,
         getNextPageParam: (lastPage) =>
           lastPage.hasMore ? lastPage.page + 1 : undefined,
-        enabled: isViewingReplies,
+        enabled: !!total,
       }
     );
 
@@ -47,6 +48,9 @@ const Replies: FC<Props> = ({ commentId, total }) => {
           <Loading align="left" className="my-4" />
         ) : (
           <div className="space-y-5 my-4">
+            {newReplies.map((reply) => (
+              <Reply key={reply.id} data={reply} onDeleted={() => {}} />
+            ))}
             {data?.pages.map((page) =>
               page.items.map((reply) => (
                 <Reply key={reply.id} data={reply} onDeleted={() => {}} />

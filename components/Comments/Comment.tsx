@@ -48,49 +48,27 @@ const Comment: FC<Props> = (props) => {
   const queryClient = useQueryClient();
   const { authenticate, user } = useAuth();
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
-  const repliesMutation = useMutation(
-    async (text: string) =>
-      axios
-        .post<IReply>(`/api/comments/${data.id}/replies`, { text })
-        .then((res) => res.data),
-    {
-      onSuccess(newReply) {
-        queryClient.setQueryData<InfiniteData<IReplyPage>>(
-          `comments/${data.id}/replies`,
-          (data) => {
-            const oldPages = data?.pages ?? [];
-            const firstPage = oldPages[0];
-            const lastPage = oldPages[oldPages.length - 1];
-
-            const items = [newReply, ...firstPage.items];
-            const updatedFirstPage: IReplyPage = {
-              ...firstPage,
-              items,
-              count: items.length,
-            };
-
-            const updatedPages = [updatedFirstPage, ...oldPages.slice(1)].map(
-              (page) => ({ ...page, total: lastPage.total + 1 })
-            );
-
-            return {
-              pages: updatedPages,
-              pageParams: data?.pageParams ?? [],
-            };
-          }
-        );
-      },
-    }
+  const [totalReplies, setTotalReplies] = useState(props.data.replyCount);
+  const [newReplies, setNewReplies] = useState<IReply>([]);
+  const repliesMutation = useMutation(async (text: string) =>
+    axios
+      .post<IReply>(`/api/comments/${data.id}/replies`, { text })
+      .then((res) => res.data)
   );
   const [isReplying, setIsReplying] = useState(false);
   const toggleIsReplying = () => setIsReplying((prev) => !prev);
 
   const handleReplySubmit: FormEventHandler = (event) => {
     event.preventDefault();
-    authenticate(() => {
+    const submit = authenticate(async () => {
       const text = replyInputRef?.current?.value;
-      if (text) repliesMutation.mutate(text);
-    })();
+      if (!text) return;
+
+      const newReply = await repliesMutation.mutateAsync(text);
+      setNewReplies((old) => [newReply, ...old]);
+      setTotalReplies((old) => old + 1);
+    });
+    submit();
   };
 
   return deleteMutation.isLoading ? (
@@ -258,9 +236,9 @@ const Comment: FC<Props> = (props) => {
               </form>
             )}
             <Replies
-              key={props.data.id}
-              total={props.data.replyCount}
+              total={totalReplies}
               commentId={props.data.id}
+              newReplies={newReplies}
             />
           </div>
         )}

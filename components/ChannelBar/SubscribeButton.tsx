@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Dispatch, FC, SetStateAction } from "react";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { useAuth } from "../../contexts/Auth";
 import ISubscribers from "../../interfaces/Subscribers";
 
@@ -15,6 +15,7 @@ const SubscribeButton: FC<Props> = ({
   subscribers,
   setSubscribers,
 }) => {
+  const queryClient = useQueryClient();
   const { authenticate } = useAuth();
   const subscribersMutation = useMutation(
     (unsubscribe: boolean) => {
@@ -23,7 +24,12 @@ const SubscribeButton: FC<Props> = ({
         ? axios.delete<ISubscribers>(url).then((res) => res.data)
         : axios.post<ISubscribers>(url).then((res) => res.data);
     },
-    { onSuccess: setSubscribers }
+    {
+      onSuccess(data) {
+        setSubscribers(data);
+        queryClient.invalidateQueries("/api/subscribers/subscriptions");
+      },
+    }
   );
 
   const className =

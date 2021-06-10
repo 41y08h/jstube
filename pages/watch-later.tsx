@@ -1,7 +1,9 @@
 import axios from "axios";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Button, Card } from "react-bootstrap";
 import { useQuery, useQueryClient } from "react-query";
+import { LinearProgress } from "@material-ui/core";
 
 function WLCard({ data: wl, onDeleted }) {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -30,7 +32,7 @@ function WLCard({ data: wl, onDeleted }) {
 
 export default function WatchLater() {
   const queryClient = useQueryClient();
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, isFetching } = useQuery(
     "/api/watchlater",
     () => axios("/api/watchlater").then((res) => res.data),
     { staleTime: 10000 }
@@ -46,6 +48,8 @@ export default function WatchLater() {
 
   return (
     <div>
+      {isFetching && <LinearProgress />}
+      <Link href="/">back</Link>
       {data.map((wl) => (
         <WLCard data={wl} onDeleted={handleDelete} />
       ))}

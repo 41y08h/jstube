@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ReactComponent as SignInIcon } from "../../icons/signin.svg";
+import SignInIcon from "../../icons/signin.svg";
 
 const SignInButton: FC = () => (
   <a

@@ -1,4 +1,4 @@
-import { ReactComponent as MenuIcon } from "../../icons/menu.svg";
+import MenuIcon from "../../icons/menu.svg";
 import Link from "next/link";
 import SearchBar from "./SearchBar";
 import { FC } from "react";
@@ -18,6 +18,7 @@ const Header: FC<Props> = ({ toggleMenu }) => {
             <img className="h-5" src="/jstube_logo.svg" alt="jstube logo" />
           </a>
         </Link>
+        <Link href="/watch-later">wl</Link>
       </div>
       <SearchBar />
       <SignInButton />

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ReactComponent as SearchIcon } from "../../icons/search.svg";
+import SearchIcon from "../../icons/search.svg";
 
 const SearchBar: FC = () => (
   <div className="flex border">

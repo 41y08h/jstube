@@ -4,8 +4,8 @@ import { useMutation } from "react-query";
 import ActionButton from "./ActionButton";
 import { useAuth } from "../../contexts/Auth";
 import formatNumber from "../../lib/formatNumber";
-import { ReactComponent as LikeIcon } from "../../icons/like.svg";
-import { ReactComponent as DislikeIcon } from "../../icons/dislike.svg";
+import LikeIcon from "../../icons/like.svg";
+import DislikeIcon from "../../icons/dislike.svg";
 import { QVideoDetailed } from "../../interfaces/Video";
 import IRatings from "../../interfaces/Ratings";
 

@@ -1,7 +1,7 @@
 import { FC } from "react";
 import Ratings from "./Ratings";
 import ActionButton from "./ActionButton";
-import { ReactComponent as ShareIcon } from "../../icons/share.svg";
+import ShareIcon from "../../icons/share.svg";
 import { QVideoDetailed } from "../../interfaces/Video";
 
 interface Props {

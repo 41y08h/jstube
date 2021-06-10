@@ -1,7 +1,7 @@
 import axios from "axios";
 import { FC, useState } from "react";
 import { useInfiniteQuery } from "react-query";
-import { IReplyPage } from "../../interfaces/Comment";
+import { IReply, IReplyPage } from "../../interfaces/Comment";
 import Reply from "./Reply";
 import Loading from "../Loading";
 
@@ -9,9 +9,17 @@ interface Props {
   commentId: number;
   total: number;
   newReplies: IReply[];
+  increaseTotal(): any;
+  decreaseTotal(): any;
 }
 
-const Replies: FC<Props> = ({ commentId, total, newReplies }) => {
+const Replies: FC<Props> = ({
+  commentId,
+  total,
+  newReplies,
+  increaseTotal,
+  decreaseTotal,
+}) => {
   const [isViewingReplies, setIsViewingReplies] = useState(false);
   const toggleRepliesView = () => setIsViewingReplies((prev) => !prev);
   const { isLoading, data, hasNextPage, isFetchingNextPage, fetchNextPage } =
@@ -31,6 +39,10 @@ const Replies: FC<Props> = ({ commentId, total, newReplies }) => {
       }
     );
 
+  function onReplied() {
+    increaseTotal();
+  }
+
   return (
     <div>
       {!!total && (
@@ -49,14 +61,24 @@ const Replies: FC<Props> = ({ commentId, total, newReplies }) => {
         ) : (
           <div className="space-y-5 my-4">
             {newReplies.map((reply) => (
-              <Reply key={reply.id} data={reply} onDeleted={() => {}} />
+              <Reply
+                key={reply.id}
+                data={reply}
+                onDeleted={() => {}}
+                onReplied={onReplied}
+              />
             ))}
             {data?.pages.map((page) =>
               page.items.map((reply) =>
                 newReplies.find(
                   (newReply) => newReply.id === reply.id
                 ) ? null : (
-                  <Reply key={reply.id} data={reply} onDeleted={() => {}} />
+                  <Reply
+                    key={reply.id}
+                    data={reply}
+                    onDeleted={() => {}}
+                    onReplied={onReplied}
+                  />
                 )
               )
             )}

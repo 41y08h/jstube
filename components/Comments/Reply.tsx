@@ -21,6 +21,7 @@ import MultilineInput from "../MultilineInput";
 interface Props {
   data: IReply;
   onDeleted(id: number): any;
+  onReplied(newReply: IReply): any;
 }
 
 const Reply: FC<Props> = (props) => {
@@ -82,10 +83,15 @@ const Reply: FC<Props> = (props) => {
 
   const handleReplySubmit: FormEventHandler = (event) => {
     event.preventDefault();
-    authenticate(() => {
+    const submit = authenticate(async () => {
       const text = replyInputRef?.current?.value;
-      if (text) repliesMutation.mutate(text);
-    })();
+      if (!text) return;
+
+      const newReply = await repliesMutation.mutateAsync(text);
+      toggleIsReplying();
+      props.onReplied(newReply);
+    });
+    submit();
   };
 
   return deleteMutation.isLoading ? (

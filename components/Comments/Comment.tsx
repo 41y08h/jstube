@@ -57,6 +57,8 @@ const Comment: FC<Props> = (props) => {
   );
   const [isReplying, setIsReplying] = useState(false);
   const toggleIsReplying = () => setIsReplying((prev) => !prev);
+  const increaseTotal = () => setTotal((old) => old + 1);
+  const decreaseTotal = () => setTotal((old) => old - 1);
 
   const handleReplySubmit: FormEventHandler = (event) => {
     event.preventDefault();
@@ -240,6 +242,8 @@ const Comment: FC<Props> = (props) => {
               total={totalReplies}
               commentId={props.data.id}
               newReplies={newReplies}
+              increaseTotal={increaseTotal}
+              decreaseTotal={decreaseTotal}
             />
           </div>
         )}

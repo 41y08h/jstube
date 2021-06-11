@@ -41,7 +41,7 @@ const BottomItems = [
     icon: VideosIcon,
     active: false,
     text: "Your videos",
-    href: "/profile/videos",
+    href: "/my-videos",
   },
   {
     icon: WatchLaterIcon,

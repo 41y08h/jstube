@@ -6,8 +6,7 @@ import { useQuery } from "react-query";
 const Subscriptions: FC = () => {
   const { data, isLoading, isFetching } = useQuery(
     "/api/subscribers/subscriptions",
-    () => axios("/api/subscribers/subscriptions").then((res) => res.data),
-    { staleTime: 20000 }
+    () => axios("/api/subscribers/subscriptions").then((res) => res.data)
   );
 
   function content() {

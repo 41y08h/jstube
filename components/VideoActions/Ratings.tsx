@@ -1,6 +1,6 @@
 import axios from "axios";
 import { FC, useState } from "react";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import ActionButton from "./ActionButton";
 import { useAuth } from "../../contexts/Auth";
 import formatNumber from "../../lib/formatNumber";
@@ -14,6 +14,7 @@ interface Props {
 }
 
 const RatingActions: FC<Props> = ({ data }) => {
+  const queryClient = useQueryClient();
   const [ratings, setRatings] = useState(data.ratings);
   const { authenticate } = useAuth();
 
@@ -33,7 +34,12 @@ const RatingActions: FC<Props> = ({ data }) => {
           return res_2.data;
       }
     },
-    { onSuccess: setRatings }
+    {
+      onSuccess(data) {
+        setRatings(data);
+        queryClient.invalidateQueries("/api/playlists/liked");
+      },
+    }
   );
 
   const onLike = authenticate(() =>

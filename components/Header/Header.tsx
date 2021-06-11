@@ -18,7 +18,6 @@ const Header: FC<Props> = ({ toggleMenu }) => {
             <img className="h-5" src="/jstube_logo.svg" alt="jstube logo" />
           </a>
         </Link>
-        <Link href="/watch-later">wl</Link>
       </div>
       <SearchBar />
       <SignInButton />

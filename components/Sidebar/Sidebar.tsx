@@ -36,7 +36,7 @@ const TopItems = [
 
 const BottomItems = [
   { icon: LibraryIcon, active: false, text: "Library", href: "/feed/library" },
-  { icon: HistoryIcon, active: false, text: "History", href: "/feed/history" },
+  { icon: HistoryIcon, active: false, text: "History", href: "/history" },
   {
     icon: VideosIcon,
     active: false,

@@ -32,10 +32,8 @@ function WLCard({ data: wl, onDeleted }) {
 
 export default function WatchLater() {
   const queryClient = useQueryClient();
-  const { data, isLoading, isFetching } = useQuery(
-    "/api/watchlater",
-    () => axios("/api/watchlater").then((res) => res.data),
-    { staleTime: 10000 }
+  const { data, isLoading, isFetching } = useQuery("/api/watchlater", () =>
+    axios("/api/watchlater").then((res) => res.data)
   );
 
   function handleDelete(videoId) {

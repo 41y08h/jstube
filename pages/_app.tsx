@@ -13,7 +13,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { queryFn, staleTime: 5 * 60 * 1000 },
+    queries: { queryFn, staleTime: 5 * 60 * 1000, refetchOnMount: "always" },
     mutations: {
       onError(err: AxiosError) {
         toast(err?.response?.data.message, {

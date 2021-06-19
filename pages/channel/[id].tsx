@@ -12,6 +12,7 @@ import ChannelTabs from "../../components/ChannelTabs";
 import { useQuery } from "react-query";
 import { FC } from "react";
 import IVideo from "../../interfaces/Video";
+import Link from "next/link";
 
 const Videos: FC<{ channelId: number }> = ({ channelId }) => {
   const { data, isLoading } = useQuery<IVideo[]>(
@@ -23,15 +24,18 @@ const Videos: FC<{ channelId: number }> = ({ channelId }) => {
       {data?.map((video) => (
         <Card style={{ width: "13rem" }} variant="outlined">
           <CardActionArea>
-            <CardMedia
-              component="img"
-              image={video.thumbnail}
-              alt={video.title}
-              height="140"
-              title={video.title}
-            />
-            <img />
-            <p>{video.title}</p>
+            <Link href={`/watch?v=${video.id}`}>
+              <a>
+                <CardMedia
+                  component="img"
+                  image={video.thumbnail}
+                  alt={video.title}
+                  height="140"
+                  title={video.title}
+                />
+              </a>
+            </Link>
+            <p className="font-medium p-2">{video.title}</p>
           </CardActionArea>
         </Card>
       ))}

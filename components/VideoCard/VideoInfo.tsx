@@ -20,7 +20,7 @@ const VideoInfo: FC<Props> = ({ data }) => (
           {data.channel.name}
         </a>
       </Link>
-      <VideoDetail views={data.views} uploadedAt={data.updatedAt} />
+      <VideoDetail views={data.views} uploadedAt={data.uploadedAt} />
     </div>
   </div>
 );

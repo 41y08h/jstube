@@ -1,55 +1,14 @@
+import { FC } from "react";
 import Link from "next/link";
-import Menu from "@material-ui/core/Menu";
+import VideoMenu from "./VideoMenu";
 import timeSince from "../../lib/timeSince";
 import formatTime from "../../lib/formatTime";
 import Avatar from "@material-ui/core/Avatar";
 import { QVideo } from "../../interfaces/Video";
-import { FC, MouseEvent, useState } from "react";
 import formatNumber from "../../lib/formatNumber";
-import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import ButtonBase from "@material-ui/core/ButtonBase";
-import IconButton from "@material-ui/core/IconButton";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import WatchLaterIcon from "@material-ui/icons/WatchLater";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
-
-function VideoMenu() {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  return (
-    <>
-      <IconButton onClick={handleClick}>
-        <MoreVertIcon />
-      </IconButton>
-      <Menu
-        keepMounted
-        anchorEl={anchorEl}
-        elevation={1}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={handleClose}>
-          <WatchLaterIcon className="mr-3 text-secondary" fontSize="small" />
-          <Typography variant="inherit">Save to Watch later</Typography>
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <PlaylistAddIcon className="mr-3 text-secondary" fontSize="small" />
-          <Typography variant="inherit">Save to playlist</Typography>
-        </MenuItem>
-      </Menu>
-    </>
-  );
-}
 
 const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
   const links = {
@@ -58,8 +17,11 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
   };
 
   return (
-    <ButtonBase component="div" style={{ padding: "4px", borderRadius: "6px" }}>
-      <div className="w-64 cursor-pointer">
+    <ButtonBase
+      component="div"
+      style={{ padding: "4px", borderRadius: "6px", maxWidth: "fit-content" }}
+    >
+      <div className="w-64">
         <div className="h-36 w-full relative">
           <Link href={links.video}>
             <a>

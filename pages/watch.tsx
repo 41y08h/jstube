@@ -31,11 +31,11 @@ const Watch: FC<Props> = ({ data }) => {
             <VideoPlayer src={video.src} />
             <h1 className="mt-4 text-xl font-normal">{video.title}</h1>
             <div className="flex justify-between mt-3 text-secondary text-sm border-b">
-              <VideoDetail
+              {/* <VideoDetail
                 exactDate
                 views={video.views}
                 uploadedAt={video.updatedAt}
-              />
+              /> */}
               <VideoActions data={video} />
             </div>
             <ChannelBar channel={data.channel} />

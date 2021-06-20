@@ -9,7 +9,6 @@ import "tailwindcss/tailwind.css";
 import { AuthProvider } from "../contexts/Auth";
 import queryFn from "../lib/queryFunction";
 import "../styles/globals.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {

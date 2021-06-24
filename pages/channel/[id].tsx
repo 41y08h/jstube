@@ -11,36 +11,16 @@ import Paper from "@material-ui/core/Paper";
 import ChannelTabs from "../../components/ChannelTabs";
 import { useQuery } from "react-query";
 import { FC } from "react";
-import IVideo from "../../interfaces/Video";
+import { QVideo } from "../../interfaces/Video";
 import Link from "next/link";
+import VideosList from "../../components/VideosList";
 
 const Videos: FC<{ channelId: number }> = ({ channelId }) => {
-  const { data, isLoading } = useQuery<IVideo[]>(
+  const { data, isLoading } = useQuery<QVideo[]>(
     `/api/channel/${channelId}/videos`
   );
 
-  return (
-    <div className="p-4 flex flex-wrap gap-4">
-      {data?.map((video) => (
-        <Card style={{ width: "13rem" }} variant="outlined">
-          <CardActionArea>
-            <Link href={`/watch?v=${video.id}`}>
-              <a>
-                <CardMedia
-                  component="img"
-                  image={video.thumbnail}
-                  alt={video.title}
-                  height="140"
-                  title={video.title}
-                />
-              </a>
-            </Link>
-            <p className="font-medium p-2">{video.title}</p>
-          </CardActionArea>
-        </Card>
-      ))}
-    </div>
-  );
+  return <div className="p-4">{data && <VideosList videos={data} />}</div>;
 };
 
 export default function ChannelPage({ channel }) {

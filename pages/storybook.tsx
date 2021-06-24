@@ -1,9 +1,20 @@
-import { useQuery } from "react-query";
-import { QVideo } from "../interfaces/Video";
-import VideosList from "../components/VideosList";
+import { useState } from "react";
+import Sidebar from "../components/Sidebar2";
 
 export default function StoryBook() {
-  const { data } = useQuery<QVideo[]>("/api/videos");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  return data && <VideosList videos={data} />;
+  function toggleSidebarOpen() {
+    console.log("hit");
+    setIsSidebarOpen((old) => !old);
+  }
+
+  return (
+    <div>
+      <button onClick={() => toggleSidebarOpen()} className="p-8">
+        open
+      </button>
+      <Sidebar isOpen={isSidebarOpen} toggleIsOpen={toggleSidebarOpen} />
+    </div>
+  );
 }

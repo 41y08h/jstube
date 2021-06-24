@@ -1,5 +1,5 @@
 import Item from "./Item";
-import { FC } from "react";
+import React, { FC } from "react";
 import HomeIcon from "../../icons/home.svg";
 import ExploreIcon from "../../icons/explore.svg";
 import SubscriptionsIcon from "../../icons/subscriptions.svg";
@@ -22,6 +22,13 @@ import HelpIcon from "../../icons/help.svg";
 import FeedbackIcon from "../../icons/feedback.svg";
 import Subscriptions from "./Subscriptions";
 import Footer from "./Footer";
+import {
+  SwipeableDrawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@material-ui/core";
 
 const TopItems = [
   { icon: HomeIcon, active: true, text: "Home", href: "/" },
@@ -136,10 +143,28 @@ const OtherItems = [
 ];
 
 const Sidebar: FC = () => (
-  <aside className="bg-white pt-1 h-full overflow-y-auto themed-scrollbar">
-    {TopItems.map((props, i) => (
-      <Item key={i} {...props} />
-    ))}
+  <SwipeableDrawer
+    anchor="left"
+    open={true}
+    onClose={() => {
+      alert("You");
+    }}
+    classes={{
+      paper: "bg-white pt-1 h-full overflow-y-auto themed-scrollbar",
+    }}
+    onOpen={() => {}}
+  >
+    <List component="div">
+      {TopItems.map(({ icon: Icon, ...props }, i) => (
+        <ListItem button key={i}>
+          <ListItemIcon>
+            <Icon className="h-6" />
+          </ListItemIcon>
+          <ListItemText primary={props.text} />
+        </ListItem>
+      ))}
+    </List>
+
     <hr className="my-3" />
     {BottomItems.map((props, i) => (
       <Item key={i} {...props} />
@@ -159,7 +184,7 @@ const Sidebar: FC = () => (
     ))}
     <hr className="my-3" />
     <Footer />
-  </aside>
+  </SwipeableDrawer>
 );
 
 export default Sidebar;

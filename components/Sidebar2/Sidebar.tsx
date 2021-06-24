@@ -11,6 +11,7 @@ import {
 } from "@material-ui/core";
 import items from "./items";
 import MenuIcon from "@material-ui/icons/Menu";
+import Link from "next/link";
 
 interface Props {
   isOpen: boolean;
@@ -52,15 +53,19 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
             return <Divider classes={{ root: classes.divider }} />;
           else
             return (
-              <ListItem button classes={{ root: classes.item }}>
-                <ListItemIcon classes={{ root: classes.icon }}>
-                  <Item.Icon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={Item.text}
-                  classes={{ primary: classes.text }}
-                />
-              </ListItem>
+              <Link href={Item.link}>
+                <a>
+                  <ListItem button classes={{ root: classes.item }}>
+                    <ListItemIcon classes={{ root: classes.icon }}>
+                      <Item.Icon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={Item.text}
+                      classes={{ primary: classes.text }}
+                    />
+                  </ListItem>
+                </a>
+              </Link>
             );
         })}
       </List>

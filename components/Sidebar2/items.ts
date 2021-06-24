@@ -12,38 +12,47 @@ export default [
   {
     Icon: HomeIcon,
     text: "Home",
+    link: "/",
   },
   {
     Icon: ExploreIcon,
     text: "Explore",
+    link: "/",
   },
   {
     Icon: SubscriptionsIcon,
     text: "Subscriptions",
+    link: "/",
   },
   "divider",
   {
     Icon: VideoLibraryIcon,
     text: "Library",
+    link: "/",
   },
   {
     Icon: HistoryIcon,
     text: "History",
+    link: "/",
   },
   {
     Icon: PersonalVideoIcon,
     text: "Your Videos",
+    link: "/",
   },
   {
     Icon: WatchLaterIcon,
     text: "Watch Later",
+    link: "/",
   },
   {
     Icon: ThumbUpIcon,
     text: "Liked Videos",
+    link: "/",
   },
   {
     Icon: PlaylistPlayIcon,
     text: "Custom Playlist",
+    link: "/",
   },
 ];

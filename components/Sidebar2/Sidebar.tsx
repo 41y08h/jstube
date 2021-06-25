@@ -21,15 +21,11 @@ interface Props {
 
 const useStyles = makeStyles((theme) => ({
   text: theme.typography.body2,
-  icon: { width: 46, minWidth: "unset" },
-  list: { width: 243 },
   divider: { margin: "12px 0" },
+  icon: { width: 46, minWidth: "unset" },
+  root: { width: 243, overflowX: "hidden" },
   item: { paddingLeft: 24, paddingRight: 24 },
-  topbar: {
-    display: "flex",
-    alignItems: "center",
-    padding: "8px 14px",
-  },
+  topbar: { display: "flex", alignItems: "center", padding: "8px 14px" },
 }));
 
 const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
@@ -38,10 +34,10 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
   return (
     <SwipeableDrawer
       anchor="left"
-      open={isOpen}
+      open={true}
       onOpen={toggleIsOpen}
       onClose={toggleIsOpen}
-      classes={{ paper: "themed-scrollbar" }}
+      classes={{ paper: `themed-scrollbar ${classes.root}` }}
     >
       <div className={classes.topbar}>
         <IconButton onClick={toggleIsOpen}>
@@ -49,7 +45,7 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
         </IconButton>
         <img className="h-5 pl-4" src="/jstube_logo.svg" alt="JsTube" />
       </div>
-      <List component="div" classes={{ root: classes.list }}>
+      <List>
         {items.map((Item, i) => {
           if (Item === "divider")
             return <Divider classes={{ root: classes.divider }} />;

@@ -24,7 +24,7 @@ export const AuthProvider: FC = ({ children }) => {
 
   const { isLoading, error, data } = useQuery<User, AxiosError>(
     "/api/auth/user",
-    { retry: false, staleTime: Infinity }
+    { retry: false, refetchOnWindowFocus: false }
   );
 
   const user = data;

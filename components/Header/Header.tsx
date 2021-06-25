@@ -1,14 +1,8 @@
 import Link from "next/link";
 import React, { FC } from "react";
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Button,
-  makeStyles,
-} from "@material-ui/core";
+import { AppBar, Toolbar, IconButton, makeStyles } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import SignInButton from "../SignInButton";
 
 const useStyles = makeStyles((theme) => ({
   root: { boxShadow: "none", backgroundColor: "white" },
@@ -38,14 +32,7 @@ const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
             </IconButton>
             <img className="h-5" src="/jstube_logo.svg" alt="JsTube" />
           </div>
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<AccountCircleIcon />}
-            href="/api/auth/google"
-          >
-            Sign in
-          </Button>
+          <SignInButton />
         </Toolbar>
       </AppBar>
       <div className={classes.offset} />

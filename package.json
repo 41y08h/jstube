@@ -35,7 +35,9 @@
   },
   "devDependencies": {
     "@svgr/webpack": "^5.5.0",
+    "@types/cookie": "^0.4.0",
     "@types/dateformat": "^3.0.1",
+    "@types/nookies": "^2.0.3",
     "autoprefixer": "^10.2.5",
     "postcss": "^8.2.10",
     "tailwindcss": "^2.1.1",

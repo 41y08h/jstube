@@ -8,6 +8,7 @@ import ListItem from "@material-ui/core/ListItem";
 import Typography from "@material-ui/core/Typography";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
+import { useAuth } from "../../contexts/Auth";
 
 const useStyles = makeStyles((theme) => ({
   text: theme.typography.body2,
@@ -16,7 +17,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Subscriptions: FC = () => {
-  const { data } = useQuery("/api/subscribers/subscriptions");
+  const { user } = useAuth();
+  const { data } = useQuery("/api/subscribers/subscriptions", {
+    enabled: Boolean(user),
+  });
   const classes = useStyles();
 
   return (

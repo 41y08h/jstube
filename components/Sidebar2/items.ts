@@ -16,6 +16,7 @@ type TItem =
       Icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
       text: string;
       link: string;
+      isAuthRequired?: boolean;
     };
 
 const items: TItem[] = [
@@ -49,21 +50,25 @@ const items: TItem[] = [
     Icon: PersonalVideoIcon,
     text: "Your Videos",
     link: "/my-videos",
+    isAuthRequired: true,
   },
   {
     Icon: WatchLaterIcon,
     text: "Watch Later",
     link: "/playlists/watch-later",
+    isAuthRequired: true,
   },
   {
     Icon: ThumbUpIcon,
     text: "Liked Videos",
     link: "/playlists/liked",
+    isAuthRequired: true,
   },
   {
     Icon: PlaylistPlayIcon,
-    text: "Custom Playlist",
+    text: "Created Playlist",
     link: "/",
+    isAuthRequired: true,
   },
   "divider",
 ];

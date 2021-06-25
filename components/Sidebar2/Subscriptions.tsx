@@ -12,6 +12,7 @@ import ListItem from "@material-ui/core/ListItem";
 import Typography from "@material-ui/core/Typography";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
+import { ISubscription } from "../../interfaces/Subscriber";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
@@ -21,11 +22,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Subscriptions: FC = () => {
-  const { user: isLoggedIn, isLoading: isAuthLoading } = useAuth();
-  const { data, isLoading } = useQuery("/api/subscribers/subscriptions", {
-    enabled: Boolean(isLoggedIn),
-  });
   const classes = useStyles();
+  const { user: isLoggedIn, isLoading: isAuthLoading } = useAuth();
+  const { data, isLoading } = useQuery<ISubscription[]>(
+    "/api/subscribers/subscriptions",
+    { enabled: Boolean(isLoggedIn) }
+  );
 
   if (isLoading || isAuthLoading)
     return (

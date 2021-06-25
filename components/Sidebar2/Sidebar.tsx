@@ -13,6 +13,7 @@ import items from "./items";
 import MenuIcon from "@material-ui/icons/Menu";
 import Link from "next/link";
 import Subscriptions from "./Subscriptions";
+import { useAuth } from "../../contexts/Auth";
 
 interface Props {
   isOpen: boolean;
@@ -29,12 +30,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
+  const { user: isLoggedIn } = useAuth();
   const classes = useStyles();
 
   return (
     <SwipeableDrawer
       anchor="left"
-      open={true}
+      open={isOpen}
       onOpen={toggleIsOpen}
       onClose={toggleIsOpen}
       classes={{ paper: `themed-scrollbar ${classes.root}` }}
@@ -49,8 +51,8 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
         {items.map((Item, i) => {
           if (Item === "divider")
             return <Divider classes={{ root: classes.divider }} />;
-          else
-            return (
+          else {
+            const Component = (
               <Link key={i} href={Item.link}>
                 <a>
                   <ListItem button classes={{ root: classes.item }}>
@@ -65,6 +67,9 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
                 </a>
               </Link>
             );
+
+            return Item.isAuthRequired ? isLoggedIn && Component : Component;
+          }
         })}
       </List>
       <Subscriptions />

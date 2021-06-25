@@ -43,28 +43,29 @@ const items: TItem[] = [
   {
     Icon: HistoryIcon,
     text: "History",
-    link: "/",
+    link: "/feed/history",
   },
   {
     Icon: PersonalVideoIcon,
     text: "Your Videos",
-    link: "/",
+    link: "/my-videos",
   },
   {
     Icon: WatchLaterIcon,
     text: "Watch Later",
-    link: "/",
+    link: "/playlists/watch-later",
   },
   {
     Icon: ThumbUpIcon,
     text: "Liked Videos",
-    link: "/",
+    link: "/playlists/liked",
   },
   {
     Icon: PlaylistPlayIcon,
     text: "Custom Playlist",
     link: "/",
   },
+  "divider",
 ];
 
 export default items;

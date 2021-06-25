@@ -12,6 +12,7 @@ import {
 import items from "./items";
 import MenuIcon from "@material-ui/icons/Menu";
 import Link from "next/link";
+import Subscriptions from "./Subscriptions";
 
 interface Props {
   isOpen: boolean;
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   text: theme.typography.body2,
   icon: { width: 46, minWidth: "unset" },
   list: { width: 243 },
-  divider: { margin: "16px 0" },
+  divider: { margin: "12px 0" },
   item: { paddingLeft: 24, paddingRight: 24 },
   topbar: {
     display: "flex",
@@ -40,6 +41,7 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
       open={isOpen}
       onOpen={toggleIsOpen}
       onClose={toggleIsOpen}
+      classes={{ paper: "themed-scrollbar" }}
     >
       <div className={classes.topbar}>
         <IconButton onClick={toggleIsOpen}>
@@ -48,12 +50,12 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
         <img className="h-5 pl-4" src="/jstube_logo.svg" alt="JsTube" />
       </div>
       <List component="div" classes={{ root: classes.list }}>
-        {items.map((Item) => {
+        {items.map((Item, i) => {
           if (Item === "divider")
             return <Divider classes={{ root: classes.divider }} />;
           else
             return (
-              <Link href={Item.link}>
+              <Link key={i} href={Item.link}>
                 <a>
                   <ListItem button classes={{ root: classes.item }}>
                     <ListItemIcon classes={{ root: classes.icon }}>
@@ -69,6 +71,7 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
             );
         })}
       </List>
+      <Subscriptions />
     </SwipeableDrawer>
   );
 };

@@ -1,19 +1,12 @@
 import { useState } from "react";
 import Sidebar from "../components/Sidebar2";
 import Header from "../components/Header";
+import Layout from "../components/Layout";
 
 export default function StoryBook() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  function toggleSidebar() {
-    console.log("hit");
-    setIsSidebarOpen((old) => !old);
-  }
-
   return (
-    <div>
-      <Header toggleSidebar={toggleSidebar} />
-      <Sidebar isOpen={isSidebarOpen} toggleIsOpen={toggleSidebar} />
-    </div>
+    <Layout>
+      <img className="w-full" src="https://source.unsplash.com/random" />
+    </Layout>
   );
 }

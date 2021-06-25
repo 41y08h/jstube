@@ -1,27 +1,51 @@
-import MenuIcon from "../../icons/menu.svg";
 import Link from "next/link";
-import SearchBar from "./SearchBar";
-import { FC } from "react";
-import SignInButton from "./SignInButton";
+import React, { FC } from "react";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Button,
+  makeStyles,
+} from "@material-ui/core";
+import MenuIcon from "@material-ui/icons/Menu";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
-interface Props {
-  toggleMenu: Function;
-}
+const useStyles = makeStyles({
+  root: { boxShadow: "none", backgroundColor: "white" },
+  innerRoot: { justifyContent: "space-between" },
+});
 
-const Header: FC<Props> = ({ toggleMenu }) => {
+const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
+  const classes = useStyles();
+
   return (
-    <div className="flex justify-between items-center px-6 bg-white h-16 fixed top-0 left-0 z-20 w-full">
-      <div className="flex space-x-6">
-        <MenuIcon onClick={toggleMenu} className="h-6 cursor-pointer" />
-        <Link href="/">
-          <a>
-            <img className="h-5" src="/jstube_logo.svg" alt="jstube logo" />
-          </a>
-        </Link>
-      </div>
-      <SearchBar />
-      <SignInButton />
-    </div>
+    <AppBar
+      classes={{ root: classes.root }}
+      position="fixed"
+      variant="outlined"
+    >
+      <Toolbar classes={{ root: classes.innerRoot }}>
+        <div className="flex items-center space-x-3">
+          <IconButton
+            onClick={() => toggleSidebar()}
+            edge="start"
+            color="default"
+            aria-label="menu"
+          >
+            <MenuIcon />
+          </IconButton>
+          <img className="h-5" src="/jstube_logo.svg" alt="JsTube" />
+        </div>
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<AccountCircleIcon />}
+          href="/api/auth/google"
+        >
+          Sign in
+        </Button>
+      </Toolbar>
+    </AppBar>
   );
 };
 

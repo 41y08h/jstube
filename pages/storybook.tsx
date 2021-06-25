@@ -1,20 +1,19 @@
 import { useState } from "react";
 import Sidebar from "../components/Sidebar2";
+import Header from "../components/Header";
 
 export default function StoryBook() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  function toggleSidebarOpen() {
+  function toggleSidebar() {
     console.log("hit");
     setIsSidebarOpen((old) => !old);
   }
 
   return (
     <div>
-      <button onClick={() => toggleSidebarOpen()} className="p-8">
-        open
-      </button>
-      <Sidebar isOpen={isSidebarOpen} toggleIsOpen={toggleSidebarOpen} />
+      <Header toggleSidebar={toggleSidebar} />
+      <Sidebar isOpen={isSidebarOpen} toggleIsOpen={toggleSidebar} />
     </div>
   );
 }

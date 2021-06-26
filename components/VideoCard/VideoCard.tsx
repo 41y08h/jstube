@@ -38,7 +38,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
             {formatTime(data.duration)}
           </Typography>
         </div>
-        <div className="mt-3 flex items-start space-x-4 px-3 relative">
+        <div className="mt-3 flex items-start pl-3">
           <Link href={links.channel}>
             <a>
               <Avatar
@@ -48,7 +48,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
               />
             </a>
           </Link>
-          <div className="flex flex-col space-y-0.5 text-md leading-tight pr-0">
+          <div className="flex flex-col pl-2 space-y-0.5 text-md leading-tight pr-0">
             <Link href={links.video}>
               <a>
                 <Typography
@@ -80,10 +80,8 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
                 </Typography>
               </div>
             </div>
-            <div className="absolute top-0 right-0 md:-right-3 md:-top-3">
-              <VideoMenu />
-            </div>
           </div>
+          <VideoMenu />
         </div>
       </div>
     </ButtonBase>

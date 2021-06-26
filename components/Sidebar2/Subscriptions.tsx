@@ -12,7 +12,7 @@ import ListItem from "@material-ui/core/ListItem";
 import Typography from "@material-ui/core/Typography";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import { ISubscription } from "../../interfaces/Subscriber";
+import { ISubscription } from "../../interfaces/Subscribers";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({

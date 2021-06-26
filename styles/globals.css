@@ -40,7 +40,7 @@ button:focus {
 }
 
 .themed-scrollbar::-webkit-scrollbar {
-  width: 0;
+  width: 8px;
 }
 
 .themed-scrollbar::-webkit-scrollbar-track {

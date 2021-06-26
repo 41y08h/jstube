@@ -18,7 +18,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
 
   return (
     <ButtonBase component="div" className="overflow-hidden">
-      <div>
+      <div className="w-full">
         <div className="relative">
           <Link href={links.video}>
             <a>
@@ -48,7 +48,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
               />
             </a>
           </Link>
-          <div className="flex flex-col space-y-0.5 text-md leading-tight">
+          <div className="flex flex-col space-y-0.5 text-md leading-tight pr-0">
             <Link href={links.video}>
               <a>
                 <Typography
@@ -61,14 +61,14 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
               </a>
             </Link>
 
-            <div className="text-secondary flex items-center space-x-3">
+            <div className="text-secondary flex flex-wrap items-center space-x-3 sm:space-x-0">
               <Link href={links.channel}>
                 <a className="flex items-center space-x-1">
                   <Typography variant="body2">{data.channel.name}</Typography>
                   <CheckCircleIcon style={{ width: "12px" }} />
                 </a>
               </Link>
-              <div className="flex">
+              <div className="flex flex-wrap">
                 <Typography variant="body2">
                   {data.views
                     ? `${formatNumber(data.views)} views`
@@ -80,7 +80,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
                 </Typography>
               </div>
             </div>
-            <div className="absolute top-0 right-0">
+            <div className="absolute top-0 right-0 md:-right-3 md:-top-3">
               <VideoMenu />
             </div>
           </div>

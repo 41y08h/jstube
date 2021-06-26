@@ -17,18 +17,16 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
   };
 
   return (
-    <ButtonBase
-      component="div"
-      style={{ padding: "4px", borderRadius: "6px", maxWidth: "fit-content" }}
-    >
-      <div className="w-64">
-        <div className="h-36 w-full relative">
+    <ButtonBase component="div" className="overflow-hidden">
+      <div>
+        <div className="relative">
           <Link href={links.video}>
             <a>
               <img
-                className="w-64 h-36 object-cover"
+                className="w-full object-cover"
                 src={data.thumbnail}
                 alt={data.title}
+                style={{ aspectRatio: "64 / 36" }}
               />
             </a>
           </Link>
@@ -40,20 +38,17 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
             {formatTime(data.duration)}
           </Typography>
         </div>
-        <div className="mt-3 flex items-start space-x-2 relative">
-          <div className="absolute -top-3 -right-3">
-            <VideoMenu />
-          </div>
+        <div className="mt-3 flex items-start space-x-4 px-3 relative">
           <Link href={links.channel}>
             <a>
               <Avatar
-                style={{ width: "2.25rem", height: "2.25rem" }}
+                style={{ width: "2.6rem", height: "2.6rem" }}
                 src={data.channel.picture}
                 alt={data.channel.name}
               />
             </a>
           </Link>
-          <div className="flex flex-col text-md leading-tight">
+          <div className="flex flex-col space-y-0.5 text-md leading-tight">
             <Link href={links.video}>
               <a>
                 <Typography
@@ -66,7 +61,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
               </a>
             </Link>
 
-            <div className="mt-1 text-secondary">
+            <div className="text-secondary flex items-center space-x-3">
               <Link href={links.channel}>
                 <a className="flex items-center space-x-1">
                   <Typography variant="body2">{data.channel.name}</Typography>
@@ -84,6 +79,9 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
                   {timeSince(new Date(data.uploadedAt))}
                 </Typography>
               </div>
+            </div>
+            <div className="absolute top-0 right-0">
+              <VideoMenu />
             </div>
           </div>
         </div>

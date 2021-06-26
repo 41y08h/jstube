@@ -4,10 +4,12 @@ import { useQuery } from "react-query";
 import { AxiosError } from "axios";
 import VideoLoadingGrid from "../components/VideoLoadingGrid";
 import { QVideo } from "../interfaces/Video";
+import VideosList from "../components/VideosList";
 
 export default function Home() {
-  const { isLoading, error, data } =
-    useQuery<QVideo[], AxiosError>("/api/videos");
+  const { isLoading, error, data } = useQuery<QVideo[], AxiosError>(
+    "/api/videos"
+  );
 
   if (isLoading)
     return (
@@ -23,13 +25,5 @@ export default function Home() {
       </Layout>
     );
 
-  return (
-    <Layout>
-      <div className="py-4 px-6 flex flex-wrap justify-evenly">
-        {data.map((video) => (
-          <VideoCard key={video.id} data={video} />
-        ))}
-      </div>
-    </Layout>
-  );
+  return <Layout>{data && <VideosList videos={data} />}</Layout>;
 }

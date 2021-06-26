@@ -18,13 +18,13 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
 
   return (
     <ButtonBase component="div" className="overflow-hidden">
-      <div className="w-full">
+      <div className="w-full space-y-3 pb-6">
         <div className="relative">
           <Link href={links.video}>
             <a>
               <img
                 className="w-full object-cover"
-                src={data.thumbnail}
+                src={`https://source.unsplash.com/random/${data.id}`}
                 alt={data.title}
                 style={{ aspectRatio: "64 / 36" }}
               />
@@ -38,50 +38,56 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
             {formatTime(data.duration)}
           </Typography>
         </div>
-        <div className="mt-3 flex items-start pl-3">
-          <Link href={links.channel}>
-            <a>
-              <Avatar
-                style={{ width: "2.6rem", height: "2.6rem" }}
-                src={data.channel.picture}
-                alt={data.channel.name}
-              />
-            </a>
-          </Link>
-          <div className="flex flex-col pl-2 space-y-0.5 text-md leading-tight pr-0">
-            <Link href={links.video}>
+        <div className="flex justify-between pl-3 pr-2 w-full">
+          <div className="flex items-start">
+            <Link href={links.channel}>
               <a>
-                <Typography
-                  className="pr-8 line-clamp-2"
-                  variant="subtitle2"
-                  component="p"
-                >
-                  {data.title}
-                </Typography>
+                <Avatar
+                  style={{ width: "2.25rem", height: "2.25rem" }}
+                  src={data.channel.picture}
+                  alt={data.channel.name}
+                />
               </a>
             </Link>
-
-            <div className="text-secondary flex flex-wrap items-center space-x-3 sm:space-x-0">
-              <Link href={links.channel}>
-                <a className="flex items-center space-x-1">
-                  <Typography variant="body2">{data.channel.name}</Typography>
-                  <CheckCircleIcon style={{ width: "12px" }} />
+            <div className="flex flex-col pl-4 space-y-0.5 text-md leading-tight pr-0">
+              <Link href={links.video}>
+                <a>
+                  <Typography
+                    className="pr-8 line-clamp-2"
+                    variant="subtitle2"
+                    component="p"
+                  >
+                    {data.title}
+                  </Typography>
                 </a>
               </Link>
-              <div className="flex flex-wrap">
-                <Typography variant="body2">
-                  {data.views
-                    ? `${formatNumber(data.views)} views`
-                    : "No views"}
-                </Typography>
-                <span className="mx-1.5 text-xl font-bold leading-none">·</span>
-                <Typography variant="body2">
-                  {timeSince(new Date(data.uploadedAt))}
-                </Typography>
+
+              <div className="text-secondary flex flex-wrap items-center sm:space-x-0">
+                <Link href={links.channel}>
+                  <a className="flex items-center space-x-2 pr-2">
+                    <Typography variant="body2">{data.channel.name}</Typography>
+                    <CheckCircleIcon style={{ width: "12px" }} />
+                  </a>
+                </Link>
+                <div className="flex flex-wrap items-center">
+                  <Typography variant="body2">
+                    {data.views
+                      ? `${formatNumber(data.views)} views`
+                      : "No views"}
+                  </Typography>
+                  <span className="mx-1.5 text-xl font-bold leading-none">
+                    ·
+                  </span>
+                  <Typography variant="body2">
+                    {timeSince(new Date(data.uploadedAt))}
+                  </Typography>
+                </div>
               </div>
             </div>
           </div>
-          <VideoMenu />
+          <div className="pl-1">
+            <VideoMenu />
+          </div>
         </div>
       </div>
     </ButtonBase>

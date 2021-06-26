@@ -30,7 +30,11 @@ const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
             >
               <MenuIcon />
             </IconButton>
-            <img className="h-5" src="/jstube_logo.svg" alt="JsTube" />
+            <Link href="/">
+              <a>
+                <img className="h-5" src="/jstube_logo.svg" alt="JsTube" />
+              </a>
+            </Link>
           </div>
           <SignInButton />
         </Toolbar>

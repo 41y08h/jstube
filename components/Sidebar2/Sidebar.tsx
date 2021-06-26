@@ -10,10 +10,10 @@ import {
   Divider,
 } from "@material-ui/core";
 import items from "./items";
-import MenuIcon from "@material-ui/icons/Menu";
 import Link from "next/link";
 import Subscriptions from "./Subscriptions";
 import { useAuth } from "../../contexts/Auth";
+import MenuIcon from "@material-ui/icons/Menu";
 
 interface Props {
   isOpen: boolean;
@@ -45,7 +45,11 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
         <IconButton onClick={toggleIsOpen}>
           <MenuIcon />
         </IconButton>
-        <img className="h-5 pl-4" src="/jstube_logo.svg" alt="JsTube" />
+        <Link href="/">
+          <a>
+            <img className="h-5 pl-4" src="/jstube_logo.svg" alt="JsTube" />
+          </a>
+        </Link>
       </div>
       <List>
         {items.map((Item, i) => {

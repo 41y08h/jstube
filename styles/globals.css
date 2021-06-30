@@ -1,7 +1,7 @@
 * {
   box-sizing: border-box;
-  font-family: "Roboto", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
 html {
@@ -45,7 +45,7 @@ button:focus {
 
 .themed-scrollbar::-webkit-scrollbar-track {
   background: #fff;
-  padding: "0 4px";
+  padding: 0 4px;
 }
 
 .themed-scrollbar::-webkit-scrollbar-thumb {
@@ -85,4 +85,35 @@ button:focus {
     stroke-dasharray: 90, 150;
     stroke-dashoffset: -124;
   }
+}
+
+.aspect-ratio {
+  position: relative;
+  max-width: 100%;
+}
+
+.aspect-ratio::before {
+  height: 0;
+  content: "";
+  display: block;
+  padding-bottom: 56.25%;
+}
+
+.aspect-ratio > *:not(style) {
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.aspect-ratio > img,
+.aspect-ratio > video {
+  object-fit: cover;
 }

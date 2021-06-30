@@ -26,7 +26,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
                 className="w-full object-cover"
                 src={`https://source.unsplash.com/random/${data.id}`}
                 alt={data.title}
-                style={{ aspectRatio: "64 / 36" }}
+                // style={{ aspectRatio: "64 / 36" }}
               />
             </a>
           </Link>

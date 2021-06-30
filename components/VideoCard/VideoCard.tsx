@@ -22,12 +22,9 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
         <div className="relative">
           <Link href={links.video}>
             <a>
-              <img
-                className="w-full object-cover"
-                src={`https://source.unsplash.com/random/${data.id}`}
-                alt={data.title}
-                // style={{ aspectRatio: "64 / 36" }}
-              />
+              <div className="aspect-ratio">
+                <img src={data.thumbnail} alt={data.title} />
+              </div>
             </a>
           </Link>
           <Typography
@@ -38,7 +35,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
             {formatTime(data.duration)}
           </Typography>
         </div>
-        <div className="flex justify-between pl-3 pr-2 w-full">
+        <div className="relative flex justify-between pl-3 pr-2 w-full">
           <div className="flex items-start">
             <Link href={links.channel}>
               <a>
@@ -53,7 +50,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
               <Link href={links.video}>
                 <a>
                   <Typography
-                    className="pr-8 line-clamp-2"
+                    className="pr-7 line-clamp-2"
                     variant="subtitle2"
                     component="p"
                   >
@@ -85,7 +82,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
               </div>
             </div>
           </div>
-          <div className="pl-1">
+          <div className="pl-1 absolute top-0 right-0">
             <VideoMenu />
           </div>
         </div>

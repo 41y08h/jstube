@@ -20,7 +20,7 @@ export default function VideoMenu() {
 
   return (
     <>
-      <IconButton onClick={handleClick} edge="end" size="small">
+      <IconButton onClick={handleClick} edge="end">
         <MoreVertIcon
           className="text-primary"
           style={{ width: "20px", height: "20px" }}

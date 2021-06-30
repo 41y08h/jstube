@@ -8,7 +8,10 @@ import VideosList from "../components/VideosList";
 
 export default function Home() {
   const { isLoading, error, data } = useQuery<QVideo[], AxiosError>(
-    "/api/videos"
+    "/api/videos",
+    {
+      staleTime: 5000,
+    }
   );
 
   if (isLoading)

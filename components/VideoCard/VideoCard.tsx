@@ -35,55 +35,53 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
             {formatTime(data.duration)}
           </Typography>
         </div>
-        <div className="relative flex justify-between pl-3 pr-2 w-full">
-          <div className="flex items-start">
-            <Link href={links.channel}>
+        <div className="flex items-start relative w-full pt-0 p-2 pl-4">
+          <Link href={links.channel}>
+            <a>
+              <Avatar
+                style={{ width: "2.25rem", height: "2.25rem" }}
+                src={data.channel.picture}
+                alt={data.channel.name}
+              />
+            </a>
+          </Link>
+          <div className="flex flex-col pl-4 space-y-0.5 text-md leading-tight pr-8 w-full">
+            <div className="pl-1 absolute -top-2 right-3">
+              <VideoMenu />
+            </div>
+            <Link href={links.video}>
               <a>
-                <Avatar
-                  style={{ width: "2.25rem", height: "2.25rem" }}
-                  src={data.channel.picture}
-                  alt={data.channel.name}
-                />
+                <Typography
+                  className="line-clamp-2"
+                  variant="subtitle2"
+                  component="p"
+                >
+                  {data.title}
+                </Typography>
               </a>
             </Link>
-            <div className="flex flex-col pl-4 space-y-0.5 text-md leading-tight pr-0">
-              <Link href={links.video}>
-                <a>
-                  <Typography
-                    className="pr-7 line-clamp-2"
-                    variant="subtitle2"
-                    component="p"
-                  >
-                    {data.title}
+
+            <div className="text-secondary flex flex-wrap items-center w-full">
+              <Link href={links.channel}>
+                <a className="flex items-center space-x-2 pr-2">
+                  <Typography variant="body2" component="span">
+                    {data.channel.name}
                   </Typography>
+                  <CheckCircleIcon style={{ width: "12px" }} />
                 </a>
               </Link>
-
-              <div className="text-secondary flex flex-wrap items-center sm:space-x-0">
-                <Link href={links.channel}>
-                  <a className="flex items-center space-x-2 pr-2">
-                    <Typography variant="body2">{data.channel.name}</Typography>
-                    <CheckCircleIcon style={{ width: "12px" }} />
-                  </a>
-                </Link>
-                <div className="flex flex-wrap items-center">
-                  <Typography variant="body2">
-                    {data.views
-                      ? `${formatNumber(data.views)} views`
-                      : "No views"}
-                  </Typography>
-                  <span className="mx-1.5 text-xl font-bold leading-none">
-                    ·
-                  </span>
-                  <Typography variant="body2">
-                    {timeSince(new Date(data.uploadedAt))}
-                  </Typography>
-                </div>
+              <div className="flex items-center flex-wrap">
+                <Typography variant="body2" component="span">
+                  {data.views
+                    ? `${formatNumber(data.views)} views`
+                    : "No views"}
+                </Typography>
+                <span className="mx-1.5 text-xl font-bold leading-none">·</span>
+                <Typography variant="body2" component="span">
+                  {timeSince(new Date(data.uploadedAt))}
+                </Typography>
               </div>
             </div>
-          </div>
-          <div className="pl-1 absolute top-0 right-0">
-            <VideoMenu />
           </div>
         </div>
       </div>

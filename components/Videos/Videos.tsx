@@ -6,20 +6,31 @@ import { QVideos } from "../../interfaces/Video";
 import VideoLoadingGrid from "../VideoLoadingGrid";
 import { useInView } from "react-intersection-observer";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import AlienImage from "../../images/alien.svg";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 
 const Videos: FC<{ url: string }> = ({ url }) => {
-  const { data, isLoading, error, isError, isFetchingNextPage, fetchNextPage } =
-    useInfiniteQuery<QVideos, AxiosError>(
-      url,
-      async ({ pageParam = 1 }) =>
-        axios(url, {
-          params: { page: pageParam },
-        }).then((res) => res.data),
-      {
-        getNextPageParam: (lastPage) =>
-          lastPage.hasMore ? lastPage.page + 1 : undefined,
-      }
-    );
+  const {
+    data,
+    isLoading,
+    error,
+    isError,
+    isFetchingNextPage,
+    fetchNextPage,
+    isRefetchError,
+    refetch,
+  } = useInfiniteQuery<QVideos, AxiosError>(
+    url,
+    async ({ pageParam = 1 }) =>
+      axios(url, {
+        params: { page: pageParam },
+      }).then((res) => res.data),
+    {
+      getNextPageParam: (lastPage) =>
+        lastPage.hasMore ? lastPage.page + 1 : undefined,
+    }
+  );
   const [bottomRef, isAtBottom] = useInView({ threshold: 0.1 });
 
   useEffect(() => {
@@ -29,7 +40,19 @@ const Videos: FC<{ url: string }> = ({ url }) => {
 
   if (isLoading) return <VideoLoadingGrid />;
 
-  if (isError) return <p>{error?.message}</p>;
+  if (isError)
+    return (
+      <div className="py-16 flex flex-col items-center justify-center space-y-4 text-center">
+        <AlienImage className="h-32 mx-auto" />
+        <Typography variant="h5">An error occurred</Typography>
+        <Typography variant="body2">
+          {error?.response?.data?.message}
+        </Typography>
+        <Button variant="outlined" color="primary" onClick={() => refetch()}>
+          Retry
+        </Button>
+      </div>
+    );
 
   return data ? (
     <>

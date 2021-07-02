@@ -47,7 +47,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
           </Link>
           <div className="flex flex-col pl-4 space-y-0.5 text-md leading-tight pr-8 w-full">
             <div className="pl-1 absolute -top-2 right-3">
-              <VideoMenu />
+              <VideoMenu id={data.id} />
             </div>
             <Link href={links.video}>
               <a>

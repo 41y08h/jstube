@@ -16,7 +16,13 @@ export default interface IVideo {
 }
 
 export interface QVideo extends IVideo {
-  channel: User;
+  channel: IChannel;
+}
+
+export interface QVideos {
+  page: number;
+  hasMore: boolean;
+  items: QVideo[];
 }
 
 export interface QVideoDetailed extends IVideo {

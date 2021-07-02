@@ -1,18 +1,31 @@
 import Layout from "../components/Layout";
 import VideoCard from "../components/VideoCard";
-import { useQuery } from "react-query";
-import { AxiosError } from "axios";
+import { useInfiniteQuery, useQuery } from "react-query";
+import axios, { AxiosError } from "axios";
 import VideoLoadingGrid from "../components/VideoLoadingGrid";
-import { QVideo } from "../interfaces/Video";
+import { QVideos } from "../interfaces/Video";
 import VideosList from "../components/VideosList";
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 
 export default function Home() {
-  const { isLoading, error, data } = useQuery<QVideo[], AxiosError>(
-    "/api/videos",
-    {
-      staleTime: 5000,
-    }
-  );
+  const { data, isLoading, error, isError, isFetchingNextPage, fetchNextPage } =
+    useInfiniteQuery<QVideos, AxiosError>(
+      "/api/videos",
+      async ({ pageParam = 1 }) =>
+        axios(`/api/videos`, {
+          params: { page: pageParam },
+        }).then((res) => res.data),
+      {
+        getNextPageParam: (lastPage) =>
+          lastPage.hasMore ? lastPage.page + 1 : undefined,
+      }
+    );
+  const [bottomRef, isAtBottom] = useInView({ threshold: 0.1 });
+
+  useEffect(() => {
+    if (isAtBottom) fetchNextPage();
+  }, [isAtBottom, fetchNextPage]);
 
   if (isLoading)
     return (
@@ -28,5 +41,10 @@ export default function Home() {
       </Layout>
     );
 
-  return <Layout>{data && <VideosList videos={data} />}</Layout>;
+  return (
+    <Layout>
+      {data && data.pages.map((page) => <VideosList videos={page.items} />)}
+      <div className="h-2" ref={bottomRef} />
+    </Layout>
+  );
 }

@@ -61,7 +61,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
               </a>
             </Link>
 
-            <div className="text-secondary flex flex-wrap items-center w-full">
+            <div className="text-secondary flex lg:flex-col lg:items-start flex-wrap items-center w-full ">
               <Link href={links.channel}>
                 <a className="flex items-center space-x-2 pr-2">
                   <Typography variant="body2" component="span">

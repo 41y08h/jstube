@@ -17,6 +17,7 @@ export default interface IVideo {
 
 export interface QVideo extends IVideo {
   channel: IChannel;
+  isInWL: boolean;
 }
 
 export interface QVideos {

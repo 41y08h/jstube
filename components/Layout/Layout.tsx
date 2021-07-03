@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import Sidebar from "../Sidebar2";
+import Sidebar from "../Sidebar";
 import Header from "../Header";
 
 const Layout: FC = ({ children }) => {

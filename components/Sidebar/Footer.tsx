@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FC } from "react";
 
 const Footer: FC = () => (
-  <footer className="p-6 pt-4">
+  <footer className="p-6 pt-0">
     <div className="text-xs font-medium text-secondary space-y-2">
       <div className="space-x-3">
         <Link href="/about">About</Link>

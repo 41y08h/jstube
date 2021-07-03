@@ -1,190 +1,117 @@
-import Item from "./Item";
 import React, { FC } from "react";
-import HomeIcon from "../../icons/home.svg";
-import ExploreIcon from "../../icons/explore.svg";
-import SubscriptionsIcon from "../../icons/subscriptions.svg";
-import LibraryIcon from "../../icons/library.svg";
-import HistoryIcon from "../../icons/history.svg";
-import VideosIcon from "../../icons/videos.svg";
-import WatchLaterIcon from "../../icons/watchLater.svg";
-import LikedVideosIcon from "../../icons/likedVideos.svg";
-import MusicIcon from "../../icons/music.svg";
-import PremiumIcon from "../../icons/premium.svg";
-import MoviesIcon from "../../icons/movies.svg";
-import GamingIcon from "../../icons/gaming.svg";
-import LiveIcon from "../../icons/live.svg";
-import FashionIcon from "../../icons/fashion.svg";
-import LearningIcon from "../../icons/learning.svg";
-import SportsIcon from "../../icons/sports.svg";
-import SettingsIcon from "../../icons/settings.svg";
-import ReportHistoryIcon from "../../icons/reportHistory.svg";
-import HelpIcon from "../../icons/help.svg";
-import FeedbackIcon from "../../icons/feedback.svg";
-import Subscriptions from "./Subscriptions";
-import Footer from "./Footer";
 import {
-  SwipeableDrawer,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  makeStyles,
+  SwipeableDrawer,
+  IconButton,
+  Divider,
 } from "@material-ui/core";
+import items from "./items";
+import Link from "next/link";
+import Subscriptions from "./Subscriptions";
+import { useAuth } from "../../contexts/Auth";
+import MenuIcon from "@material-ui/icons/Menu";
+import Typography from "@material-ui/core/Typography";
+import moreItems from "./moreItems";
+import Footer from "./Footer";
 
-const TopItems = [
-  { icon: HomeIcon, active: true, text: "Home", href: "/" },
-  { icon: ExploreIcon, active: false, text: "Explore", href: "/feed/explore" },
-  {
-    icon: SubscriptionsIcon,
-    active: false,
-    text: "Subscriptions",
-    href: "/feed/subscriptions",
-  },
-];
+interface Props {
+  isOpen: boolean;
+  toggleIsOpen(): void;
+}
 
-const BottomItems = [
-  { icon: LibraryIcon, active: false, text: "Library", href: "/feed/library" },
-  { icon: HistoryIcon, active: false, text: "History", href: "/history" },
-  {
-    icon: VideosIcon,
-    active: false,
-    text: "Your videos",
-    href: "/my-videos",
-  },
-  {
-    icon: WatchLaterIcon,
-    active: false,
-    text: "Watch later",
-    href: "/playlists/watch-later",
-  },
-  {
-    icon: LikedVideosIcon,
-    active: false,
-    text: "Liked videos",
-    href: "/playlists/liked",
-  },
-  {
-    icon: MusicIcon,
-    active: false,
-    text: "Music",
-    href: "/playlists/music",
-  },
-];
+const useStyles = makeStyles((theme) => ({
+  text: theme.typography.body2,
+  divider: { margin: "12px 0" },
+  icon: { width: 46, minWidth: "unset" },
+  root: { width: 243, overflowX: "hidden" },
+  item: { paddingLeft: 24, paddingRight: 24 },
+  topbar: { display: "flex", alignItems: "center", padding: "8px 14px" },
+}));
 
-const MoreItems = [
-  {
-    icon: PremiumIcon,
-    active: false,
-    text: "JsTube Premium",
-    href: "/premium",
-  },
-  {
-    icon: MoviesIcon,
-    active: false,
-    text: "Movies",
-    href: "/playlists/movies",
-  },
-  {
-    icon: GamingIcon,
-    active: false,
-    text: "Gaming",
-    href: "/playlists/gaming",
-  },
-  {
-    icon: LiveIcon,
-    active: false,
-    text: "Live",
-    href: "/channels/live",
-  },
-  {
-    icon: FashionIcon,
-    active: false,
-    text: "Fashion & Beauty",
-    href: "/channels/live",
-  },
-  {
-    icon: LearningIcon,
-    active: false,
-    text: "Learning",
-    href: "/channels/live",
-  },
-  {
-    icon: SportsIcon,
-    active: false,
-    text: "Sports",
-    href: "/channels/live",
-  },
-];
+const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
+  const { user: isLoggedIn } = useAuth();
+  const classes = useStyles();
 
-const OtherItems = [
-  {
-    icon: SettingsIcon,
-    active: false,
-    text: "Settings",
-    href: "/account",
-  },
-  {
-    icon: ReportHistoryIcon,
-    active: false,
-    text: "Report history",
-    href: "/report-history",
-  },
-  {
-    icon: HelpIcon,
-    active: false,
-    text: "Help",
-    href: "/help",
-  },
-  {
-    icon: FeedbackIcon,
-    active: false,
-    text: "Send Feedback",
-    href: "/feedback",
-  },
-];
+  return (
+    <SwipeableDrawer
+      anchor="left"
+      open={isOpen}
+      onOpen={toggleIsOpen}
+      onClose={toggleIsOpen}
+      classes={{ paper: `themed-scrollbar ${classes.root}` }}
+    >
+      <div className={classes.topbar}>
+        <IconButton onClick={toggleIsOpen}>
+          <MenuIcon />
+        </IconButton>
+        <Link href="/">
+          <a>
+            <img className="h-5 pl-4" src="/jstube_logo.svg" alt="JsTube" />
+          </a>
+        </Link>
+      </div>
+      <List>
+        {items.map((Item, i) => {
+          if (Item === "divider")
+            return <Divider classes={{ root: classes.divider }} />;
+          else {
+            const Component = (
+              <Link key={i} href={Item.link}>
+                <a>
+                  <ListItem button classes={{ root: classes.item }}>
+                    <ListItemIcon classes={{ root: classes.icon }}>
+                      <Item.Icon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={Item.text}
+                      classes={{ primary: classes.text }}
+                    />
+                  </ListItem>
+                </a>
+              </Link>
+            );
 
-const Sidebar: FC = () => (
-  <SwipeableDrawer
-    anchor="left"
-    open={true}
-    onClose={() => {
-      alert("You");
-    }}
-    classes={{
-      paper: "bg-white pt-1 h-full overflow-y-auto themed-scrollbar",
-    }}
-    onOpen={() => {}}
-  >
-    <List component="div">
-      {TopItems.map(({ icon: Icon, ...props }, i) => (
-        <ListItem button key={i}>
-          <ListItemIcon>
-            <Icon className="h-6" />
-          </ListItemIcon>
-          <ListItemText primary={props.text} />
-        </ListItem>
-      ))}
-    </List>
+            return Item.isAuthRequired ? isLoggedIn && Component : Component;
+          }
+        })}
+      </List>
+      <Subscriptions />
+      <Divider classes={{ root: classes.divider }} />
+      <Typography component="span" variant="button" className="px-7">
+        More from JsTube
+      </Typography>
+      <List>
+        {moreItems.map((Item, i) => {
+          if (Item === "divider")
+            return <Divider classes={{ root: classes.divider }} />;
+          else {
+            const Component = (
+              <Link key={i} href={Item.link}>
+                <a>
+                  <ListItem button classes={{ root: classes.item }}>
+                    <ListItemIcon classes={{ root: classes.icon }}>
+                      <Item.Icon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={Item.text}
+                      classes={{ primary: classes.text }}
+                    />
+                  </ListItem>
+                </a>
+              </Link>
+            );
 
-    <hr className="my-3" />
-    {BottomItems.map((props, i) => (
-      <Item key={i} {...props} />
-    ))}
-    <hr className="my-3" />
-    <Subscriptions />
-    <hr className="my-3" />
-    <span className="uppercase text-sm font-medium text-secondary px-6">
-      More from JsTube
-    </span>
-    {MoreItems.map((props, i) => (
-      <Item key={i} {...props} />
-    ))}
-    <hr className="my-3" />
-    {OtherItems.map((props, i) => (
-      <Item key={i} {...props} />
-    ))}
-    <hr className="my-3" />
-    <Footer />
-  </SwipeableDrawer>
-);
+            return Item.isAuthRequired ? isLoggedIn && Component : Component;
+          }
+        })}
+      </List>
+      <Footer />
+    </SwipeableDrawer>
+  );
+};
 
 export default Sidebar;

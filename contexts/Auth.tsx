@@ -11,6 +11,7 @@ interface AuthContext {
   authenticate<T extends (...args: any[]) => any>(
     fn: T
   ): (...fnArgs: Parameters<T>) => ReturnType<T> | void;
+  isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<any>(undefined);
@@ -45,7 +46,13 @@ export const AuthProvider: FC = ({ children }) => {
     };
   }
 
-  const value = { isLoading, error, authenticate, user };
+  const value = {
+    user,
+    error,
+    isLoading,
+    authenticate,
+    isAuthenticated: Boolean(user),
+  };
 
   return (
     <AuthContext.Provider value={value}>

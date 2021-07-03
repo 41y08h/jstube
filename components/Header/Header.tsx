@@ -3,6 +3,8 @@ import React, { FC } from "react";
 import { AppBar, Toolbar, IconButton, makeStyles } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import SignInButton from "../SignInButton";
+import { useAuth } from "../../contexts/Auth";
+import Avatar from "@material-ui/core/Avatar";
 
 const useStyles = makeStyles((theme) => ({
   root: { boxShadow: "none", backgroundColor: "white" },
@@ -11,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
+  const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth();
   const classes = useStyles();
 
   return (
@@ -20,7 +23,7 @@ const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
         position="fixed"
         variant="outlined"
       >
-        <Toolbar classes={{ root: classes.innerRoot }}>
+        <Toolbar className={classes.innerRoot + " text-primary"}>
           <div className="flex items-center space-x-3">
             <IconButton
               onClick={() => toggleSidebar()}
@@ -36,7 +39,15 @@ const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
               </a>
             </Link>
           </div>
-          <SignInButton />
+          {isAuthLoading ? null : isAuthenticated ? (
+            <Avatar
+              style={{ width: "2rem", height: "2rem" }}
+              src={user?.picture}
+              alt={user?.name}
+            />
+          ) : (
+            <SignInButton />
+          )}
         </Toolbar>
       </AppBar>
       <div className={classes.offset} />

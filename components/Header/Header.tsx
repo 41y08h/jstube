@@ -4,8 +4,8 @@ import { AppBar, Toolbar, IconButton, makeStyles } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import SignInButton from "../SignInButton";
 import { useAuth } from "../../contexts/Auth";
-import Avatar from "@material-ui/core/Avatar";
 import Profile from "./Profile";
+import Search from "./Search";
 
 const useStyles = makeStyles((theme) => ({
   root: { boxShadow: "none", backgroundColor: "white", borderRight: "none" },
@@ -40,11 +40,14 @@ const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
               </a>
             </Link>
           </div>
-          {isAuthLoading ? null : isAuthenticated ? (
-            <Profile />
-          ) : (
-            <SignInButton />
-          )}
+          <div className="flex items-center space-x-2">
+            <Search />
+            {isAuthLoading ? null : isAuthenticated ? (
+              <Profile />
+            ) : (
+              <SignInButton />
+            )}
+          </div>
         </Toolbar>
       </AppBar>
       <div className={classes.offset} />

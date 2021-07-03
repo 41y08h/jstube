@@ -5,9 +5,10 @@ import MenuIcon from "@material-ui/icons/Menu";
 import SignInButton from "../SignInButton";
 import { useAuth } from "../../contexts/Auth";
 import Avatar from "@material-ui/core/Avatar";
+import Profile from "./Profile";
 
 const useStyles = makeStyles((theme) => ({
-  root: { boxShadow: "none", backgroundColor: "white" },
+  root: { boxShadow: "none", backgroundColor: "white", borderRight: "none" },
   innerRoot: { justifyContent: "space-between" },
   offset: theme.mixins.toolbar,
 }));
@@ -40,11 +41,7 @@ const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
             </Link>
           </div>
           {isAuthLoading ? null : isAuthenticated ? (
-            <Avatar
-              style={{ width: "2rem", height: "2rem" }}
-              src={user?.picture}
-              alt={user?.name}
-            />
+            <Profile />
           ) : (
             <SignInButton />
           )}

@@ -9,6 +9,7 @@ import { MouseEvent } from "react";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import Divider from "@material-ui/core/Divider";
 import { makeStyles } from "@material-ui/core/styles";
+import Link from "next/link";
 
 const useStyles = makeStyles({
   divider: { margin: "12px 0" },
@@ -59,8 +60,15 @@ export default function Profile() {
         </div>
         <Divider className={classes.divider} />
         <MenuItem onClick={closeMenu}>
-          <AccountBoxIcon className="mr-3 text-secondary" fontSize="small" />
-          <Typography variant="inherit">Your channel</Typography>
+          <Link href={`/channel/${user?.id}`}>
+            <a>
+              <AccountBoxIcon
+                className="mr-3 text-secondary"
+                fontSize="small"
+              />
+              <Typography variant="inherit">Your channel</Typography>
+            </a>
+          </Link>
         </MenuItem>
         <MenuItem onClick={closeMenu}>
           <a href="/api/logout">

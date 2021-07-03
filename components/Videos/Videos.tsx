@@ -18,7 +18,6 @@ const Videos: FC<{ url: string }> = ({ url }) => {
     isError,
     isFetchingNextPage,
     fetchNextPage,
-    isRefetchError,
     refetch,
   } = useInfiniteQuery<QVideos, AxiosError>(
     url,

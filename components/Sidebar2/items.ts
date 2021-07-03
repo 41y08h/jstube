@@ -7,19 +7,9 @@ import PersonalVideoIcon from "@material-ui/icons/PersonalVideo";
 import WatchLaterIcon from "@material-ui/icons/WatchLater";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import PlaylistPlayIcon from "@material-ui/icons/PlaylistPlay";
-import { SvgIconTypeMap } from "@material-ui/core";
-import { OverridableComponent } from "@material-ui/core/OverridableComponent";
+import ISidebarItem from "../../@types/TSidebarItem";
 
-type TItem =
-  | "divider"
-  | {
-      Icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
-      text: string;
-      link: string;
-      isAuthRequired?: boolean;
-    };
-
-const items: TItem[] = [
+const items: TSidebarItem[] = [
   {
     Icon: HomeIcon,
     text: "Home",

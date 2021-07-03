@@ -14,6 +14,8 @@ import Link from "next/link";
 import Subscriptions from "./Subscriptions";
 import { useAuth } from "../../contexts/Auth";
 import MenuIcon from "@material-ui/icons/Menu";
+import Typography from "@material-ui/core/Typography";
+import moreItems from "./moreItems";
 
 interface Props {
   isOpen: boolean;
@@ -77,6 +79,35 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
         })}
       </List>
       <Subscriptions />
+      <Divider classes={{ root: classes.divider }} />
+      <Typography component="span" variant="button" className="px-7">
+        More from JsTube
+      </Typography>
+      <List>
+        {moreItems.map((Item, i) => {
+          if (Item === "divider")
+            return <Divider classes={{ root: classes.divider }} />;
+          else {
+            const Component = (
+              <Link key={i} href={Item.link}>
+                <a>
+                  <ListItem button classes={{ root: classes.item }}>
+                    <ListItemIcon classes={{ root: classes.icon }}>
+                      <Item.Icon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={Item.text}
+                      classes={{ primary: classes.text }}
+                    />
+                  </ListItem>
+                </a>
+              </Link>
+            );
+
+            return Item.isAuthRequired ? isLoggedIn && Component : Component;
+          }
+        })}
+      </List>
     </SwipeableDrawer>
   );
 };

@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   text: theme.typography.body2,
   divider: { margin: "12px 0" },
   icon: { width: 46, minWidth: "unset" },
-  root: { width: 243, overflowX: "hidden" },
+  root: { width: 245, overflowX: "hidden" },
   item: { paddingLeft: 24, paddingRight: 24 },
   topbar: { display: "flex", alignItems: "center", padding: "8px 14px" },
 }));

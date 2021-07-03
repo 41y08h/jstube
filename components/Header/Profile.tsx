@@ -1,15 +1,35 @@
-import { useState } from "react";
+import Link from "next/link";
+import { MouseEvent } from "react";
+import { useState, FC } from "react";
+import { DetailedHTMLProps } from "react";
 import Menu from "@material-ui/core/Menu";
+import { AnchorHTMLAttributes } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import { useAuth } from "../../contexts/Auth";
-import MenuItem from "@material-ui/core/MenuItem";
-import AccountBoxIcon from "@material-ui/icons/AccountBox";
-import Typography from "@material-ui/core/Typography";
-import { MouseEvent } from "react";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import HelpIcon from "@material-ui/icons/Help";
 import Divider from "@material-ui/core/Divider";
+import MenuItem from "@material-ui/core/MenuItem";
+import { SvgIconTypeMap } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import Link from "next/link";
+import Typography from "@material-ui/core/Typography";
+import SettingsIcon from "@material-ui/icons/Settings";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import AccountBoxIcon from "@material-ui/icons/AccountBox";
+import { OverridableComponent } from "@material-ui/core/OverridableComponent";
+
+interface Props {
+  Icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
+  text: string;
+}
+
+const MenuItemContent: FC<Props> = ({ Icon, text }) => {
+  return (
+    <>
+      <Icon className="mr-3 text-secondary" fontSize="small" />
+      <Typography variant="inherit">{text}</Typography>
+    </>
+  );
+};
 
 const useStyles = makeStyles({
   divider: { margin: "12px 0" },
@@ -62,19 +82,29 @@ export default function Profile() {
         <MenuItem onClick={closeMenu}>
           <Link href={`/channel/${user?.id}`}>
             <a>
-              <AccountBoxIcon
-                className="mr-3 text-secondary"
-                fontSize="small"
-              />
-              <Typography variant="inherit">Your channel</Typography>
+              <MenuItemContent Icon={AccountBoxIcon} text="Your channel" />
             </a>
           </Link>
         </MenuItem>
         <MenuItem onClick={closeMenu}>
           <a href="/api/logout">
-            <ExitToAppIcon className="mr-3 text-secondary" fontSize="small" />
-            <Typography variant="inherit">Sign out</Typography>
+            <MenuItemContent Icon={ExitToAppIcon} text="Sign out" />
           </a>
+        </MenuItem>
+        <Divider className={classes.divider} />
+        <MenuItem onClick={closeMenu}>
+          <Link href="/">
+            <a>
+              <MenuItemContent Icon={SettingsIcon} text="Settings" />
+            </a>
+          </Link>
+        </MenuItem>
+        <MenuItem onClick={closeMenu}>
+          <Link href="/">
+            <a>
+              <MenuItemContent Icon={HelpIcon} text="Help" />
+            </a>
+          </Link>
         </MenuItem>
       </Menu>
     </div>

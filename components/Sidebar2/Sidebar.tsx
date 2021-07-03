@@ -16,6 +16,7 @@ import { useAuth } from "../../contexts/Auth";
 import MenuIcon from "@material-ui/icons/Menu";
 import Typography from "@material-ui/core/Typography";
 import moreItems from "./moreItems";
+import Footer from "./Footer";
 
 interface Props {
   isOpen: boolean;
@@ -108,6 +109,7 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
           }
         })}
       </List>
+      <Footer />
     </SwipeableDrawer>
   );
 };

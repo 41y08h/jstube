@@ -79,32 +79,24 @@ export default function Profile() {
           </Typography>
         </div>
         <Divider className={classes.divider} />
-        <MenuItem onClick={closeMenu}>
-          <Link href={`/channel/${user?.id}`}>
-            <a>
+        <Link href={`/channel/${user?.id}`}>
+          <a>
+            <MenuItem onClick={closeMenu}>
               <MenuItemContent Icon={AccountBoxIcon} text="Your channel" />
-            </a>
-          </Link>
-        </MenuItem>
-        <MenuItem onClick={closeMenu}>
-          <a href="/api/logout">
-            <MenuItemContent Icon={ExitToAppIcon} text="Sign out" />
+            </MenuItem>
           </a>
-        </MenuItem>
+        </Link>
+        <a href="/api/logout">
+          <MenuItem onClick={closeMenu}>
+            <MenuItemContent Icon={ExitToAppIcon} text="Sign out" />
+          </MenuItem>
+        </a>
         <Divider className={classes.divider} />
         <MenuItem onClick={closeMenu}>
-          <Link href="/">
-            <a>
-              <MenuItemContent Icon={SettingsIcon} text="Settings" />
-            </a>
-          </Link>
+          <MenuItemContent Icon={SettingsIcon} text="Settings" />
         </MenuItem>
         <MenuItem onClick={closeMenu}>
-          <Link href="/">
-            <a>
-              <MenuItemContent Icon={HelpIcon} text="Help" />
-            </a>
-          </Link>
+          <MenuItemContent Icon={HelpIcon} text="Help" />
         </MenuItem>
       </Menu>
     </div>

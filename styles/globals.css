@@ -5,8 +5,13 @@
 }
 
 html {
-  background-color: #f9f9f9;
   color: #030303;
+}
+
+@media (min-width: 640px) {
+  html {
+    background-color: #f9f9f9;
+  }
 }
 
 body {

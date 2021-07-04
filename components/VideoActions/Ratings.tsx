@@ -55,7 +55,7 @@ const RatingActions: FC<Props> = ({ data }) => {
   );
 
   return (
-    <div className="flex border-b-2 border-gray-500 space-x-5 pb-4">
+    <div className="flex space-x-5 pb-4">
       <ActionButton
         icon={LikeIcon}
         highlight={ratings.userRatingStatus === "LIKED"}

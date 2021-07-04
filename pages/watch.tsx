@@ -7,11 +7,18 @@ import Layout from "../components/Layout";
 import { VideoContext } from "../contexts/Video";
 import ChannelBar from "../components/ChannelBar";
 import VideoPlayer from "../components/VideoPlayer";
-import VideoDetail from "../components/VideoCard/VideoDetail";
 import VideoActions from "../components/VideoActions";
 import VideoDescription from "../components/VideoDescription";
 import { QVideoDetailed } from "../interfaces/Video";
 import Comments from "../components/Comments";
+import Typography from "@material-ui/core/Typography";
+import numberWithCommas from "../lib/numberWithCommas";
+import dateformat from "dateformat";
+import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
+import ThumbDownIcon from "@material-ui/icons/ThumbDown";
+import ReplyIcon from "@material-ui/icons/Reply";
+import IconButton from "@material-ui/core/IconButton";
+import { Button } from "@material-ui/core";
 
 interface Props {
   data: QVideoDetailed;
@@ -26,26 +33,42 @@ const Watch: FC<Props> = ({ data }) => {
         <Head>
           <title>{video.title} - JS Tube</title>
         </Head>
-        <div className="p-6 px-8 flex">
-          <div className="w-2/3">
-            <VideoPlayer src={video.src} />
-            <h1 className="mt-4 text-xl font-normal">{video.title}</h1>
-            <div className="flex justify-between mt-3 text-secondary text-sm border-b">
-              {/* <VideoDetail
-                exactDate
-                views={video.views}
-                uploadedAt={video.updatedAt}
-              /> */}
-              <VideoActions data={video} />
+        <div className="flex flex-col">
+          <VideoPlayer src={video.src} />
+          <Typography variant="body2" component="h1" className="p-3 pt-4">
+            {video.title}
+          </Typography>
+          <div className="flex flex-col px-4 space-y-4">
+            <div className="flex items-start space-x-2">
+              <Typography color="secondary" variant="body2" component="span">
+                {numberWithCommas(data.views)} views
+              </Typography>
+              <span className="mx-1.5 text-xl font-bold leading-none">·</span>
+              <Typography color="secondary" variant="body2" component="span">
+                {dateformat(new Date(data.uploadedAt), "dd-mmm-yyyy")} views
+              </Typography>
             </div>
-            <ChannelBar channel={data.channel} />
-            <div className="pl-16">
-              <VideoDescription text={video.description} />
+            <div className="flex items-center justify-start text-secondary">
+              <Button color="secondary" startIcon={<ThumbUpAltIcon />}>
+                {data.ratings.count.likes}
+              </Button>
+              <Button color="secondary" startIcon={<ThumbDownIcon />}>
+                {data.ratings.count.dislikes}
+              </Button>
+              <Button
+                color="secondary"
+                startIcon={<ReplyIcon style={{ transform: "scaleX(-1)" }} />}
+              >
+                Share
+              </Button>
             </div>
-            <hr className="h-2 my-4" />
-            <Comments videoId={video.id} />
           </div>
-          <div className="w-1/3">Suggestions will go here</div>
+          <ChannelBar channel={data.channel} />
+          <div className="pl-16">
+            <VideoDescription text={video.description} />
+          </div>
+          <hr className="h-2 my-4" />
+          <Comments videoId={video.id} />
         </div>
       </VideoContext.Provider>
     </Layout>

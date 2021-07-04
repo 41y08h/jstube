@@ -1,13 +1,16 @@
-import axios, { AxiosError } from "axios";
-import type { AppProps } from "next/app";
 import React from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+import theme from "../lib/theme";
+import type { AppProps } from "next/app";
+import axios, { AxiosError } from "axios";
+import queryFn from "../lib/queryFunction";
+import { AuthProvider } from "../contexts/Auth";
 import { ToastContainer, toast } from "react-toastify";
+import { ThemeProvider } from "@material-ui/core/styles";
+import { ReactQueryDevtools } from "react-query/devtools";
+import { QueryClient, QueryClientProvider } from "react-query";
+
 import "react-toastify/dist/ReactToastify.css";
 import "tailwindcss/tailwind.css";
-import { AuthProvider } from "../contexts/Auth";
-import queryFn from "../lib/queryFunction";
 import "../styles/globals.css";
 
 const queryClient = new QueryClient({
@@ -27,9 +30,12 @@ const queryClient = new QueryClient({
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Component {...pageProps} />
-      </AuthProvider>
+      <ThemeProvider theme={theme}>
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
+      </ThemeProvider>
+
       <ToastContainer
         position="bottom-left"
         newestOnTop={true}

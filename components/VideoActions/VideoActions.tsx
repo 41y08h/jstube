@@ -9,7 +9,7 @@ interface Props {
 }
 
 const VideoActions: FC<Props> = ({ data }) => (
-  <div className="flex space-x-5 items-start justify-center">
+  <div className="flex space-x-5 items-start">
     <Ratings data={data} />
     <ActionButton icon={ShareIcon}>Share</ActionButton>
   </div>

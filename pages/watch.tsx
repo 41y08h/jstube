@@ -69,14 +69,15 @@ const Watch: FC<Props> = ({ data }) => {
           <div className="px-5 py-3">
             <ChannelBar channel={data.channel} />
           </div>
-
           <Divider />
         </div>
         <div className="px-5">
           <VideoDescription text={data.description} />
         </div>
-        <hr className="h-2 my-4" />
-        <Comments videoId={data.id} />
+        <Divider />
+        <div className="px-5 my-4">
+          <Comments videoId={data.id} />
+        </div>
       </div>
     </Layout>
   );

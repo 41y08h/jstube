@@ -10,20 +10,38 @@ import { useAuth } from "../../contexts/Auth";
 import { useInView } from "react-intersection-observer";
 import IComment, { ICommentPage } from "../../interfaces/Comment";
 import { FC, FormEventHandler, useEffect, useRef, useState } from "react";
-import Button from "../Button";
-import Avatar from "../Avatar";
+import Button from "@material-ui/core/Button";
+import Avatar from "@material-ui/core/Avatar";
 import Loading from "../Loading";
 import MultilineInput from "../MultilineInput";
+import Typography from "@material-ui/core/Typography";
+import { InputBase } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import grey from "@material-ui/core/colors/grey";
+
+const useStyles = makeStyles((theme) => ({
+  heading: {
+    margin: "0.5rem 0",
+  },
+  input: {
+    ...theme.typography.body2,
+    backgroundColor: grey[200],
+    padding: "0.8rem",
+    width: "100%",
+    borderRadius: 6,
+  },
+}));
 
 interface Props {
   videoId: number;
 }
 
 const Comments: FC<Props> = ({ videoId }) => {
+  const classes = useStyles();
   const { authenticate, user } = useAuth();
   const queryClient = useQueryClient();
   const [bottomRef, isAtBottom] = useInView();
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLDivElement>(null);
   const [total, setTotal] = useState<number | undefined>();
   const [isCommenting, setIsCommenting] = useState(false);
 
@@ -100,38 +118,40 @@ const Comments: FC<Props> = ({ videoId }) => {
   if (isLoading) return <Loading className="my-8" />;
 
   return (
-    <div className="p-4">
-      {total && <p className="block mb-5">{total} Comments</p>}
-      <form className="relative mb-8" onSubmit={handleSubmit}>
+    <div>
+      <Typography component="h3" variant="body1" className={classes.heading}>
+        {total ? total : "No"} Comments
+      </Typography>
+      <form className="relative mt-5 mb-10" onSubmit={handleSubmit}>
         {commentsMutation.isLoading ? (
           <Loading />
         ) : (
           <div>
             <div className="flex space-x-4">
-              <Avatar src={user?.picture} alt={user?.name} />
-              <MultilineInput
+              <Avatar
+                style={{ width: "2rem", height: "2rem" }}
+                src={user?.picture}
+                alt={user?.name}
+              />
+              <InputBase
+                multiline
                 required
-                ref={inputRef}
+                className={classes.input}
+                inputRef={inputRef}
                 onClick={() => setIsCommenting(true)}
                 placeholder="Add a public comment..."
               />
             </div>
             {isCommenting && (
               <div className="flex justify-end pt-3 space-x-2">
-                <Button
-                  size="sm"
-                  appearance="none"
-                  className="uppercase font-medium text-secondary"
-                  onClick={toggleIsCommenting}
-                >
+                <Button color="secondary" onClick={toggleIsCommenting}>
                   Cancel
                 </Button>
                 <Button
-                  size="sm"
                   type="submit"
-                  appearance="primary"
-                  className="uppercase font-medium"
-                  disabled={!!inputRef?.current?.value}
+                  color="primary"
+                  variant="contained"
+                  disableElevation
                 >
                   Comment
                 </Button>

@@ -59,7 +59,7 @@ const ChannelBar: FC<Props> = ({ channel }) => {
   );
 
   return (
-    <div className="flex justify-between items-center border-t border-b px-4 py-3 my-4">
+    <div className="flex justify-between items-center border-t border-b px-5 py-3 my-4">
       <div className="flex items-center space-x-4">
         <Avatar src={channel.picture} alt={channel.name} />
         <div className="flex flex-col">

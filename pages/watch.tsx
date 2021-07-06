@@ -29,10 +29,14 @@ const Watch: FC<Props> = ({ data }) => {
       </Head>
       <div className="flex flex-col">
         <VideoPlayer src={data.src} />
-        <Typography variant="body1" component="h1" className="p-3 pt-4">
+        <Typography
+          variant="subtitle1"
+          component="h1"
+          className="pb-4 pt-5 px-5"
+        >
           {data.title}
         </Typography>
-        <div className="flex flex-col px-4 space-y-3">
+        <div className="flex flex-col px-5 space-y-3">
           <div className="flex items-start space-x-2">
             <Typography color="secondary" variant="body2" component="span">
               {numberWithCommas(data.views)} views
@@ -60,7 +64,7 @@ const Watch: FC<Props> = ({ data }) => {
           </div>
         </div>
         <ChannelBar channel={data.channel} />
-        <div className="pl-16">
+        <div className="px-5">
           <VideoDescription text={data.description} />
         </div>
         <hr className="h-2 my-4" />

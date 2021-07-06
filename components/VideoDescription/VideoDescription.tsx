@@ -27,6 +27,7 @@ const VideoDescription: FC<Props> = ({ text }) => {
       <Button
         onClick={() => setIsExpanded((prev) => !prev)}
         color="secondary"
+        disableRipple
         className={classes.button}
       >
         Show {isExpanded ? "less" : "more"}

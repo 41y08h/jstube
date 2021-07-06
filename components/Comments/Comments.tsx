@@ -13,7 +13,7 @@ import { FC, FormEventHandler, useEffect, useRef, useState } from "react";
 import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";
 import Loading from "../Loading";
-import MultilineInput from "../MultilineInput";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import { InputBase } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -115,7 +115,12 @@ const Comments: FC<Props> = ({ videoId }) => {
     decreaseTotal();
   }
 
-  if (isLoading) return <Loading className="my-8" />;
+  if (isLoading)
+    return (
+      <div className="grid justify-center py-8">
+        <CircularProgress />
+      </div>
+    );
 
   return (
     <div>
@@ -124,7 +129,7 @@ const Comments: FC<Props> = ({ videoId }) => {
       </Typography>
       <form className="relative mt-5 mb-10" onSubmit={handleSubmit}>
         {commentsMutation.isLoading ? (
-          <Loading />
+          <CircularProgress />
         ) : (
           <div>
             <div className="flex space-x-4">

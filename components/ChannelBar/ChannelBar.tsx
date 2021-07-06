@@ -64,7 +64,9 @@ const ChannelBar: FC<Props> = ({ channel }) => {
         <Avatar src={channel.picture} alt={channel.name} />
         <div className="flex flex-col">
           <Link href={`/channel/${channel.id}`}>
-            <a className="text-sm font-medium">{channel.name}</a>
+            <Typography component="a" variant="subtitle2">
+              {channel.name}
+            </Typography>
           </Link>
           <Typography variant="caption" color="secondary">
             {formatNumber(subscribers.count)} subscriber

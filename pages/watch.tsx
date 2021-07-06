@@ -35,17 +35,19 @@ const Watch: FC<Props> = ({ data }) => {
         </Head>
         <div className="flex flex-col">
           <VideoPlayer src={video.src} />
-          <Typography variant="body2" component="h1" className="p-3 pt-4">
+          <Typography variant="body1" component="h1" className="p-3 pt-4">
             {video.title}
           </Typography>
-          <div className="flex flex-col px-4 space-y-4">
+          <div className="flex flex-col px-4 space-y-3">
             <div className="flex items-start space-x-2">
               <Typography color="secondary" variant="body2" component="span">
                 {numberWithCommas(data.views)} views
               </Typography>
-              <span className="mx-1.5 text-xl font-bold leading-none">·</span>
+              <span className="mx-1.5 text-xl text-secondary font-bold leading-none">
+                ·
+              </span>
               <Typography color="secondary" variant="body2" component="span">
-                {dateformat(new Date(data.uploadedAt), "dd-mmm-yyyy")} views
+                {dateformat(new Date(data.uploadedAt), "dd-mmm-yyyy")}
               </Typography>
             </div>
             <div className="flex items-center justify-start text-secondary">

@@ -1,8 +1,28 @@
+import { Button } from "@material-ui/core";
 import axios from "axios";
 import { Dispatch, FC, SetStateAction } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { useAuth } from "../../contexts/Auth";
 import ISubscribers from "../../interfaces/Subscribers";
+import { makeStyles } from "@material-ui/core/styles";
+import red from "@material-ui/core/colors/red";
+import grey from "@material-ui/core/colors/grey";
+
+const useStyles = makeStyles((theme) => ({
+  button: {
+    paddingLeft: "1rem",
+    paddingRight: "1rem",
+  },
+  buttonUnsubscribed: {
+    backgroundColor: red[500],
+    color: theme.palette.getContrastText(red[500]),
+    "&:hover": { backgroundColor: red[700] },
+  },
+  buttonSubscribed: {
+    backgroundColor: grey[200],
+    color: grey[600],
+  },
+}));
 
 interface Props {
   channelId: number;
@@ -15,6 +35,7 @@ const SubscribeButton: FC<Props> = ({
   subscribers,
   setSubscribers,
 }) => {
+  const classes = useStyles();
   const queryClient = useQueryClient();
   const { authenticate } = useAuth();
   const subscribersMutation = useMutation(
@@ -32,24 +53,24 @@ const SubscribeButton: FC<Props> = ({
     }
   );
 
-  const className =
-    "uppercase px-4 py-0 h-9 font-medium text-sm rounded-sm " +
-    (subscribers.isUserSubscribed
-      ? "bg-gray-200 text-secondary"
-      : "bg-red-700 text-white");
-
   const onSubscribe = authenticate(() =>
     subscribersMutation.mutate(subscribers.isUserSubscribed)
   );
 
   return (
-    <button
-      className={className}
-      disabled={subscribersMutation.isLoading}
+    <Button
+      variant="contained"
+      disableElevation
+      className={`${classes.button} ${
+        subscribers.isUserSubscribed
+          ? classes.buttonSubscribed
+          : classes.buttonUnsubscribed
+      }`}
       onClick={onSubscribe}
+      disabled={subscribersMutation.isLoading}
     >
       {subscribers.isUserSubscribed ? "Subscribed" : "Subscribe"}
-    </button>
+    </Button>
   );
 };
 

@@ -127,7 +127,7 @@ const Comments: FC<Props> = ({ videoId }) => {
       <Typography component="h3" variant="body1" className={classes.heading}>
         {total ? total : "No"} Comments
       </Typography>
-      <form className="relative mt-5 mb-10" onSubmit={handleSubmit}>
+      <form className="relative mt-5 mb-8" onSubmit={handleSubmit}>
         {commentsMutation.isLoading ? (
           <CircularProgress />
         ) : (

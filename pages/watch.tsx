@@ -71,7 +71,7 @@ const Watch: FC<Props> = ({ data }) => {
           </div>
           <Divider />
         </div>
-        <div className="px-5">
+        <div className="px-5 pb-2">
           <VideoDescription text={data.description} />
         </div>
         <Divider />

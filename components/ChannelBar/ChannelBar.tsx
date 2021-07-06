@@ -61,7 +61,11 @@ const ChannelBar: FC<Props> = ({ channel }) => {
   return (
     <div className="flex justify-between items-center">
       <div className="flex items-center space-x-4">
-        <Avatar src={channel.picture} alt={channel.name} />
+        <Link href={`/channel/${channel.id}`}>
+          <a>
+            <Avatar src={channel.picture} alt={channel.name} />
+          </a>
+        </Link>
         <div className="flex flex-col">
           <Link href={`/channel/${channel.id}`}>
             <Typography component="a" variant="subtitle2">

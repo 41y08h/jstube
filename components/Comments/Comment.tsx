@@ -1,6 +1,9 @@
-import Button from "../Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
+import Typography from "@material-ui/core/Typography";
 import Replies from "./Replies";
 import EditForm from "./EditForm";
+import Link from "next/link";
 import EditInput from "./EditInput";
 import { FC, FormEventHandler, useState, useRef } from "react";
 import CommentText from "./CommentText";
@@ -14,7 +17,7 @@ import IComment, {
 } from "../../interfaces/Comment";
 import { useAuth } from "../../contexts/Auth";
 import timeSince from "../../lib/timeSince";
-import Avatar from "../Avatar";
+import Avatar from "@material-ui/core/Avatar";
 import LikeIcon from "../../icons/like.svg";
 import DislikeIcon from "../../icons/dislike.svg";
 import TridotIcon from "../../icons/tridot.svg";
@@ -23,6 +26,24 @@ import DeleteIcon from "../../icons/delete.svg";
 import { Menu } from "@headlessui/react";
 import Loading from "../Loading";
 import MultilineInput from "../MultilineInput";
+import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
+import ThumbDownIcon from "@material-ui/icons/ThumbDown";
+import ReplyIcon from "@material-ui/icons/Reply";
+import { Button } from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
+import blue from "@material-ui/core/colors/blue";
+
+const useStyles = makeStyles({
+  button: {
+    paddingLeft: "0.5rem",
+    paddingRight: "0.5rem",
+    width: "auto",
+    minWidth: "unset",
+  },
+  highlightedButton: {
+    color: blue[700],
+  },
+});
 
 interface Props {
   data: IComment;
@@ -45,6 +66,7 @@ const Comment: FC<Props> = (props) => {
     hasUserDisliked,
     onEditFormSubmit,
   } = useComment({ initialData: props.data, onDeleted: props.onDeleted });
+  const classes = useStyles();
   const queryClient = useQueryClient();
   const { authenticate, user } = useAuth();
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
@@ -75,18 +97,30 @@ const Comment: FC<Props> = (props) => {
   };
 
   return deleteMutation.isLoading ? (
-    <Loading className="my-6" />
+    <div className="grid justify-center py-5">
+      <CircularProgress />
+    </div>
   ) : (
     <div className="flex relative w-full">
       <div className="flex w-full space-x-4">
-        <Avatar src={data.author.picture} alt={data.author.name} />
+        <Link href={`/channel/${data.author.id}`}>
+          <a>
+            <Avatar
+              style={{ width: "2rem", height: "2rem" }}
+              src={data.author.picture}
+              alt={data.author.name}
+            />
+          </a>
+        </Link>
         {isEditing ? (
           <EditForm
             className="flex flex-col w-full"
             onSubmit={onEditFormSubmit}
           >
             {editMutation.isLoading ? (
-              <Loading className="my-4" />
+              <div className="grid justify-center py-5">
+                <CircularProgress />
+              </div>
             ) : (
               <div>
                 <MultilineInput
@@ -154,51 +188,59 @@ const Comment: FC<Props> = (props) => {
                 </Menu.Items>
               </Menu>
             )}
-            <div className="space-x-2">
-              <span className="text-bold text-sm">{data.author.name}</span>
-              <span className="text-bold text-sm text-secondary">
+            <div className="flex space-x-2">
+              <Typography variant="body2">{data.author.name}</Typography>
+              <Typography variant="body2" color="secondary">
                 {timeSince(new Date(data.createdAt))}
-              </span>
+              </Typography>
               {data.updatedAt !== data.createdAt && (
-                <span className="text-bold text-sm text-secondary">
+                <Typography variant="body2" color="secondary">
                   (edited)
-                </span>
+                </Typography>
               )}
             </div>
-            <CommentText className="whitespace-pre-wrap">
-              {data.text.trim()}
-            </CommentText>
-            <div className="mt-2 flex space-x-4">
-              <button
-                className="text-secondary text-xs flex space-x-2 items-center"
+            <div className="mt-2">
+              <Typography variant="body1" className="whitespace-pre-wrap">
+                {data.text.trim()}
+              </Typography>
+            </div>
+            <div className="flex mt-2">
+              <Button
+                size="small"
+                color="secondary"
+                className={classes.button}
+                startIcon={
+                  <ThumbUpAltIcon
+                    className={hasUserLiked ? classes.highlightedButton : ""}
+                  />
+                }
                 disabled={ratingsMutation.isLoading}
                 onClick={onLike}
+                disableRipple
               >
-                <LikeIcon
-                  className={`${"w-4 h-4"} ${
-                    hasUserLiked ? "text-blue-600" : ""
-                  }`}
-                />
-                {!!data.ratings.count.likes && (
-                  <span>{data.ratings.count.likes}</span>
-                )}
-              </button>
-              <button
-                className="text-secondary text-xs flex space-x-2 items-center"
+                {!!data.ratings.count.likes && data.ratings.count.likes}
+              </Button>
+              <Button
+                className={classes.button}
+                size="small"
+                color="secondary"
+                startIcon={
+                  <ThumbDownIcon
+                    className={hasUserDisliked ? classes.highlightedButton : ""}
+                  />
+                }
                 disabled={ratingsMutation.isLoading}
                 onClick={onDislike}
+                disableRipple
               >
-                <DislikeIcon
-                  className={`${"w-4 h-4"} ${
-                    hasUserDisliked ? "text-blue-600" : ""
-                  }`}
-                />
-              </button>
+                {!!data.ratings.count.dislikes && data.ratings.count.dislikes}
+              </Button>
               <Button
-                appearance="none"
-                size="xs"
-                className="uppercase text-secondary text-semibold"
+                className={classes.button}
+                size="small"
+                disableRipple
                 type="submit"
+                color="secondary"
                 onClick={toggleIsReplying}
               >
                 Reply

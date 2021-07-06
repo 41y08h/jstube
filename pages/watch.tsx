@@ -16,6 +16,7 @@ import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
 import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 import ReplyIcon from "@material-ui/icons/Reply";
 import { Button } from "@material-ui/core";
+import { Divider } from "@material-ui/core";
 
 interface Props {
   data: QVideoDetailed;
@@ -63,7 +64,14 @@ const Watch: FC<Props> = ({ data }) => {
             </Button>
           </div>
         </div>
-        <ChannelBar channel={data.channel} />
+        <div className="my-4">
+          <Divider />
+          <div className="px-5 py-3">
+            <ChannelBar channel={data.channel} />
+          </div>
+
+          <Divider />
+        </div>
         <div className="px-5">
           <VideoDescription text={data.description} />
         </div>

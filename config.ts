@@ -1,7 +1,7 @@
-const isDevEnvironment = process.env.NODE_ENV === "development";
+export const __DEV__ = process.env.NODE_ENV === 'development'
 
-export const API_URL = isDevEnvironment
-  ? "http://localhost:5000"
-  : "https://jstube-api.herokuapp.com";
+export const API_URL = __DEV__
+  ? 'http://localhost:5000'
+  : 'https://jstube-api.herokuapp.com'
 
-export const siteName = "JsTube";
+export const siteName = 'JsTube'

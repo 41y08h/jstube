@@ -62,7 +62,6 @@ const Comment: FC<Props> = props => {
     editInputRef,
     editMutation,
     hasUserLiked,
-    deleteMutation,
     ratingsMutation,
     hasUserDisliked,
     onEditFormSubmit,
@@ -101,7 +100,17 @@ const Comment: FC<Props> = props => {
   const [isEditing, setIsEditing] = useState(false)
   const toggleEditing = () => setIsEditing(old => !old)
 
-  return deleteMutation.isLoading ? (
+  // Delete Mutation
+  const { isLoading: isDeleting, ...deleteMutation } = useMutation(
+    () => axios.delete(`/api/comments/${data.id}`),
+    { onSuccess: () => props.onDeleted(data.id) }
+  )
+  const deleteComment = authenticate(() => deleteMutation.mutate())
+  // ~deleteMutation.mutate~ --> () => deleteMutation.mutate() here is important
+  // otherwise we'll get type errors
+  // when attaching event handler
+
+  return isDeleting ? (
     <div className='grid justify-center py-5'>
       <CircularProgress />
     </div>
@@ -164,7 +173,7 @@ const Comment: FC<Props> = props => {
                   <EditIcon className='mr-3' fontSize='small' />
                   <Typography>Edit</Typography>
                 </MenuItem>
-                <MenuItem onClick={() => deleteMutation.mutate()}>
+                <MenuItem onClick={deleteComment} disabled={isDeleting}>
                   <DeleteIcon className='mr-3' fontSize='small' />
                   <Typography>Delete</Typography>
                 </MenuItem>

@@ -3,7 +3,6 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Typography from '@material-ui/core/Typography'
 import Replies from './Replies'
-import EditForm from './EditForm'
 import Link from 'next/link'
 import EditInput from './EditInput'
 import { FC, FormEventHandler, useState, useRef } from 'react'
@@ -35,8 +34,10 @@ import MenuItem from '@material-ui/core/MenuItem'
 import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit'
 import IconButton from '@material-ui/core/IconButton'
+import grey from '@material-ui/core/colors/grey'
+import InputBase from '@material-ui/core/InputBase'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   button: {
     paddingLeft: '0.5rem',
     paddingRight: '0.5rem',
@@ -46,11 +47,19 @@ const useStyles = makeStyles({
   highlightedButton: {
     color: blue[700],
   },
-})
+  input: {
+    ...theme.typography.body2,
+    backgroundColor: grey[200],
+    padding: '0.8rem',
+    width: '100%',
+    borderRadius: 6,
+  },
+}))
 
 interface Props {
   data: IComment
   onDeleted(id: number): any
+  onEdited(editedComment: IComment): any
 }
 
 const Comment: FC<Props> = props => {
@@ -59,8 +68,6 @@ const Comment: FC<Props> = props => {
     onLike,
     onDislike,
     isAuthorUser,
-    editInputRef,
-    editMutation,
     hasUserLiked,
     ratingsMutation,
     hasUserDisliked,
@@ -74,7 +81,7 @@ const Comment: FC<Props> = props => {
   const [newReplies, setNewReplies] = useState<IReply[]>([])
   const repliesMutation = useMutation(async (text: string) =>
     axios
-      .post<IReply>(`/api/comments/${data.id}/replies`, { text })
+      .post<IReply>(`/api/comments/${props.data.id}/replies`, { text })
       .then(res => res.data)
   )
   const [isReplying, setIsReplying] = useState(false)
@@ -96,14 +103,31 @@ const Comment: FC<Props> = props => {
     submit()
   }
 
-  // New Code
-  const [isEditing, setIsEditing] = useState(false)
-  const toggleEditing = () => setIsEditing(old => !old)
+  // Edit Mutation
+  const editInputRef = useRef<HTMLTextAreaElement>(null)
+  const [isEditingMode, setIsEditingMode] = useState(false)
+  const toggleEditingMode = () => setIsEditingMode(old => !old)
+
+  const { isLoading: isEditing, ...editMutation } = useMutation(
+    (text: string) =>
+      axios.patch<IComment>(`/api/comments/${props.data.id}`, { text }),
+    {
+      onSuccess: res => {
+        props.onEdited(res.data)
+        toggleEditingMode()
+      },
+    }
+  )
+
+  const editComment = authenticate(() => {
+    const text = editInputRef.current?.value
+    if (text) editMutation.mutate(text)
+  })
 
   // Delete Mutation
   const { isLoading: isDeleting, ...deleteMutation } = useMutation(
-    () => axios.delete(`/api/comments/${data.id}`),
-    { onSuccess: () => props.onDeleted(data.id) }
+    () => axios.delete(`/api/comments/${props.data.id}`),
+    { onSuccess: () => props.onDeleted(props.data.id) }
   )
   const deleteComment = authenticate(() => deleteMutation.mutate())
   // ~deleteMutation.mutate~ --> () => deleteMutation.mutate() here is important
@@ -117,59 +141,52 @@ const Comment: FC<Props> = props => {
   ) : (
     <div className='flex relative w-full'>
       <div className='flex w-full space-x-4'>
-        <Link href={`/channel/${data.author.id}`}>
+        <Link href={`/channel/${props.data.author.id}`}>
           <a>
             <Avatar
               style={{ width: '2rem', height: '2rem' }}
-              src={data.author.picture}
-              alt={data.author.name}
+              src={props.data.author.picture}
+              alt={props.data.author.name}
             />
           </a>
         </Link>
-        {isEditing ? (
-          <EditForm
-            className='flex flex-col w-full'
-            onSubmit={onEditFormSubmit}
-          >
-            {editMutation.isLoading ? (
+        {isEditingMode ? (
+          <div className='w-full'>
+            {isEditing ? (
               <div className='grid justify-center py-5'>
                 <CircularProgress />
               </div>
             ) : (
-              <div>
+              <form className='flex flex-col' onSubmit={editComment}>
                 <MultilineInput
-                  autoFocus
-                  className='w-full'
                   required
-                  ref={editInputRef}
-                  defaultValue={data.text}
+                  autoFocus
+                  inputRef={editInputRef}
+                  defaultValue={props.data.text}
+                  className={classes.input}
+                  placeholder='Keep writing...'
                 />
-                <div className='flex  justify-end pt-3 space-x-2'>
-                  <Button
-                    size='sm'
-                    appearance='none'
-                    className='uppercase font-medium text-secondary'
-                    onClick={toggleEditing}
-                  >
+                <div className='flex justify-end pt-3 space-x-2'>
+                  <Button color='secondary' onClick={toggleEditingMode}>
                     Cancel
                   </Button>
                   <Button
-                    size='sm'
                     type='submit'
-                    appearance='primary'
-                    className='uppercase font-medium'
+                    color='primary'
+                    variant='contained'
+                    disableElevation
                   >
                     Save
                   </Button>
                 </div>
-              </div>
+              </form>
             )}
-          </EditForm>
+          </div>
         ) : (
           <div className='flex flex-col w-full'>
             <div className='absolute -top-2 right-1'>
               <CommentMenu>
-                <MenuItem onClick={toggleEditing}>
+                <MenuItem onClick={toggleEditingMode}>
                   <EditIcon className='mr-3' fontSize='small' />
                   <Typography>Edit</Typography>
                 </MenuItem>
@@ -180,15 +197,17 @@ const Comment: FC<Props> = props => {
               </CommentMenu>
             </div>
             <div className='flex space-x-2'>
-              <Link href={`/channel/${data.author.id}`}>
+              <Link href={`/channel/${props.data.author.id}`}>
                 <a>
-                  <Typography variant='body2'>{data.author.name}</Typography>
+                  <Typography variant='body2'>
+                    {props.data.author.name}
+                  </Typography>
                 </a>
               </Link>
               <Typography variant='body2' color='secondary'>
-                {timeSince(new Date(data.createdAt))}
+                {timeSince(new Date(props.data.createdAt))}
               </Typography>
-              {data.updatedAt !== data.createdAt && (
+              {props.data.updatedAt !== props.data.createdAt && (
                 <Typography variant='body2' color='secondary'>
                   (edited)
                 </Typography>
@@ -196,7 +215,7 @@ const Comment: FC<Props> = props => {
             </div>
             <div className='mt-2'>
               <Typography variant='body1' className='whitespace-pre-wrap'>
-                {data.text.trim()}
+                {props.data.text.trim()}
               </Typography>
             </div>
             <div className='flex mt-2'>
@@ -213,7 +232,8 @@ const Comment: FC<Props> = props => {
                 onClick={onLike}
                 disableRipple
               >
-                {!!data.ratings.count.likes && data.ratings.count.likes}
+                {!!props.data.ratings.count.likes &&
+                  props.data.ratings.count.likes}
               </Button>
               <Button
                 className={classes.button}
@@ -228,7 +248,8 @@ const Comment: FC<Props> = props => {
                 onClick={onDislike}
                 disableRipple
               >
-                {!!data.ratings.count.dislikes && data.ratings.count.dislikes}
+                {!!props.data.ratings.count.dislikes &&
+                  props.data.ratings.count.dislikes}
               </Button>
               <Button
                 className={classes.button}

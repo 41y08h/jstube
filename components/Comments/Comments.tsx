@@ -78,7 +78,7 @@ const Comments: FC<Props> = ({ videoId }) => {
       </div>
     )
 
-  if (!data) return
+  if (!data) return null
 
   const latestPage = data.pages[data.pages.length - 1]
 
@@ -123,12 +123,23 @@ const Comments: FC<Props> = ({ videoId }) => {
   }
 
   function setTotal(updater: (total: number) => number) {
-    const latestPage = data.pages[data.pages.length - 1]
-
     const total = updater(latestPage.total)
 
     queryClient.setQueryData<QueryData>(queryKey, data => ({
       pages: data?.pages.map(page => ({ ...page, total })) ?? [],
+      pageParams: data?.pageParams ?? [],
+    }))
+  }
+
+  function handleCommentEdited(editedComment: IComment) {
+    queryClient.setQueryData<QueryData>(queryKey, data => ({
+      pages:
+        data?.pages.map(page => ({
+          ...page,
+          items: page.items.map(item =>
+            item.id === editedComment.id ? editedComment : item
+          ),
+        })) ?? [],
       pageParams: data?.pageParams ?? [],
     }))
   }
@@ -183,6 +194,7 @@ const Comments: FC<Props> = ({ videoId }) => {
             key={newComment.id}
             data={newComment}
             onDeleted={onDeleted}
+            onEdited={handleCommentEdited}
           />
         ))}
         {data?.pages.map(page =>
@@ -190,7 +202,12 @@ const Comments: FC<Props> = ({ videoId }) => {
             newComments.find(
               newComment => newComment.id === comment.id
             ) ? null : (
-              <Comment key={comment.id} data={comment} onDeleted={onDeleted} />
+              <Comment
+                key={comment.id}
+                data={comment}
+                onDeleted={onDeleted}
+                onEdited={handleCommentEdited}
+              />
             )
           )
         )}

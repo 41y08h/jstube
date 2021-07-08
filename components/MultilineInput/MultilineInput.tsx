@@ -1,16 +1,22 @@
-import { TextareaAutosize, TextareaAutosizeProps } from "@material-ui/core";
-import { forwardRef } from "react";
+import { FC, useRef, useEffect, RefObject } from 'react'
+import { InputBase, InputBaseProps } from '@material-ui/core'
 
-const MultilineInput = forwardRef<HTMLTextAreaElement, TextareaAutosizeProps>(
-  ({ className, ...props }, ref) => {
-    return (
-      <TextareaAutosize
-        {...props}
-        ref={ref}
-        className={`border-b w-full resize-none bg-transparent outline-none ${className}`}
-      />
-    );
-  }
-);
+interface Props extends InputBaseProps {
+  inputRef?: RefObject<HTMLTextAreaElement>
+}
 
-export default MultilineInput;
+const MultilineInput: FC<Props> = props => {
+  const ref = useRef<HTMLTextAreaElement | null>(null)
+
+  useEffect(() => {
+    const element = props.inputRef?.current || ref.current
+    if (!element) return
+
+    // Put the cursor at the end of input
+    element.setSelectionRange(element.value.length, element.value.length)
+  }, [])
+
+  return <InputBase multiline inputRef={ref} {...props} />
+}
+
+export default MultilineInput

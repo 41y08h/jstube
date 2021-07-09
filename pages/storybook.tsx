@@ -1,11 +1,9 @@
-const image = "/download.jpg";
+import Comments from '../components/Comments'
 
 export default function StoryBook() {
   return (
-    <div style={{ width: "50%" }}>
-      <div className="aspect-ratio">
-        <img src={image} alt="aspect ratio demo" />
-      </div>
+    <div className='p-4'>
+      <Comments videoId={174} />
     </div>
-  );
+  )
 }

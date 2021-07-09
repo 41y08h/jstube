@@ -1,3 +1,4 @@
+import IRatings from '../../interfaces/Ratings'
 import CommentMenu from './CommentMenu'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
@@ -60,21 +61,11 @@ interface Props {
   data: IComment
   onDeleted(id: number): any
   onEdited(editedComment: IComment): any
+  onRated(id: number, ratings: IRatings): any
 }
 
 const Comment: FC<Props> = props => {
-  const {
-    data,
-    onLike,
-    onDislike,
-    isAuthorUser,
-    hasUserLiked,
-    ratingsMutation,
-    hasUserDisliked,
-    onEditFormSubmit,
-  } = useComment({ initialData: props.data, onDeleted: props.onDeleted })
   const classes = useStyles()
-  const queryClient = useQueryClient()
   const { authenticate, user } = useAuth()
   const replyInputRef = useRef<HTMLTextAreaElement>(null)
   const [totalReplies, setTotalReplies] = useState(props.data.replyCount)
@@ -133,6 +124,27 @@ const Comment: FC<Props> = props => {
   // ~deleteMutation.mutate~ --> () => deleteMutation.mutate() here is important
   // otherwise we'll get type errors
   // when attaching event handler
+  type RatingType = 'like' | 'dislike' | 'remove'
+
+  const { mutate: rate, isLoading: isRating } = useMutation(
+    (type: RatingType) => {
+      type T = IRatings
+
+      switch (type) {
+        case 'like':
+          return axios.post<T>(`/api/ratings/comments/${props.data.id}/like`)
+        case 'dislike':
+          return axios.post<T>(`/api/ratings/comments/${props.data.id}/dislike`)
+        case 'remove':
+          return axios.delete<T>(`/api/ratings/comments/${props.data.id}`)
+      }
+    },
+    { onSuccess: res => props.onRated(props.data.id, res.data) }
+  )
+
+  const hasUserLiked = props.data.ratings.userRatingStatus === 'LIKED'
+  const hasUserDisliked = props.data.ratings.userRatingStatus === 'DISLIKED'
+  const isAuthorUser = props.data.author.id === user?.id
 
   return isDeleting ? (
     <div className='grid justify-center py-5'>
@@ -228,8 +240,10 @@ const Comment: FC<Props> = props => {
                     className={hasUserLiked ? classes.highlightedButton : ''}
                   />
                 }
-                disabled={ratingsMutation.isLoading}
-                onClick={onLike}
+                disabled={isRating}
+                onClick={authenticate(() =>
+                  rate(hasUserLiked ? 'remove' : 'like')
+                )}
                 disableRipple
               >
                 {!!props.data.ratings.count.likes &&
@@ -244,8 +258,10 @@ const Comment: FC<Props> = props => {
                     className={hasUserDisliked ? classes.highlightedButton : ''}
                   />
                 }
-                disabled={ratingsMutation.isLoading}
-                onClick={onDislike}
+                disabled={isRating}
+                onClick={authenticate(() =>
+                  rate(hasUserDisliked ? 'remove' : 'dislike')
+                )}
                 disableRipple
               >
                 {!!props.data.ratings.count.dislikes &&

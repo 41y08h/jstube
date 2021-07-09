@@ -18,6 +18,7 @@ import Typography from '@material-ui/core/Typography'
 import { InputBase } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import grey from '@material-ui/core/colors/grey'
+import IRatings from '../../interfaces/Ratings'
 
 const useStyles = makeStyles(theme => ({
   heading: {
@@ -105,7 +106,7 @@ const Comments: FC<Props> = ({ videoId }) => {
     submit()
   }
 
-  function onDeleted(id: number) {
+  function handleCommentDeleted(id: number) {
     // Remove from pages cache
     queryClient.setQueryData<T>(queryKey, data => ({
       pages:
@@ -138,6 +139,19 @@ const Comments: FC<Props> = ({ videoId }) => {
           ...page,
           items: page.items.map(item =>
             item.id === editedComment.id ? editedComment : item
+          ),
+        })) ?? [],
+      pageParams: data?.pageParams ?? [],
+    }))
+  }
+
+  function handleCommentRated(id: number, ratings: IRatings) {
+    queryClient.setQueryData<QueryData>(queryKey, data => ({
+      pages:
+        data?.pages.map(page => ({
+          ...page,
+          items: page.items.map(item =>
+            item.id === id ? { ...item, ratings } : item
           ),
         })) ?? [],
       pageParams: data?.pageParams ?? [],
@@ -193,8 +207,9 @@ const Comments: FC<Props> = ({ videoId }) => {
           <Comment
             key={newComment.id}
             data={newComment}
-            onDeleted={onDeleted}
+            onDeleted={handleCommentDeleted}
             onEdited={handleCommentEdited}
+            onRated={handleCommentRated}
           />
         ))}
         {data?.pages.map(page =>
@@ -205,8 +220,9 @@ const Comments: FC<Props> = ({ videoId }) => {
               <Comment
                 key={comment.id}
                 data={comment}
-                onDeleted={onDeleted}
+                onDeleted={handleCommentDeleted}
                 onEdited={handleCommentEdited}
+                onRated={handleCommentRated}
               />
             )
           )

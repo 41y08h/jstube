@@ -157,6 +157,19 @@ const Comments: FC<Props> = ({ videoId }) => {
     }))
   }
 
+  function handleCommentReplied(id: number) {
+    queryClient.setQueryData<QueryData>(queryKey, data => ({
+      pages:
+        data?.pages.map(page => ({
+          ...page,
+          items: page.items.map(item =>
+            item.id === id ? { ...item, replyCount: item.replyCount + 1 } : item
+          ),
+        })) ?? [],
+      pageParams: data?.pageParams ?? [],
+    }))
+  }
+
   if (!data || isLoading) return <CenteredSpinner spacing={8} />
 
   return (
@@ -211,6 +224,8 @@ const Comments: FC<Props> = ({ videoId }) => {
               onDeleted={handleCommentDeleted}
               onEdited={handleCommentEdited}
               onRated={handleCommentRated}
+              onReplied={handleCommentReplied}
+              videoId={videoId}
             />
           ))
         )}

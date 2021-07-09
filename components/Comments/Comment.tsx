@@ -1,8 +1,7 @@
 import axios from 'axios'
 import Link from 'next/link'
-import Replies from './Replies'
+import Replies from '../Replies'
 import CommentMenu from './CommentMenu'
-import { useMutation } from 'react-query'
 import { Button } from '@material-ui/core'
 import timeSince from '../../lib/timeSince'
 import { useAuth } from '../../contexts/Auth'
@@ -19,9 +18,10 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import Typography from '@material-ui/core/Typography'
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt'
-import IComment, { IReply } from '../../interfaces/Comment'
 import { FC, FormEventHandler, useState, useRef } from 'react'
+import IComment, { ICommentPage } from '../../interfaces/Comment'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import { useMutation, useQueryClient, InfiniteData } from 'react-query'
 
 const useStyles = makeStyles(theme => ({
   input: {
@@ -45,10 +45,20 @@ interface Props {
   onDeleted(id: number): any
   onEdited(editedComment: IComment): any
   onRated(id: number, ratings: IRatings): any
+  onReplied(id: number, replyComment: IComment): any
+  videoId: number
 }
 
-const Comment: FC<Props> = ({ data, onDeleted, onEdited, onRated }) => {
+const Comment: FC<Props> = ({
+  data,
+  onDeleted,
+  onEdited,
+  onRated,
+  onReplied,
+  videoId,
+}) => {
   const classes = useStyles()
+  const queryClient = useQueryClient()
   const { authenticate, user } = useAuth()
 
   // Edit Mutation
@@ -101,12 +111,12 @@ const Comment: FC<Props> = ({ data, onDeleted, onEdited, onRated }) => {
 
   const { mutate: reply, isLoading: isReplying } = useMutation(
     (text: string) =>
-      axios.post<IReply>(`/api/comments/${data.id}/replies`, { text }),
+      axios.post<IComment>(`/api/comments/${data.id}/replies`, { text }),
     {
       onSuccess: res => {
         toggleReplyingMode()
-        // setNewReplies(old => [newReply, ...old])
-        // setTotalReplies(old => old + 1)
+        onReplied(data.id, res.data)
+        addNewReply(res.data)
       },
     }
   )
@@ -115,13 +125,34 @@ const Comment: FC<Props> = ({ data, onDeleted, onEdited, onRated }) => {
   const [isReplyingMode, setIsReplyingMode] = useState(false)
   const toggleReplyingMode = () => setIsReplyingMode(old => !old)
 
+  const [isViewingReplies, setIsViewingReplies] = useState(false)
+  const toggleRepliesView = () => setIsViewingReplies(old => !old)
+
   const handleReplySubmit: FormEventHandler = event => {
     event.preventDefault()
     authenticate(() => {
       const text = replyInputRef?.current?.value
-      alert(text)
       if (text) reply(text)
     })()
+  }
+
+  function addNewReply(replyComment: IComment) {
+    type QueryData = InfiniteData<ICommentPage>
+    const queryKey = `/api/comments/${data.id}/replies`
+
+    queryClient.setQueryData<QueryData>(queryKey, data => ({
+      pages: data?.pages.map((page, i) => {
+        const isFirstPage = i === 0
+        return isFirstPage
+          ? {
+              ...page,
+              total: page.total + 1,
+              items: [replyComment, ...page.items],
+            }
+          : page
+      }) ?? [{ total: 1, hasMore: false, items: [replyComment] }],
+      pageParams: data?.pageParams ?? [],
+    }))
   }
 
   const hasUserLiked = data.ratings.userRatingStatus === 'LIKED'
@@ -295,6 +326,21 @@ const Comment: FC<Props> = ({ data, onDeleted, onEdited, onRated }) => {
                 </div>
               </form>
             ))}
+          {Boolean(data.replyCount) && (
+            <>
+              <button
+                className='text-blue-600 text-sm font-medium tracking-wide'
+                onClick={() => toggleRepliesView()}
+              >
+                {isViewingReplies
+                  ? `◤ Hide ${data.replyCount} replies`
+                  : `◢ View ${data.replyCount} replies`}
+              </button>
+              {isViewingReplies && (
+                <Replies commentId={data.id} videoId={videoId} />
+              )}
+            </>
+          )}
         </div>
       )}
     </div>

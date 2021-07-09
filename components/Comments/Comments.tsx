@@ -47,16 +47,18 @@ const Comments: FC<Props> = ({ videoId }) => {
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery(
       queryKey,
-      async ({ pageParam = 1 }) => {
+      async ({ pageParam }) => {
         const { data } = await axios.get<ICommentPage>(
           `/api/comments/${videoId}`,
-          { params: { page: pageParam } }
+          { params: { beforeId: pageParam } }
         )
         return data
       },
       {
         getNextPageParam: lastPage =>
-          lastPage.hasMore ? lastPage.page + 1 : undefined,
+          lastPage.hasMore
+            ? lastPage.items[lastPage.items.length - 1].id
+            : undefined,
       }
     )
 

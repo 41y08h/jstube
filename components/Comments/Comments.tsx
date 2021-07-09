@@ -1,3 +1,4 @@
+import CenteredSpinner from '../CenteredSpinner'
 import {
   InfiniteData,
   useInfiniteQuery,
@@ -42,30 +43,46 @@ type QueryData = InfiniteData<ICommentPage>
 
 const Comments: FC<Props> = ({ videoId }) => {
   const classes = useStyles()
-  const { authenticate, user } = useAuth()
   const queryClient = useQueryClient()
-  const [bottomRef, isAtBottom] = useInView()
-  const inputRef = useRef<HTMLTextAreaElement>(null)
-
+  const { authenticate, user } = useAuth()
   const queryKey = `/api/comments/${videoId}`
-  const [newComments, setNewComments] = useState<IComment[]>([])
 
+  // Data query
+  const [bottomRef, isAtBottom] = useInView()
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery(
       queryKey,
-      async ({ pageParam = 1 }) =>
-        axios
-          .get<ICommentPage>(`/api/comments/${videoId}`, {
-            params: { page: pageParam },
-          })
-          .then(res => res.data),
+      async ({ pageParam = 1 }) => {
+        const { data } = await axios.get<ICommentPage>(
+          `/api/comments/${videoId}`,
+          { params: { page: pageParam } }
+        )
+        return data
+      },
       {
         getNextPageParam: lastPage =>
           lastPage.hasMore ? lastPage.page + 1 : undefined,
       }
     )
 
+  const latestPage = data?.pages[data?.pages.length - 1]
+
+  function setTotal(updater: (total: number) => number) {
+    const total = updater(latestPage.total)
+
+    queryClient.setQueryData<QueryData>(queryKey, data => ({
+      pages: data?.pages.map(page => ({ ...page, total })) ?? [],
+      pageParams: data?.pageParams ?? [],
+    }))
+  }
+
+  useEffect(() => {
+    if (isAtBottom) fetchNextPage()
+  }, [isAtBottom, fetchNextPage])
+  // ---
+
   // Add new comment functionality
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const [isCommentingMode, setIsCommentingMode] = useState(false)
   const { mutate: comment, isLoading: isCommenting } = useMutation(
     (text: string) =>
@@ -94,21 +111,6 @@ const Comments: FC<Props> = ({ videoId }) => {
   }
   // -----
 
-  useEffect(() => {
-    if (isAtBottom) fetchNextPage()
-  }, [isAtBottom, fetchNextPage])
-
-  if (isLoading)
-    return (
-      <div className='grid justify-center py-8'>
-        <CircularProgress />
-      </div>
-    )
-
-  if (!data) return null
-
-  const latestPage = data.pages[data.pages.length - 1]
-
   const handleSubmit: FormEventHandler = event => {
     event.preventDefault()
 
@@ -119,29 +121,17 @@ const Comments: FC<Props> = ({ videoId }) => {
   }
 
   function handleCommentDeleted(id: number) {
-    // Remove from pages cache
-    queryClient.setQueryData<T>(queryKey, data => ({
+    queryClient.setQueryData<QueryData>(queryKey, data => ({
       pages:
         data?.pages.map(page => {
-          const items = page.items.filter(c => c.id !== id)
+          const items = page.items.filter(item => item.id !== id)
           return { ...page, items }
         }) ?? [],
       pageParams: data?.pageParams ?? [],
     }))
 
-    setNewComments(comments => comments.filter(comment => comment.id !== id))
-
     // Decrease total
     setTotal(total => total - 1)
-  }
-
-  function setTotal(updater: (total: number) => number) {
-    const total = updater(latestPage.total)
-
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
-      pages: data?.pages.map(page => ({ ...page, total })) ?? [],
-      pageParams: data?.pageParams ?? [],
-    }))
   }
 
   function handleCommentEdited(editedComment: IComment) {
@@ -170,14 +160,16 @@ const Comments: FC<Props> = ({ videoId }) => {
     }))
   }
 
+  if (!data || isLoading) return <CenteredSpinner spacing={8} />
+
   return (
     <div>
       <Typography variant='body1' className={classes.heading}>
-        {latestPage.total} Comments
+        {latestPage?.total} Comments
       </Typography>
       <form className='relative mt-5 mb-8' onSubmit={handleSubmit}>
         {isCommenting ? (
-          <CircularProgress />
+          <CenteredSpinner spacing={0} />
         ) : (
           <div>
             <div className='flex space-x-4'>
@@ -214,33 +206,20 @@ const Comments: FC<Props> = ({ videoId }) => {
       </form>
 
       <div className='space-y-5'>
-        {newComments.map(newComment => (
-          <Comment
-            key={newComment.id}
-            data={newComment}
-            onDeleted={handleCommentDeleted}
-            onEdited={handleCommentEdited}
-            onRated={handleCommentRated}
-          />
-        ))}
-        {data?.pages.map(page =>
-          page.items.map(comment =>
-            newComments.find(
-              newComment => newComment.id === comment.id
-            ) ? null : (
-              <Comment
-                key={comment.id}
-                data={comment}
-                onDeleted={handleCommentDeleted}
-                onEdited={handleCommentEdited}
-                onRated={handleCommentRated}
-              />
-            )
-          )
+        {data.pages.map(page =>
+          page.items.map(comment => (
+            <Comment
+              key={comment.id}
+              data={comment}
+              onDeleted={handleCommentDeleted}
+              onEdited={handleCommentEdited}
+              onRated={handleCommentRated}
+            />
+          ))
         )}
       </div>
       <div ref={bottomRef} />
-      {isFetchingNextPage && <Loading className='my-4' />}
+      {isFetchingNextPage && <CenteredSpinner />}
     </div>
   )
 }

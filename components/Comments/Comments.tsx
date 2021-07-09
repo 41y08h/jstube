@@ -45,10 +45,7 @@ const Comments: FC<Props> = ({ videoId }) => {
   const { authenticate, user } = useAuth()
   const queryClient = useQueryClient()
   const [bottomRef, isAtBottom] = useInView()
-  const inputRef = useRef<HTMLDivElement>(null)
-  const [isCommenting, setIsCommenting] = useState(false)
-
-  const [isCommentingMode, setIsCommentingMode] = useState(false)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
   const queryKey = `/api/comments/${videoId}`
   const [newComments, setNewComments] = useState<IComment[]>([])
@@ -67,9 +64,35 @@ const Comments: FC<Props> = ({ videoId }) => {
           lastPage.hasMore ? lastPage.page + 1 : undefined,
       }
     )
-  const commentsMutation = useMutation(async (text: string) =>
-    axios.post<IComment>(queryKey, { text }).then(res => res.data)
+
+  // Add new comment functionality
+  const [isCommentingMode, setIsCommentingMode] = useState(false)
+  const { mutate: comment, isLoading: isCommenting } = useMutation(
+    (text: string) =>
+      axios.post<IComment>(`/api/comments/${videoId}`, { text }),
+    { onSuccess: res => handleCommented(res.data) }
   )
+
+  function toggleCommentingMode() {
+    if (inputRef.current) inputRef.current.value = ''
+    setIsCommentingMode(old => !old)
+  }
+
+  function handleCommented(newComment: IComment) {
+    queryClient.setQueryData<QueryData>(queryKey, data => ({
+      pages:
+        data?.pages.map((page, i) => {
+          const isFirstPage = i === 0
+          return isFirstPage
+            ? { ...page, items: [newComment, ...page.items] }
+            : page
+        }) ?? [],
+      pageParams: data?.pageParams ?? [],
+    }))
+    setTotal(old => old + 1)
+    toggleCommentingMode()
+  }
+  // -----
 
   useEffect(() => {
     if (isAtBottom) fetchNextPage()
@@ -86,27 +109,13 @@ const Comments: FC<Props> = ({ videoId }) => {
 
   const latestPage = data.pages[data.pages.length - 1]
 
-  const toggleIsCommenting = () => {
-    if (inputRef.current) inputRef.current.value = ''
-    setIsCommenting(old => !old)
-  }
-
   const handleSubmit: FormEventHandler = event => {
     event.preventDefault()
 
-    const submit = authenticate(async () => {
+    authenticate(async () => {
       const text = inputRef?.current?.value
-      if (!text) return
-
-      const newComment = await commentsMutation.mutateAsync(text)
-      setNewComments(old => [newComment, ...old])
-
-      setTotal(total => total + 1)
-
-      toggleIsCommenting()
-    })
-
-    submit()
+      if (text) comment(text)
+    })()
   }
 
   function handleCommentDeleted(id: number) {
@@ -161,15 +170,13 @@ const Comments: FC<Props> = ({ videoId }) => {
     }))
   }
 
-  const toggleCommentingMode = () => setIsCommentingMode(old => !old)
-
   return (
     <div>
       <Typography variant='body1' className={classes.heading}>
         {latestPage.total} Comments
       </Typography>
       <form className='relative mt-5 mb-8' onSubmit={handleSubmit}>
-        {commentsMutation.isLoading ? (
+        {isCommenting ? (
           <CircularProgress />
         ) : (
           <div>

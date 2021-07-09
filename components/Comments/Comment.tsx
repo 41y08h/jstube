@@ -18,7 +18,9 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import Typography from '@material-ui/core/Typography'
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt'
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp'
 import { FC, FormEventHandler, useState, useRef } from 'react'
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import IComment, { ICommentPage } from '../../interfaces/Comment'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useMutation, useQueryClient, InfiniteData } from 'react-query'
@@ -38,6 +40,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: '0.5rem',
   },
   highlightedButton: { color: blue[700] },
+  blueTextbutton: { color: blue[700], textTransform: 'unset' },
 }))
 
 interface Props {
@@ -327,19 +330,21 @@ const Comment: FC<Props> = ({
               </form>
             ))}
           {Boolean(data.replyCount) && (
-            <>
-              <button
-                className='text-blue-600 text-sm font-medium tracking-wide'
+            <div>
+              <Button
+                className={classes.blueTextbutton}
                 onClick={() => toggleRepliesView()}
+                disableRipple
               >
+                {isViewingReplies ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
                 {isViewingReplies
-                  ? `◤ Hide ${data.replyCount} replies`
-                  : `◢ View ${data.replyCount} replies`}
-              </button>
+                  ? `Hide ${data.replyCount} replies`
+                  : `View ${data.replyCount} replies`}
+              </Button>
               {isViewingReplies && (
                 <Replies commentId={data.id} videoId={videoId} />
               )}
-            </>
+            </div>
           )}
         </div>
       )}

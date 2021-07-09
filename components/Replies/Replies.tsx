@@ -1,11 +1,17 @@
 import axios from 'axios'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import Comment from '../Comments/Comment'
+import Button from '@material-ui/core/Button'
 import IRatings from '../../interfaces/Ratings'
 import CenteredSpinner from '../CenteredSpinner'
-import { useInView } from 'react-intersection-observer'
 import IComment, { ICommentPage } from '../../interfaces/Comment'
 import { useInfiniteQuery, useQueryClient, InfiniteData } from 'react-query'
+import { makeStyles } from '@material-ui/styles'
+import blue from '@material-ui/core/colors/blue'
+
+const useStyles = makeStyles({
+  blueTextbutton: { color: blue[700], textTransform: 'unset' },
+})
 
 interface Props {
   commentId: number
@@ -17,8 +23,8 @@ type QueryData = InfiniteData<ICommentPage>
 const Replies: FC<Props> = ({ commentId, videoId }) => {
   const queryKey = `/api/comments/${commentId}/replies`
   const queryClient = useQueryClient()
+  const classes = useStyles()
 
-  const [bottomRef, isAtBottom] = useInView()
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery(
       queryKey,
@@ -33,10 +39,6 @@ const Replies: FC<Props> = ({ commentId, videoId }) => {
             : undefined,
       }
     )
-
-  useEffect(() => {
-    if (isAtBottom) fetchNextPage()
-  }, [isAtBottom, fetchNextPage])
 
   function handleCommentDeleted(id: number) {
     // Remove from the replies data
@@ -123,7 +125,7 @@ const Replies: FC<Props> = ({ commentId, videoId }) => {
   if (isLoading) return <CenteredSpinner />
 
   return (
-    <div className='space-y-5'>
+    <div className='space-y-5 py-4'>
       {data?.pages.map(page =>
         page.items.map(comment => (
           <Comment
@@ -137,8 +139,19 @@ const Replies: FC<Props> = ({ commentId, videoId }) => {
           />
         ))
       )}
-      <div ref={bottomRef} />
-      {isFetchingNextPage && <CenteredSpinner />}
+      {isFetchingNextPage ? (
+        <CenteredSpinner />
+      ) : (
+        Boolean(data?.pages[data?.pages.length - 1].hasMore) && (
+          <Button
+            className={classes.blueTextbutton}
+            onClick={() => fetchNextPage()}
+            color='primary'
+          >
+            Show more replies
+          </Button>
+        )
+      )}
     </div>
   )
 }

@@ -1,4 +1,3 @@
-import CenteredSpinner from '../CenteredSpinner'
 import {
   InfiniteData,
   useInfiniteQuery,
@@ -8,24 +7,20 @@ import {
 import axios from 'axios'
 import Comment from './Comment'
 import { useAuth } from '../../contexts/Auth'
+import Button from '@material-ui/core/Button'
+import Avatar from '@material-ui/core/Avatar'
+import MultilineInput from '../MultilineInput'
+import IRatings from '../../interfaces/Ratings'
+import CenteredSpinner from '../CenteredSpinner'
+import grey from '@material-ui/core/colors/grey'
+import { makeStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
 import { useInView } from 'react-intersection-observer'
 import IComment, { ICommentPage } from '../../interfaces/Comment'
 import { FC, FormEventHandler, useEffect, useRef, useState } from 'react'
-import Button from '@material-ui/core/Button'
-import Avatar from '@material-ui/core/Avatar'
-import Loading from '../Loading'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Typography from '@material-ui/core/Typography'
-import { InputBase } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import grey from '@material-ui/core/colors/grey'
-import IRatings from '../../interfaces/Ratings'
-import MultilineInput from '../MultilineInput'
 
 const useStyles = makeStyles(theme => ({
-  heading: {
-    margin: '0.5rem 0',
-  },
+  heading: { margin: '0.5rem 0' },
   input: {
     ...theme.typography.body2,
     backgroundColor: grey[200],

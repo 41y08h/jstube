@@ -19,6 +19,7 @@ import { InputBase } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import grey from '@material-ui/core/colors/grey'
 import IRatings from '../../interfaces/Ratings'
+import MultilineInput from '../MultilineInput'
 
 const useStyles = makeStyles(theme => ({
   heading: {
@@ -46,6 +47,8 @@ const Comments: FC<Props> = ({ videoId }) => {
   const [bottomRef, isAtBottom] = useInView()
   const inputRef = useRef<HTMLDivElement>(null)
   const [isCommenting, setIsCommenting] = useState(false)
+
+  const [isCommentingMode, setIsCommentingMode] = useState(false)
 
   const queryKey = `/api/comments/${videoId}`
   const [newComments, setNewComments] = useState<IComment[]>([])
@@ -158,6 +161,8 @@ const Comments: FC<Props> = ({ videoId }) => {
     }))
   }
 
+  const toggleCommentingMode = () => setIsCommentingMode(old => !old)
+
   return (
     <div>
       <Typography variant='body1' className={classes.heading}>
@@ -174,18 +179,17 @@ const Comments: FC<Props> = ({ videoId }) => {
                 src={user?.picture}
                 alt={user?.name}
               />
-              <InputBase
-                multiline
+              <MultilineInput
                 required
-                className={classes.input}
                 inputRef={inputRef}
-                onClick={() => setIsCommenting(true)}
+                className={classes.input}
+                onClick={toggleCommentingMode}
                 placeholder='Add a public comment...'
               />
             </div>
-            {isCommenting && (
+            {isCommentingMode && (
               <div className='flex justify-end pt-3 space-x-2'>
-                <Button color='secondary' onClick={toggleIsCommenting}>
+                <Button color='secondary' onClick={toggleCommentingMode}>
                   Cancel
                 </Button>
                 <Button

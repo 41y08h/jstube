@@ -86,10 +86,12 @@ const Comments: FC<Props> = ({ videoId }) => {
       axios.post<IComment>(`/api/comments/${videoId}`, { text }),
     { onSuccess: res => handleCommented(res.data) }
   )
-
-  function toggleCommentingMode() {
-    if (inputRef.current) inputRef.current.value = ''
-    setIsCommentingMode(old => !old)
+  const setCommentMode = (mode: boolean) => {
+    if (mode) setIsCommentingMode(true)
+    else {
+      if (inputRef.current) inputRef.current.value = ''
+      setIsCommentingMode(false)
+    }
   }
 
   function handleCommented(newComment: IComment) {
@@ -104,7 +106,7 @@ const Comments: FC<Props> = ({ videoId }) => {
       pageParams: data?.pageParams ?? [],
     }))
     setTotal(old => old + 1)
-    toggleCommentingMode()
+    setCommentMode(false)
   }
   // -----
 
@@ -192,13 +194,13 @@ const Comments: FC<Props> = ({ videoId }) => {
                 required
                 inputRef={inputRef}
                 className={classes.input}
-                onClick={toggleCommentingMode}
+                onClick={() => setCommentMode(true)}
                 placeholder='Add a public comment...'
               />
             </div>
             {isCommentingMode && (
               <div className='flex justify-end pt-3 space-x-2'>
-                <Button color='secondary' onClick={toggleCommentingMode}>
+                <Button color='secondary' onClick={() => setCommentMode(false)}>
                   Cancel
                 </Button>
                 <Button

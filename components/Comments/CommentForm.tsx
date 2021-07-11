@@ -2,10 +2,11 @@ import { useAuth } from 'contexts/Auth'
 import MultilineInput from '../MultilineInput'
 import grey from '@material-ui/core/colors/grey'
 import { makeStyles, Avatar, Button } from '@material-ui/core'
-import { FC, FormEventHandler, useRef, useState } from 'react'
+import { FC, FormEventHandler, useState, RefObject } from 'react'
 
 interface Props {
   onSubmit: FormEventHandler
+  inputRef: RefObject<HTMLTextAreaElement>
 }
 
 const useStyles = makeStyles(theme => ({
@@ -19,10 +20,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const CommentForm: FC<Props> = ({ onSubmit }) => {
+const CommentForm: FC<Props> = ({ onSubmit, inputRef }) => {
   const { user } = useAuth()
   const classes = useStyles()
-  const inputRef = useRef<HTMLTextAreaElement>(null)
   const [isFormActive, setIsFormActive] = useState(false)
 
   const activateForm = () => setIsFormActive(true)

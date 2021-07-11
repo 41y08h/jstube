@@ -40,7 +40,7 @@ type QueryData = InfiniteData<ICommentPage>
 const Comments: FC<Props> = ({ videoId }) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
-  const { authenticate, user } = useAuth()
+  const { authenticate } = useAuth()
   const queryKey = `/api/comments/${videoId}`
 
   // Data query
@@ -79,45 +79,39 @@ const Comments: FC<Props> = ({ videoId }) => {
   }, [isAtBottom, fetchNextPage])
   // ---
 
-  // Add new comment functionality
-  const inputRef = useRef<HTMLTextAreaElement>(null)
-  const [isCommentingMode, setIsCommentingMode] = useState(false)
-  const { mutate: comment, isLoading: isCommenting } = useMutation(
-    (text: string) =>
-      axios.post<IComment>(`/api/comments/${videoId}`, { text }),
-    { onSuccess: res => handleCommented(res.data) }
-  )
-  const setCommentMode = (mode: boolean) => {
-    if (mode) setIsCommentingMode(true)
-    else {
-      if (inputRef.current) inputRef.current.value = ''
-      setIsCommentingMode(false)
-    }
+  const setPages = (updater: (pages: ICommentPage[]) => ICommentPage[]) => {
+    queryClient.setQueryData<QueryData>(queryKey, data => ({
+      pages: updater(data?.pages ?? []),
+      pageParams: data?.pageParams ?? [],
+    }))
   }
 
-  function handleCommented(newComment: IComment) {
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
-      pages:
-        data?.pages.map((page, i) => {
+  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const commentsMutation = useMutation((text: string) =>
+    axios.post<IComment>(`/api/comments/${videoId}`, { text })
+  )
+
+  const handleCommentFormSubmit: FormEventHandler = event => {
+    event.preventDefault()
+
+    const submit = authenticate(async () => {
+      const input = inputRef.current as HTMLTextAreaElement
+      const { data: newComment } = await commentsMutation.mutateAsync(
+        input.value
+      )
+
+      setPages(pages =>
+        pages.map((page, i) => {
+          // Insert new comment at first page
           const isFirstPage = i === 0
           return isFirstPage
             ? { ...page, items: [newComment, ...page.items] }
             : page
-        }) ?? [],
-      pageParams: data?.pageParams ?? [],
-    }))
-    setTotal(old => old + 1)
-    setCommentMode(false)
-  }
-  // -----
+        })
+      )
+    })
 
-  const handleSubmit: FormEventHandler = event => {
-    event.preventDefault()
-
-    authenticate(async () => {
-      const text = inputRef?.current?.value
-      if (text) comment(text)
-    })()
+    submit()
   }
 
   function handleCommentDeleted(id: number) {
@@ -181,13 +175,12 @@ const Comments: FC<Props> = ({ videoId }) => {
         {latestPage?.total} Comments
       </Typography>
       <div className='mt-5 mb-8'>
-        {isCommenting ? (
+        {commentsMutation.isLoading ? (
           <CenteredSpinner spacing={0} />
         ) : (
-          <CommentForm onSubmit={handleSubmit} />
+          <CommentForm onSubmit={handleCommentFormSubmit} inputRef={inputRef} />
         )}
       </div>
-
       <div className='space-y-5'>
         {data.pages.map(page =>
           page.items.map(comment => (
@@ -203,8 +196,8 @@ const Comments: FC<Props> = ({ videoId }) => {
           ))
         )}
       </div>
-      <div ref={bottomRef} />
       {isFetchingNextPage && <CenteredSpinner />}
+      <div ref={bottomRef} />
     </div>
   )
 }

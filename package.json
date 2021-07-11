@@ -30,6 +30,7 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-intersection-observer": "^8.32.0",
     "react-query": "^3.18.1",
+    "react-responsive": "^8.2.0",
     "react-toastify": "^7.0.3",
     "swr": "^0.5.5"
   },

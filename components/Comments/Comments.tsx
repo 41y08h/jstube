@@ -6,6 +6,7 @@ import {
 } from 'react-query'
 import axios from 'axios'
 import Comment from './Comment'
+import CommentForm from './CommentForm'
 import { useAuth } from '../../contexts/Auth'
 import Button from '@material-ui/core/Button'
 import Avatar from '@material-ui/core/Avatar'
@@ -179,43 +180,13 @@ const Comments: FC<Props> = ({ videoId }) => {
       <Typography variant='body1' className={classes.heading}>
         {latestPage?.total} Comments
       </Typography>
-      <form className='relative mt-5 mb-8' onSubmit={handleSubmit}>
+      <div className='mt-5 mb-8'>
         {isCommenting ? (
           <CenteredSpinner spacing={0} />
         ) : (
-          <div>
-            <div className='flex space-x-4'>
-              <Avatar
-                style={{ width: '2rem', height: '2rem' }}
-                src={user?.picture}
-                alt={user?.name}
-              />
-              <MultilineInput
-                required
-                inputRef={inputRef}
-                className={classes.input}
-                onClick={() => setCommentMode(true)}
-                placeholder='Add a public comment...'
-              />
-            </div>
-            {isCommentingMode && (
-              <div className='flex justify-end pt-3 space-x-2'>
-                <Button color='secondary' onClick={() => setCommentMode(false)}>
-                  Cancel
-                </Button>
-                <Button
-                  type='submit'
-                  color='primary'
-                  variant='contained'
-                  disableElevation
-                >
-                  Comment
-                </Button>
-              </div>
-            )}
-          </div>
+          <CommentForm onSubmit={handleSubmit} />
         )}
-      </form>
+      </div>
 
       <div className='space-y-5'>
         {data.pages.map(page =>

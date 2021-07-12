@@ -3,7 +3,6 @@ import Link from 'next/link'
 import Replies from '../Replies'
 import CommentMenu from './CommentMenu'
 import { Button } from '@material-ui/core'
-import timeSince from '../../lib/timeSince'
 import { useAuth } from '../../contexts/Auth'
 import Avatar from '@material-ui/core/Avatar'
 import EditIcon from '@material-ui/icons/Edit'
@@ -24,6 +23,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import IComment, { ICommentPage } from '../../interfaces/Comment'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useMutation, useQueryClient, InfiniteData } from 'react-query'
+import moment from 'moment'
 
 const useStyles = makeStyles(theme => ({
   input: {
@@ -232,7 +232,7 @@ const Comment: FC<Props> = ({
               </a>
             </Link>
             <Typography variant='body2' color='secondary'>
-              {timeSince(new Date(data.createdAt))}
+              {moment(data.createdAt).fromNow()}
             </Typography>
             {data.updatedAt !== data.createdAt && (
               <Typography variant='body2' color='secondary'>

@@ -57,6 +57,18 @@ interface Props {
   videoId: number
 }
 
+function useDeleteComment() {
+  const deleteMutation = useMutation(() =>
+    axios.delete(`/api/comments/${data.id}`)
+  )
+  const deleteComment = authenticate(async () => {
+    await deleteMutation.mutateAsync()
+    onDeleted(data.id)
+  })
+
+  return { deleteMutation, deletecomment }
+}
+
 const Comment: FC<Props> = ({
   data,
   onDeleted,
@@ -68,6 +80,8 @@ const Comment: FC<Props> = ({
   const classes = useStyles()
   const queryClient = useQueryClient()
   const { authenticate, user } = useAuth()
+
+  const { deleteMutation, deleteComment } = useDeleteComment()
 
   const [isEditing, setIsEditing] = useState(false)
   const editInputRef = useRef<HTMLTextAreaElement>(null)
@@ -91,15 +105,6 @@ const Comment: FC<Props> = ({
     submit()
   }
 
-  // Delete Mutation
-  const { isLoading: isDeleting, ...deleteMutation } = useMutation(
-    () => axios.delete(`/api/comments/${data.id}`),
-    { onSuccess: () => onDeleted(data.id) }
-  )
-  const deleteComment = authenticate(() => deleteMutation.mutate())
-  // ~deleteMutation.mutate~ --> () => deleteMutation.mutate() here is important
-  // otherwise we'll get type errors
-  // when attaching event handler
   type RatingType = 'like' | 'dislike' | 'remove'
 
   const { mutate: rate, isLoading: isRating } = useMutation(
@@ -203,7 +208,10 @@ const Comment: FC<Props> = ({
                   <EditIcon className='mr-3' fontSize='small' />
                   <Typography>Edit</Typography>
                 </MenuItem>
-                <MenuItem onClick={deleteComment} disabled={isDeleting}>
+                <MenuItem
+                  onClick={deleteComment}
+                  disabled={deleteMutation.isLoading}
+                >
                   <DeleteIcon className='mr-3' fontSize='small' />
                   <Typography>Delete</Typography>
                 </MenuItem>

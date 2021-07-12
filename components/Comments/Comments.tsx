@@ -34,6 +34,27 @@ interface Props {
 
 type QueryData = InfiniteData<ICommentPage>
 
+function useComments(videoId: number) {
+  const key = `/api/comments/${videoId}`
+
+  return useInfiniteQuery(
+    key,
+    async ({ pageParam }) => {
+      const { data } = await axios.get<ICommentPage>(key, {
+        params: { beforeId: pageParam },
+      })
+      return data
+    },
+    {
+      getNextPageParam(lastPage) {
+        return lastPage.hasMore
+          ? lastPage.items[lastPage.items.length - 1].id
+          : undefined
+      },
+    }
+  )
+}
+
 const Comments: FC<Props> = ({ videoId }) => {
   const classes = useStyles()
   const { authenticate } = useAuth()
@@ -42,21 +63,7 @@ const Comments: FC<Props> = ({ videoId }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   const [bottomRef, isAtBottom] = useInView()
-  const commentsQuery = useInfiniteQuery(
-    queryKey,
-    ({ pageParam }) =>
-      axios
-        .get<ICommentPage>(`/api/comments/${videoId}`, {
-          params: { beforeId: pageParam },
-        })
-        .then(res => res.data),
-    {
-      getNextPageParam: lastPage =>
-        lastPage.hasMore
-          ? lastPage.items[lastPage.items.length - 1].id
-          : undefined,
-    }
-  )
+  const commentsQuery = useComments(videoId)
   const commentsMutation = useMutation((text: string) =>
     axios.post<IComment>(`/api/comments/${videoId}`, { text })
   )

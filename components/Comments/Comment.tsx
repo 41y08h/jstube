@@ -8,6 +8,7 @@ import Avatar from '@material-ui/core/Avatar'
 import EditIcon from '@material-ui/icons/Edit'
 import MultilineInput from '../MultilineInput'
 import IRatings from '../../interfaces/Ratings'
+import CommentEditForm from './CommentEditForm'
 import { makeStyles } from '@material-ui/styles'
 import CenteredSpinner from '../CenteredSpinner'
 import blue from '@material-ui/core/colors/blue'
@@ -32,6 +33,10 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 6,
     padding: '0.8rem',
     backgroundColor: grey[200],
+  },
+  avatar: {
+    height: '2rem',
+    width: '2rem',
   },
   button: {
     width: 'auto',
@@ -64,26 +69,27 @@ const Comment: FC<Props> = ({
   const queryClient = useQueryClient()
   const { authenticate, user } = useAuth()
 
-  // Edit Mutation
+  const [isEditing, setIsEditing] = useState(false)
   const editInputRef = useRef<HTMLTextAreaElement>(null)
-  const [isEditingMode, setIsEditingMode] = useState(false)
-  const toggleEditingMode = () => setIsEditingMode(old => !old)
+  const toggleIsEditing = () => setIsEditing(old => !old)
 
-  const { isLoading: isEditing, ...editMutation } = useMutation(
-    (text: string) =>
-      axios.patch<IComment>(`/api/comments/${data.id}`, { text }),
-    {
-      onSuccess: res => {
-        onEdited(res.data)
-        toggleEditingMode()
-      },
-    }
+  const editMutation = useMutation((text: string) =>
+    axios.patch<IComment>(`/api/comments/${data.id}`, { text })
   )
 
-  const editComment = authenticate(() => {
-    const text = editInputRef.current?.value
-    if (text) editMutation.mutate(text)
-  })
+  const handleEditFormSubmit: FormEventHandler = event => {
+    event.preventDefault()
+    const submit = authenticate(async () => {
+      const input = editInputRef.current as HTMLTextAreaElement
+      const { data: editedComment } = await editMutation.mutateAsync(
+        input.value
+      )
+      onEdited(editedComment)
+      toggleIsEditing()
+    })
+
+    submit()
+  }
 
   // Delete Mutation
   const { isLoading: isDeleting, ...deleteMutation } = useMutation(
@@ -163,50 +169,29 @@ const Comment: FC<Props> = ({
   const isAuthoredByUser = data.author.id === user?.id
 
   return isDeleting ? (
-    <div className='grid justify-center py-5'>
-      <CircularProgress />
-    </div>
+    <CenteredSpinner />
   ) : (
     <div className='flex relative w-full space-x-4'>
       <Link href={`/channel/${data.author.id}`}>
         <a>
           <Avatar
-            style={{ width: '2rem', height: '2rem' }}
+            className={classes.avatar}
             src={data.author.picture}
             alt={data.author.name}
           />
         </a>
       </Link>
-      {isEditingMode ? (
+      {isEditing ? (
         <div className='w-full'>
-          {isEditing ? (
-            <div className='grid justify-center py-5'>
-              <CircularProgress />
-            </div>
+          {editMutation.isLoading ? (
+            <CenteredSpinner />
           ) : (
-            <form className='flex flex-col' onSubmit={editComment}>
-              <MultilineInput
-                required
-                autoFocus
-                inputRef={editInputRef}
-                defaultValue={data.text}
-                className={classes.input}
-                placeholder='Keep writing...'
-              />
-              <div className='flex justify-end pt-3 space-x-2'>
-                <Button color='secondary' onClick={toggleEditingMode}>
-                  Cancel
-                </Button>
-                <Button
-                  type='submit'
-                  color='primary'
-                  variant='contained'
-                  disableElevation
-                >
-                  Save
-                </Button>
-              </div>
-            </form>
+            <CommentEditForm
+              inputRef={editInputRef}
+              defaultValue={data.text}
+              onCancel={toggleIsEditing}
+              onSubmit={handleEditFormSubmit}
+            />
           )}
         </div>
       ) : (
@@ -214,7 +199,7 @@ const Comment: FC<Props> = ({
           <div className='absolute -top-2 right-1'>
             {isAuthoredByUser && (
               <CommentMenu>
-                <MenuItem onClick={toggleEditingMode}>
+                <MenuItem onClick={toggleIsEditing}>
                   <EditIcon className='mr-3' fontSize='small' />
                   <Typography>Edit</Typography>
                 </MenuItem>

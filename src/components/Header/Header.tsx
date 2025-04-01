@@ -1,20 +1,36 @@
 'use client'
 import Link from 'next/link'
-import React, { FC } from 'react'
-import { IconButton, Toolbar, AppBar } from '@mui/material'
+import React, { FC, useMemo } from 'react'
+import { IconButton, Toolbar, AppBar, Box } from '@mui/material'
 import MenuIcon from '@material-ui/icons/Menu'
 import SignInButton from '../SignInButton'
 import { useAuth } from '../../contexts/Auth'
 import Profile from './Profile'
 import Search from './Search'
+import { useTheme } from '@mui/material/styles'
 
 const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
   const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth()
+  const theme = useTheme()
+  const styles = useMemo(
+    () => ({
+      offset: theme.mixins.toolbar,
+    }),
+    [theme]
+  )
 
   return (
     <>
-      <AppBar position='fixed' variant='outlined'>
-        <Toolbar className={' text-primary'}>
+      <AppBar
+        position='fixed'
+        variant='outlined'
+        sx={{
+          boxShadow: 'none',
+          backgroundColor: 'white',
+          borderRight: 'none',
+        }}
+      >
+        <Toolbar className='text-primary justify-between'>
           <div className='flex items-center space-x-3'>
             <IconButton
               onClick={() => toggleSidebar()}
@@ -38,6 +54,7 @@ const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
           </div>
         </Toolbar>
       </AppBar>
+      <Box component='div' sx={styles.offset} />
     </>
   )
 }

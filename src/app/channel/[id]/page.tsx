@@ -8,12 +8,12 @@ import {
   CardMedia,
 } from '@material-ui/core'
 import Paper from '@material-ui/core/Paper'
-import ChannelTabs from '../../components/ChannelTabs'
+import ChannelTabs from '../../../components/ChannelTabs'
 import { useQuery } from '@tanstack/react-query'
 import { FC } from 'react'
-import { QVideo } from '../../interfaces/Video'
+import { QVideo } from '../../../interfaces/Video'
 import Link from 'next/link'
-import VideosList from '../../components/VideosList'
+import VideosList from '../../../components/VideosList'
 
 const Videos: FC<{ channelId: number }> = ({ channelId }) => {
   const { data, isLoading } = useQuery<QVideo[]>(

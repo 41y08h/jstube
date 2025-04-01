@@ -57,7 +57,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
     error,
     isLoading,
     authenticate,
-    isAuthenticated: false,
+    isAuthenticated: Boolean(user),
   }
 
   return (

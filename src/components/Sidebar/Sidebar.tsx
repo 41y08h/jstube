@@ -33,7 +33,6 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
       onOpen={toggleIsOpen}
       onClose={toggleIsOpen}
       sx={{
-        width: 245,
         overflowX: 'hidden',
       }}
     >

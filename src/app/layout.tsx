@@ -1,6 +1,5 @@
 'use client'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
-import './globals.css'
 import { ToastContainer } from 'react-toastify'
 import { AuthProvider } from '@/contexts/Auth'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -10,6 +9,8 @@ import { toast } from 'react-toastify'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider } from '@mui/material'
 import theme from '@/lib/theme'
+import 'react-toastify/dist/ReactToastify.css'
+import './globals.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {

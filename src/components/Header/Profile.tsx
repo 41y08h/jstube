@@ -3,20 +3,14 @@ import Link from 'next/link'
 import { MouseEvent } from 'react'
 import { useState, FC } from 'react'
 import { DetailedHTMLProps } from 'react'
-import Menu from '@material-ui/core/Menu'
 import { AnchorHTMLAttributes } from 'react'
-import Avatar from '@material-ui/core/Avatar'
 import { useAuth } from '../../contexts/Auth'
-import HelpIcon from '@material-ui/icons/Help'
-import Divider from '@material-ui/core/Divider'
-import MenuItem from '@material-ui/core/MenuItem'
-import { SvgIconTypeMap } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import Typography from '@material-ui/core/Typography'
-import SettingsIcon from '@material-ui/icons/Settings'
-import ExitToAppIcon from '@material-ui/icons/ExitToApp'
-import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import { OverridableComponent } from '@material-ui/core/OverridableComponent'
+import { Avatar, Divider, Menu, MenuItem, Typography } from '@mui/material'
+import AccountBoxIcon from '@mui/icons-material/AccountBox'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'
+import SettingsIcon from '@mui/icons-material/Settings'
+import HelpIcon from '@mui/icons-material/Help'
 
 interface Props {
   Icon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>>
@@ -32,14 +26,8 @@ const MenuItemContent: FC<Props> = ({ Icon, text }) => {
   )
 }
 
-const useStyles = makeStyles({
-  divider: { margin: '12px 0' },
-  menu: { width: 220 },
-})
-
 export default function Profile() {
   const { user } = useAuth()
-  const classes = useStyles()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const isMenuOpen = Boolean(anchorEl)
 
@@ -71,7 +59,7 @@ export default function Profile() {
         open={isMenuOpen}
         onClose={closeMenu}
         elevation={1}
-        classes={{ paper: classes.menu }}
+        sx={{ width: '220px' }}
       >
         <div className='p-4 pb-2 flex items-center space-x-4'>
           <Avatar src={user?.picture} alt={user?.name} />
@@ -79,20 +67,18 @@ export default function Profile() {
             {user?.name}
           </Typography>
         </div>
-        <Divider className={classes.divider} />
+        <Divider sx={{ margin: '12px 0' }} />
         <Link href={`/channel/${user?.id}`}>
-          <a>
-            <MenuItem onClick={closeMenu}>
-              <MenuItemContent Icon={AccountBoxIcon} text='Your channel' />
-            </MenuItem>
-          </a>
+          <MenuItem onClick={closeMenu}>
+            <MenuItemContent Icon={AccountBoxIcon} text='Your channel' />
+          </MenuItem>
         </Link>
         <a href='/api/logout'>
           <MenuItem onClick={closeMenu}>
             <MenuItemContent Icon={ExitToAppIcon} text='Sign out' />
           </MenuItem>
         </a>
-        <Divider className={classes.divider} />
+        <Divider sx={{ margin: '12px 0' }} />
         <MenuItem onClick={closeMenu}>
           <MenuItemContent Icon={SettingsIcon} text='Settings' />
         </MenuItem>

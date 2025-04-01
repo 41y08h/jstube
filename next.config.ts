@@ -1,4 +1,4 @@
-import type { NextConfig } from 'next'
+import { NextConfig } from 'next'
 
 const isDevEnvironment = process.env.NODE_ENV === 'development'
 

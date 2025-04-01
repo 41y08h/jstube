@@ -2,7 +2,6 @@ import { FC } from 'react'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import List from '@material-ui/core/List'
-import Fade from '@material-ui/core/Fade'
 import SignInButton from '../SignInButton'
 import Avatar from '@material-ui/core/Avatar'
 import { useAuth } from '../../contexts/Auth'
@@ -15,6 +14,7 @@ import { ISubscription } from '../../interfaces/Subscribers'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Image from 'next/image'
 import AlienImage from '@/images/alien.svg'
+import { Fade } from '@mui/material'
 
 const useStyles = makeStyles(theme => ({
   text: theme.typography.body2,

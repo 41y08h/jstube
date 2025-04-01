@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
 import SearchDialog from './SearchDialog'
-import SearchIcon from '@material-ui/icons/Search'
-import IconButton from '@material-ui/core/IconButton'
+import { IconButton } from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
 
 export default function Search() {
   const [isOpen, setIsOpen] = useState(false)

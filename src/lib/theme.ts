@@ -1,16 +1,17 @@
-import { createMuiTheme } from "@material-ui/core/styles";
-import red from "@material-ui/core/colors/red";
+'use client'
+import { createTheme } from '@mui/material'
+import { red } from '@mui/material/colors'
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     secondary: {
-      main: "#606060",
+      main: '#606060',
     },
-    red: {
-      main: red[500],
-      contrastText: "#fff",
-    },
+    // red: {
+    //   main: red[500],
+    //   contrastText: '#fff',
+    // },
   },
-});
+})
 
-export default theme;
+export default theme

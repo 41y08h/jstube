@@ -7,9 +7,10 @@ import { QVideos } from '../../interfaces/Video'
 import VideoLoadingGrid from '../VideoLoadingGrid'
 import { useInView } from 'react-intersection-observer'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import AlienImage from '../../images/alien.svg'
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
+import Image from 'next/image'
+import AlienImage from '@/images/alien.svg'
+import { Typography } from '@mui/material'
+import { Button } from '@mui/material'
 
 const Videos: FC<{ url: string }> = ({ url }) => {
   const {
@@ -20,17 +21,16 @@ const Videos: FC<{ url: string }> = ({ url }) => {
     isFetchingNextPage,
     fetchNextPage,
     refetch,
-  } = useInfiniteQuery<QVideos, AxiosError>(
-    url,
-    async ({ pageParam = 1 }) =>
+  } = useInfiniteQuery<QVideos, AxiosError>({
+    queryKey: [url],
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) =>
       axios(url, {
         params: { page: pageParam },
       }).then(res => res.data),
-    {
-      getNextPageParam: lastPage =>
-        lastPage.hasMore ? lastPage.page + 1 : undefined,
-    }
-  )
+    getNextPageParam: lastPage =>
+      lastPage.hasMore ? lastPage.page + 1 : undefined,
+  })
   const [bottomRef, isAtBottom] = useInView({ threshold: 0.1 })
 
   useEffect(() => {

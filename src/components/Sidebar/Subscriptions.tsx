@@ -7,13 +7,14 @@ import SignInButton from '../SignInButton'
 import Avatar from '@material-ui/core/Avatar'
 import { useAuth } from '../../contexts/Auth'
 import { makeStyles } from '@material-ui/core'
-import AlienImage from '../../images/alien.svg'
 import ListItem from '@material-ui/core/ListItem'
 import Typography from '@material-ui/core/Typography'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import { ISubscription } from '../../interfaces/Subscribers'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Image from 'next/image'
+import AlienImage from '@/images/alien.svg'
 
 const useStyles = makeStyles(theme => ({
   text: theme.typography.body2,
@@ -24,10 +25,10 @@ const useStyles = makeStyles(theme => ({
 const Subscriptions: FC = () => {
   const classes = useStyles()
   const { user: isLoggedIn, isLoading: isAuthLoading } = useAuth()
-  const { data, isLoading } = useQuery<ISubscription[]>(
-    '/api/subscribers/subscriptions',
-    { enabled: Boolean(isLoggedIn) }
-  )
+  const { data, isLoading } = useQuery<ISubscription[]>({
+    queryKey: ['/api/subscribers/subscriptions'],
+    enabled: Boolean(isLoggedIn),
+  })
 
   if (isLoading || isAuthLoading)
     return (

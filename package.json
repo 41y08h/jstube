@@ -9,9 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@headlessui/react": "^2.2.0",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
+    "@mui/icons-material": "^7.0.1",
+    "@mui/material": "^7.0.1",
+    "@mui/material-nextjs": "^7.0.0",
+    "@mui/styles": "^6.4.8",
+    "@svgr/webpack": "^8.1.0",
     "@tanstack/react-query": "^5.71.1",
     "@tanstack/react-query-devtools": "^5.71.1",
     "axios": "^1.8.4",

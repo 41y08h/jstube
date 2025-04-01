@@ -32,9 +32,12 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
       open={isOpen}
       onOpen={toggleIsOpen}
       onClose={toggleIsOpen}
-      classes={{ paper: `themed-scrollbar` }}
+      sx={{
+        width: 245,
+        overflowX: 'hidden',
+      }}
     >
-      <div>
+      <div className='flex items-center pt-2 pr-3.5'>
         <IconButton onClick={toggleIsOpen}>
           <MenuIcon />
         </IconButton>
@@ -62,18 +65,24 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
         })}
       </List>
       <Subscriptions />
-      <Divider />
+      <Divider sx={{ margin: '12px 0' }} />
       <Typography component='span' variant='button' className='px-7'>
         More from JsTube
       </Typography>
       <List>
         {moreItems.map((Item, i) => {
-          if (Item === 'divider') return <Divider key={i} />
+          if (Item === 'divider')
+            return <Divider key={i} sx={{ margin: '12px 0' }} />
           else {
             const Component = (
               <Link key={i} href={Item.link}>
                 <ListItem>
-                  <ListItemIcon>
+                  <ListItemIcon
+                    sx={{
+                      width: '46px',
+                      minWidth: 'unset',
+                    }}
+                  >
                     <Item.Icon />
                   </ListItemIcon>
                   <ListItemText primary={Item.text} />

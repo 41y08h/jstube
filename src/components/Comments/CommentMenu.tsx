@@ -3,7 +3,11 @@ import { FC, useState, MouseEvent } from 'react'
 import IconButton from '@material-ui/core/IconButton'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 
-const CommentMenu: FC = ({ children }) => {
+interface Props {
+  children: React.ReactNode
+}
+
+const CommentMenu: FC<Props> = ({ children }) => {
   const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(null)
 
   const toggleMenu = (event: MouseEvent<HTMLElement>) =>

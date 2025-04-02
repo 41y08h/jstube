@@ -1,11 +1,11 @@
 import grey from '@material-ui/core/colors/grey'
 import { makeStyles, Button } from '@material-ui/core'
-import MultilineInput from 'components/MultilineInput'
+import MultilineInput from '@/components/MultilineInput'
 import { FC, FormEventHandler, RefObject } from 'react'
 
 interface Props {
   onSubmit: FormEventHandler
-  inputRef: RefObject<HTMLTextAreaElement>
+  inputRef: RefObject<HTMLTextAreaElement | undefined>
   defaultValue: string
   onCancel: Function
 }

@@ -24,6 +24,9 @@
     "@tanstack/react-query-devtools": "^5.71.1",
     "axios": "^1.8.4",
     "cookie": "^1.0.2",
+    "date-fns": "^4.1.0",
+    "dateformat": "^5.0.3",
+    "luxon": "^3.6.1",
     "next": "15.2.4",
     "nookies": "^2.5.2",
     "react": "^19.0.0",
@@ -34,6 +37,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/dateformat": "^5.0.3",
+    "@types/luxon": "^3.6.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

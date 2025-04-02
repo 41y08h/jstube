@@ -2,7 +2,7 @@ import { FC, useRef, useEffect, RefObject } from 'react'
 import { InputBase, InputBaseProps } from '@material-ui/core'
 
 interface Props extends InputBaseProps {
-  inputRef?: RefObject<HTMLTextAreaElement>
+  inputRef?: RefObject<HTMLTextAreaElement | undefined>
 }
 
 const MultilineInput: FC<Props> = props => {

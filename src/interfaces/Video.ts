@@ -1,33 +1,33 @@
-import { IComments } from "./Comment";
-import IRatings from "./Ratings";
-import User, { IChannel } from "./User";
+import { IComments } from './Comment'
+import IRatings from './Ratings'
+import User, { IChannel } from './User'
 
 export default interface IVideo {
-  id: number;
-  title: string;
-  description: string;
-  src: string;
-  thumbnail: string;
-  duration: number;
-  userId: number;
-  views: number;
-  uploadedAt: Date;
-  updatedAt: Date;
+  id: number
+  title: string
+  description: string
+  src: string
+  thumbnail: string
+  duration: number
+  userId: number
+  views: number
+  uploadedAt: string
+  updatedAt: string
 }
 
 export interface QVideo extends IVideo {
-  channel: IChannel;
-  isInWL: boolean;
+  channel: IChannel
+  isInWL: boolean
 }
 
 export interface QVideos {
-  page: number;
-  hasMore: boolean;
-  items: QVideo[];
+  page: number
+  hasMore: boolean
+  items: QVideo[]
 }
 
 export interface QVideoDetailed extends IVideo {
-  channel: IChannel;
-  ratings: IRatings;
-  comments: IComments;
+  channel: IChannel
+  ratings: IRatings
+  comments: IComments
 }

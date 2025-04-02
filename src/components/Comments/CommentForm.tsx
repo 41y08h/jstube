@@ -1,4 +1,5 @@
-import { useAuth } from 'contexts/Auth'
+'use client'
+import { useAuth } from '@/contexts/Auth'
 import MultilineInput from '../MultilineInput'
 import grey from '@material-ui/core/colors/grey'
 import { makeStyles, Avatar, Button } from '@material-ui/core'

@@ -1,3 +1,4 @@
+'use client'
 import {
   InfiniteData,
   useInfiniteQuery,
@@ -38,51 +39,50 @@ interface Props {
 type QueryData = InfiniteData<ICommentPage>
 
 function useComments(videoId: number) {
-  const key = `/api/comments/${videoId}`
+  const key = [`/api/comments/${videoId}`]
 
-  return useInfiniteQuery(
-    key,
-    async ({ pageParam }) => {
-      const { data } = await axios.get<ICommentPage>(key, {
+  return useInfiniteQuery({
+    queryKey: key,
+    queryFn: async ({ pageParam }) => {
+      const { data } = await axios.get<ICommentPage>(key[0], {
         params: { beforeId: pageParam },
       })
       return data
     },
-    {
-      getNextPageParam(lastPage) {
-        return lastPage.hasMore
-          ? lastPage.items[lastPage.items.length - 1].id
-          : undefined
-      },
-    }
-  )
+    initialPageParam: 1,
+    getNextPageParam(lastPage) {
+      return lastPage.hasMore
+        ? lastPage.items[lastPage.items.length - 1].id
+        : undefined
+    },
+  })
 }
 
 const Comments: FC<Props> = ({ videoId }) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
   const { authenticate } = useAuth()
-  const queryKey = `/api/comments/${videoId}`
+  const queryKey = [`/api/comments/${videoId}`]
 
   // Data query
   const [bottomRef, isAtBottom] = useInView()
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
-    useInfiniteQuery(
+    useInfiniteQuery({
       queryKey,
-      async ({ pageParam }) => {
+      queryFn: async ({ pageParam }) => {
         const { data } = await axios.get<ICommentPage>(
           `/api/comments/${videoId}`,
           { params: { beforeId: pageParam } }
         )
         return data
       },
-      {
-        getNextPageParam: lastPage =>
-          lastPage.hasMore
-            ? lastPage.items[lastPage.items.length - 1].id
-            : undefined,
-      }
-    )
+
+      initialPageParam: 1,
+      getNextPageParam: lastPage =>
+        lastPage.hasMore
+          ? lastPage.items[lastPage.items.length - 1].id
+          : undefined,
+    })
 
   const latestPage = data?.pages[data?.pages.length - 1]
 

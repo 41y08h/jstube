@@ -1,39 +1,30 @@
-import { FC, useState } from "react";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
-
-const useStyles = makeStyles({
-  button: {
-    paddingLeft: 0,
-    marginTop: "1rem",
-  },
-});
+'use client'
+import { FC, useState } from 'react'
+import { Typography, Button } from '@mui/material'
 
 interface Props {
-  text: string;
+  text: string
 }
 
 const VideoDescription: FC<Props> = ({ text }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const classes = useStyles();
+  const [isExpanded, setIsExpanded] = useState(false)
+  const shortLength = 160
 
-  const shortLength = 160;
   return (
     <div>
-      <Typography variant="body2">
-        {isExpanded ? text : text.substring(0, shortLength + 1)}
+      <Typography variant='body2'>
+        {isExpanded ? text : `${text.substring(0, shortLength)}...`}
       </Typography>
       <Button
-        onClick={() => setIsExpanded((prev) => !prev)}
-        color="secondary"
+        onClick={() => setIsExpanded(prev => !prev)}
+        color='secondary'
         disableRipple
-        className={classes.button}
+        sx={{ paddingLeft: 0, marginTop: '1rem', textTransform: 'none' }}
       >
-        Show {isExpanded ? "less" : "more"}
+        Show {isExpanded ? 'less' : 'more'}
       </Button>
     </div>
-  );
-};
+  )
+}
 
-export default VideoDescription;
+export default VideoDescription

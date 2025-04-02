@@ -1,20 +1,18 @@
 'use client'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import Menu from '@material-ui/core/Menu'
 import { FC, MouseEvent, useState } from 'react'
-import MenuItem from '@material-ui/core/MenuItem'
-import DeleteIcon from '@material-ui/icons/Delete'
-import Typography from '@material-ui/core/Typography'
-import IconButton from '@material-ui/core/IconButton'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
+import { MenuItem, IconButton, Typography, Menu } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import WatchLaterIcon from '@mui/icons-material/WatchLater'
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
+
 import {
   useMutation,
   useQueryClient,
   InfiniteData,
 } from '@tanstack/react-query'
-import WatchLaterIcon from '@material-ui/icons/WatchLater'
-import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd'
 import { QVideos } from '../../interfaces/Video'
 import { useAuth } from '../../contexts/Auth'
 
@@ -27,33 +25,29 @@ const VideoMenu: FC<Props> = ({ id, isInWL }) => {
   const { authenticate } = useAuth()
   const queryClient = useQueryClient()
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const { mutate: addToWL, isLoading: isAdding } = useMutation(
-    () => axios.post(`/api/watchlater/${id}`),
-    {
-      onSuccess: () => {
-        updateIsInWL()
-        toast.dark('Saved to Watch Later', {
-          position: 'bottom-left',
-          hideProgressBar: true,
-        })
-      },
-    }
-  )
-  const { mutate: removeFromWL, isLoading: isDeleting } = useMutation(
-    () => axios.delete(`/api/watchlater/${id}`),
-    {
-      onSuccess: () => {
-        updateIsInWL()
-        toast.dark('Removed from Watch Later', {
-          position: 'bottom-left',
-          hideProgressBar: true,
-        })
-      },
-    }
-  )
+  const { mutate: addToWL, isPending: isAdding } = useMutation({
+    mutationFn: () => axios.post(`/api/watchlater/${id}`),
+    onSuccess: () => {
+      updateIsInWL()
+      toast.dark('Saved to Watch Later', {
+        position: 'bottom-left',
+        hideProgressBar: true,
+      })
+    },
+  })
+  const { mutate: removeFromWL, isPending: isDeleting } = useMutation({
+    mutationFn: () => axios.delete(`/api/watchlater/${id}`),
+    onSuccess: () => {
+      updateIsInWL()
+      toast.dark('Removed from Watch Later', {
+        position: 'bottom-left',
+        hideProgressBar: true,
+      })
+    },
+  })
 
   function updateIsInWL() {
-    queryClient.setQueryData<InfiniteData<QVideos>>('/api/videos', data => ({
+    queryClient.setQueryData<InfiniteData<QVideos>>(['/api/videos'], data => ({
       pages:
         data?.pages.map(page => ({
           ...page,

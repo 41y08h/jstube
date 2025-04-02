@@ -145,13 +145,11 @@ const Comment: FC<Props> = ({
   ) : (
     <div className='flex relative w-full space-x-4'>
       <Link href={`/channel/${data.author.id}`}>
-        <a>
-          <Avatar
-            sx={{ width: 32, height: 32 }}
-            src={data.author.picture}
-            alt={data.author.name}
-          />
-        </a>
+        <Avatar
+          sx={{ width: 32, height: 32 }}
+          src={data.author.picture}
+          alt={data.author.name}
+        />
       </Link>
       {isEditing ? (
         <CommentEditForm
@@ -178,9 +176,7 @@ const Comment: FC<Props> = ({
           </div>
           <div className='flex space-x-2'>
             <Link href={`/channel/${data.author.id}`}>
-              <a>
-                <Typography variant='body2'>{data.author.name}</Typography>
-              </a>
+              <Typography variant='body2'>{data.author.name}</Typography>
             </Link>
             <Typography variant='body2' color='text.secondary'>
               {new Date(data.createdAt).toLocaleDateString()}

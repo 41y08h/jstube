@@ -5,7 +5,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import Comment from './Comment'
 import CommentForm from './CommentForm'
 import { useAuth } from '../../contexts/Auth'
@@ -67,7 +67,13 @@ const Comments: FC<Props> = ({ videoId }) => {
   // Data query
   const [bottomRef, isAtBottom] = useInView()
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
-    useInfiniteQuery({
+    useInfiniteQuery<
+      ICommentPage,
+      AxiosError,
+      InfiniteData<ICommentPage>,
+      string[],
+      number | null
+    >({
       queryKey,
       queryFn: async ({ pageParam }) => {
         const { data } = await axios.get<ICommentPage>(
@@ -77,7 +83,7 @@ const Comments: FC<Props> = ({ videoId }) => {
         return data
       },
 
-      initialPageParam: 1,
+      initialPageParam: null,
       getNextPageParam: lastPage =>
         lastPage.hasMore
           ? lastPage.items[lastPage.items.length - 1].id
@@ -108,9 +114,10 @@ const Comments: FC<Props> = ({ videoId }) => {
   }
 
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const commentsMutation = useMutation((text: string) =>
-    axios.post<IComment>(`/api/comments/${videoId}`, { text })
-  )
+  const commentsMutation = useMutation({
+    mutationFn: (text: string) =>
+      axios.post<IComment>(`/api/comments/${videoId}`, { text }),
+  })
 
   const handleCommentFormSubmit: FormEventHandler = event => {
     event.preventDefault()

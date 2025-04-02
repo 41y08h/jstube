@@ -10,7 +10,6 @@ export default async function authComplete(
   }
 
   const { token } = req.query // Correctly extract token from query params
-  console.log('Token:', token)
 
   if (typeof token === 'string') {
     // Set the token in an HTTP-Only cookie
@@ -21,7 +20,7 @@ export default async function authComplete(
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 30, // 30 days
-        sameSite: 'strict',
+        sameSite: 'lax',
       })
     )
 

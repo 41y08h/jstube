@@ -1,9 +1,10 @@
 'use client'
 import { useAuth } from '@/contexts/Auth'
 import MultilineInput from '../MultilineInput'
-import grey from '@material-ui/core/colors/grey'
-import { makeStyles, Avatar, Button } from '@material-ui/core'
+import { grey } from '@mui/material/colors'
+import { makeStyles } from '@material-ui/core'
 import { FC, FormEventHandler, useState, RefObject } from 'react'
+import { Avatar, Button } from '@mui/material'
 
 interface Props {
   onSubmit: FormEventHandler

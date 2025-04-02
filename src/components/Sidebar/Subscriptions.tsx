@@ -6,15 +6,17 @@ import SignInButton from '../SignInButton'
 import Avatar from '@material-ui/core/Avatar'
 import { useAuth } from '../../contexts/Auth'
 import { makeStyles } from '@material-ui/core'
-import ListItem from '@material-ui/core/ListItem'
-import Typography from '@material-ui/core/Typography'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
 import { ISubscription } from '../../interfaces/Subscribers'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Image from 'next/image'
 import AlienImage from '@/images/alien.svg'
-import { Fade } from '@mui/material'
+import {
+  Fade,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from '@mui/material'
 
 const useStyles = makeStyles(theme => ({
   text: theme.typography.body2,
@@ -55,21 +57,19 @@ const Subscriptions: FC = () => {
                 key={subscription.channel.id}
                 href={`/channel/${subscription.channel.id}`}
               >
-                <a>
-                  <ListItem button className={classes.item}>
-                    <ListItemIcon className={classes.icon}>
-                      <Avatar
-                        style={{ height: '28px', width: '28px' }}
-                        src={subscription.channel.picture}
-                        alt={subscription.channel.name}
-                      />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={subscription.channel.name}
-                      classes={{ primary: classes.text }}
+                <ListItem className={classes.item}>
+                  <ListItemIcon className={classes.icon}>
+                    <Avatar
+                      style={{ height: '28px', width: '28px' }}
+                      src={subscription.channel.picture}
+                      alt={subscription.channel.name}
                     />
-                  </ListItem>
-                </a>
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={subscription.channel.name}
+                    classes={{ primary: classes.text }}
+                  />
+                </ListItem>
               </Link>
             ))}
           </List>

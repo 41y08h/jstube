@@ -1,3 +1,4 @@
+'use client'
 import { FC } from 'react'
 import { __PROD__ } from '../../config'
 

@@ -1,5 +1,5 @@
 'use client'
-import axios from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 import Link from 'next/link'
 import Replies from '../Replies'
 import CommentMenu from './CommentMenu'
@@ -10,7 +10,7 @@ import {
   CircularProgress,
   MenuItem,
 } from '@mui/material'
-import { useAuth } from '../../contexts/Auth'
+import { useAuth } from '../../contexts/auth'
 import EditIcon from '@mui/icons-material/Edit'
 import MultilineInput from '../MultilineInput'
 import IRatings from '../../interfaces/Ratings'
@@ -28,34 +28,33 @@ import {
   useQueryClient,
   InfiniteData,
 } from '@tanstack/react-query'
+import { blue } from '@mui/material/colors'
+import { useComments } from '@/contexts/comments'
 
 interface Props {
-  data: IComment
+  commentData: IComment
   onDeleted(id: number): any
   onEdited(editedComment: IComment): any
   onRated(id: number, ratings: IRatings): any
-  onReplied(id: number, replyComment: IComment): any
-  videoId: number
+  onReplied(replyComment: IComment): any
 }
 
 const Comment: FC<Props> = ({
-  data,
+  commentData,
   onDeleted,
   onEdited,
   onRated,
   onReplied,
-  videoId,
 }) => {
   const queryClient = useQueryClient()
   const { authenticate, user } = useAuth()
-
   const [isEditing, setIsEditing] = useState(false)
   const editInputRef = useRef<HTMLTextAreaElement | undefined>(undefined)
   const toggleIsEditing = () => setIsEditing(old => !old)
 
   const editMutation = useMutation({
     mutationFn: (text: string) =>
-      axios.patch<IComment>(`/api/comments/${data.id}`, { text }),
+      axios.patch<IComment>(`/api/comments/${commentData.id}`, { text }),
   })
 
   const handleEditFormSubmit: FormEventHandler = event => {
@@ -73,39 +72,34 @@ const Comment: FC<Props> = ({
   }
 
   const { isPending: isDeleting, mutate: deleteComment } = useMutation({
-    mutationFn: () => axios.delete(`/api/comments/${data.id}`),
-    onSuccess: () => onDeleted(data.id),
+    mutationFn: () => axios.delete(`/api/comments/${commentData.id}`),
+    onSuccess: () => onDeleted(commentData.id),
   })
 
   type RatingType = 'like' | 'dislike' | 'remove'
-
-  const { mutate: rate, isPending: isRating } = useMutation({
-    mutationFn: (type: RatingType) => {
-      switch (type) {
-        case 'like':
-          return axios.post<IRatings>(`/api/ratings/comments/${data.id}/like`)
-        case 'dislike':
-          return axios.post<IRatings>(
-            `/api/ratings/comments/${data.id}/dislike`
-          )
-        case 'remove':
-          return axios.delete<IRatings>(`/api/ratings/comments/${data.id}`)
-      }
-    },
-    onSuccess: res => onRated(data.id, res.data),
+  const ratingMutationFn = {
+    like: () => axios.post(`/api/ratings/comments/${commentData.id}/like`),
+    dislike: () =>
+      axios.post(`/api/ratings/comments/${commentData.id}/dislike`),
+    remove: () => axios.delete(`/api/ratings/comments/${commentData.id}`),
+  }
+  const ratingMutation = useMutation<IRatings, AxiosError, RatingType>({
+    mutationFn: type => ratingMutationFn[type]().then(res => res.data),
+    onSuccess: ratings => onRated(commentData.id, ratings),
   })
 
-  const { mutate: reply, isPending: isReplying } = useMutation({
-    mutationFn: (text: string) =>
-      axios.post<IComment>(`/api/comments/${data.id}/replies`, { text }),
-    onSuccess: res => {
+  const replyMutation = useMutation<IComment, AxiosError, string>({
+    mutationFn: text =>
+      axios
+        .post(`/api/comments/${commentData.id}/replies`, { text })
+        .then(res => res.data),
+    onSuccess: replyComment => {
+      onReplied(replyComment)
       toggleReplyingMode()
-      onReplied(data.id, res.data)
-      addNewReply(res.data)
     },
   })
 
-  const replyInputRef = useRef<HTMLTextAreaElement>(null)
+  const replyInputRef = useRef<HTMLTextAreaElement | undefined>(undefined)
   const [isReplyingMode, setIsReplyingMode] = useState(false)
   const toggleReplyingMode = () => setIsReplyingMode(old => !old)
 
@@ -116,45 +110,36 @@ const Comment: FC<Props> = ({
     event.preventDefault()
     authenticate(() => {
       const text = replyInputRef?.current?.value
-      if (text) reply(text)
+      if (text) replyMutation.mutate(text)
     })()
   }
 
-  function addNewReply(replyComment: IComment) {
-    const queryKey = [`/api/comments/${data.id}/replies`]
-    queryClient.setQueryData<InfiniteData<ICommentPage>>(queryKey, data => ({
-      pages: data?.pages.map((page, i) =>
-        i === 0
-          ? {
-              ...page,
-              total: page.total + 1,
-              items: [replyComment, ...page.items],
-            }
-          : page
-      ) ?? [{ total: 1, hasMore: false, items: [replyComment] }],
-      pageParams: data?.pageParams ?? [],
-    }))
-  }
+  const hasUserLiked = commentData.ratings.userRatingStatus === 'LIKED'
+  const hasUserDisliked = commentData.ratings.userRatingStatus === 'DISLIKED'
+  const isAuthoredByUser = commentData.author.id === user?.id
 
-  const hasUserLiked = data.ratings.userRatingStatus === 'LIKED'
-  const hasUserDisliked = data.ratings.userRatingStatus === 'DISLIKED'
-  const isAuthoredByUser = data.author.id === user?.id
+  // Show replies only if it is top level comment
+  const isFirstLevelComment = commentData.originalCommentId === null
+  const isThirdLevelComment =
+    !isFirstLevelComment &&
+    commentData.originalCommentId != commentData.replyToCommentId
+  const hasReplies = Boolean(commentData.replyCount)
 
   return isDeleting ? (
     <CenteredSpinner />
   ) : (
     <div className='flex relative w-full space-x-4'>
-      <Link href={`/channel/${data.author.id}`}>
+      <Link href={`/channel/${commentData.author.id}`}>
         <Avatar
           sx={{ width: 32, height: 32 }}
-          src={data.author.picture}
-          alt={data.author.name}
+          src={commentData.author.picture}
+          alt={commentData.author.name}
         />
       </Link>
       {isEditing ? (
         <CommentEditForm
           inputRef={editInputRef}
-          defaultValue={data.text}
+          defaultValue={commentData.text}
           onCancel={toggleIsEditing}
           onSubmit={handleEditFormSubmit}
         />
@@ -175,43 +160,100 @@ const Comment: FC<Props> = ({
             )}
           </div>
           <div className='flex space-x-2'>
-            <Link href={`/channel/${data.author.id}`}>
-              <Typography variant='body2'>{data.author.name}</Typography>
+            <Link href={`/channel/${commentData.author.id}`}>
+              <Typography variant='body2'>{commentData.author.name}</Typography>
             </Link>
             <Typography variant='body2' color='text.secondary'>
-              {new Date(data.createdAt).toLocaleDateString()}
+              {new Date(commentData.createdAt).toLocaleDateString()}
             </Typography>
           </div>
           <Typography variant='body1' sx={{ whiteSpace: 'pre-wrap' }}>
-            {data.text}
+            {commentData.text}
           </Typography>
           <div className='flex mt-2'>
             <Button
+              color='secondary'
               startIcon={
-                <ThumbUpAltIcon color={hasUserLiked ? 'primary' : 'inherit'} />
-              }
-              disabled={isRating}
-              onClick={authenticate(() =>
-                rate(hasUserLiked ? 'remove' : 'like')
-              )}
-            >
-              {data.ratings.count.likes}
-            </Button>
-            <Button
-              startIcon={
-                <ThumbDownIcon
-                  color={hasUserDisliked ? 'primary' : 'inherit'}
+                <ThumbUpAltIcon
+                  sx={{ color: hasUserLiked ? blue[700] : 'inherit' }}
                 />
               }
-              disabled={isRating}
+              disabled={ratingMutation.isPending}
               onClick={authenticate(() =>
-                rate(hasUserDisliked ? 'remove' : 'dislike')
+                ratingMutation.mutate(hasUserLiked ? 'remove' : 'like')
               )}
             >
-              {data.ratings.count.dislikes}
+              {commentData.ratings.count.likes}
+            </Button>
+            <Button
+              color='secondary'
+              startIcon={
+                <ThumbDownIcon
+                  sx={{ color: hasUserDisliked ? blue[700] : 'inherit' }}
+                />
+              }
+              disabled={ratingMutation.isPending}
+              onClick={authenticate(() =>
+                ratingMutation.mutate(hasUserDisliked ? 'remove' : 'dislike')
+              )}
+            >
+              {commentData.ratings.count.dislikes}
             </Button>
             <Button onClick={toggleReplyingMode}>Reply</Button>
           </div>
+          {isReplyingMode &&
+            (replyMutation.isPending ? (
+              <CenteredSpinner />
+            ) : (
+              <form
+                className='flex space-x-3 w-full mt-2'
+                onSubmit={handleReplySubmit}
+              >
+                <Avatar
+                  style={{ width: '2rem', height: '2rem' }}
+                  src={user?.picture}
+                  alt={user?.name}
+                />
+                <div className='flex flex-col w-full space-y-3'>
+                  <MultilineInput
+                    required
+                    autoFocus
+                    inputRef={replyInputRef}
+                    placeholder='Add a public reply...'
+                  />
+                  <div className='flex justify-end space-x-2'>
+                    <Button onClick={toggleReplyingMode}>Cancel</Button>
+                    <Button
+                      type='submit'
+                      color='primary'
+                      disableElevation
+                      variant='contained'
+                    >
+                      Reply
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            ))}
+          {isFirstLevelComment && hasReplies && (
+            <div>
+              <Button onClick={() => toggleRepliesView()} disableRipple>
+                {isViewingReplies ? (
+                  <>
+                    <ArrowDropUpIcon /> Hide {commentData.replyCount} replies
+                  </>
+                ) : (
+                  <>
+                    <ArrowDropDownIcon /> View {commentData.replyCount} replies
+                  </>
+                )}
+              </Button>
+              {isViewingReplies && <Replies commentId={commentData.id} />}
+            </div>
+          )}
+          {isThirdLevelComment && (
+            <small>replied to {commentData.repliedToAuthorName}</small>
+          )}
         </div>
       )}
     </div>

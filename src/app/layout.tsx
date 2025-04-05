@@ -1,7 +1,7 @@
 'use client'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 import { ToastContainer } from 'react-toastify'
-import { AuthProvider } from '@/contexts/Auth'
+import { AuthProvider } from '@/contexts/auth'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import queryFn from '@/lib/queryFunction'

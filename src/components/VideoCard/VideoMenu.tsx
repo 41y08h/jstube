@@ -14,7 +14,7 @@ import {
   InfiniteData,
 } from '@tanstack/react-query'
 import { QVideos } from '../../interfaces/Video'
-import { useAuth } from '../../contexts/Auth'
+import { useAuth } from '../../contexts/auth'
 
 interface Props {
   id: number

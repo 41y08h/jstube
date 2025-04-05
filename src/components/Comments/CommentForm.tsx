@@ -1,14 +1,23 @@
 'use client'
-import { useAuth } from '@/contexts/Auth'
+import { useAuth } from '@/contexts/auth'
 import MultilineInput from '../MultilineInput'
 import { grey } from '@mui/material/colors'
 import { makeStyles } from '@material-ui/core'
-import { FC, FormEventHandler, useState, RefObject } from 'react'
+import {
+  FC,
+  FormEventHandler,
+  useState,
+  RefObject,
+  useMemo,
+  useEffect,
+} from 'react'
 import { Avatar, Button } from '@mui/material'
 
 interface Props {
   onSubmit: FormEventHandler
-  inputRef: RefObject<HTMLTextAreaElement>
+  isFormActive: Boolean
+  toggleForm: (t: boolean) => void
+  inputRef: RefObject<HTMLTextAreaElement | undefined>
 }
 
 const useStyles = makeStyles(theme => ({
@@ -22,18 +31,14 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const CommentForm: FC<Props> = ({ onSubmit, inputRef }) => {
+const CommentForm: FC<Props> = ({
+  onSubmit,
+  isFormActive,
+  toggleForm,
+  inputRef,
+}) => {
   const { user } = useAuth()
   const classes = useStyles()
-  const [isFormActive, setIsFormActive] = useState(false)
-
-  const activateForm = () => setIsFormActive(true)
-  const deactivateForm = () => {
-    const input = inputRef.current as HTMLTextAreaElement
-    input.value = ''
-
-    setIsFormActive(false)
-  }
 
   return (
     <form onSubmit={onSubmit}>
@@ -46,14 +51,14 @@ const CommentForm: FC<Props> = ({ onSubmit, inputRef }) => {
         <MultilineInput
           required
           inputRef={inputRef}
-          onClick={activateForm}
+          onClick={() => toggleForm(true)}
           className={classes.input}
           placeholder='Add a public comment...'
         />
       </div>
       {isFormActive && (
         <div className='flex justify-end pt-3 space-x-2'>
-          <Button color='secondary' onClick={deactivateForm}>
+          <Button color='secondary' onClick={() => toggleForm(false)}>
             Cancel
           </Button>
           <Button

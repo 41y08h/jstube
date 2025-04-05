@@ -3,7 +3,7 @@
 import axios from 'axios'
 import { FC, useState } from 'react'
 import dateformat from 'dateformat'
-import { useAuth } from '@/contexts/Auth'
+import { useAuth } from '@/contexts/auth'
 import IRatings from '@/interfaces/Ratings'
 import Comments from '@/components/Comments'
 import ChannelBar from '@/components/ChannelBar'
@@ -22,6 +22,7 @@ import {
   useSuspenseQuery,
 } from '@tanstack/react-query'
 import { getVideo } from '@/lib/api' // Fetch video data in a separate function
+import { CommentsProvider } from '@/contexts/comments'
 
 interface Props {
   video: any
@@ -128,7 +129,9 @@ const Watch: FC<Props> = ({ video }) => {
         </div>
         <Divider />
         <div className='px-5 my-4'>
-          <Comments videoId={data.id} />
+          <CommentsProvider videoId={data.id}>
+            <Comments />
+          </CommentsProvider>
         </div>
       </div>
       <div className='w-1/3'>Suggestions will go here</div>

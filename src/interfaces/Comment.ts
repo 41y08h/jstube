@@ -11,6 +11,7 @@ export default interface IComment {
   replyToCommentId: null
   createdAt: Date
   updatedAt: Date
+  repliedToAuthorName: string
 }
 
 export interface IReply {

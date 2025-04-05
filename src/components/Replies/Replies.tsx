@@ -1,7 +1,6 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { FC } from 'react'
 import Comment from '../Comments/Comment'
-import Button from '@material-ui/core/Button'
 import IRatings from '../../interfaces/Ratings'
 import CenteredSpinner from '../CenteredSpinner'
 import IComment, { ICommentPage } from '../../interfaces/Comment'
@@ -12,6 +11,8 @@ import {
 } from '@tanstack/react-query'
 import { makeStyles } from '@material-ui/styles'
 import blue from '@material-ui/core/colors/blue'
+import { Button } from '@mui/material'
+import { useComments } from '@/contexts/comments'
 
 const useStyles = makeStyles({
   blueTextbutton: { color: blue[700], textTransform: 'unset' },
@@ -19,34 +20,40 @@ const useStyles = makeStyles({
 
 interface Props {
   commentId: number
-  videoId: number
 }
 
-type QueryData = InfiniteData<ICommentPage>
+type CommentsQueryData = InfiniteData<ICommentPage>
 
-const Replies: FC<Props> = ({ commentId, videoId }) => {
-  const queryKey = `/api/comments/${commentId}/replies`
+const Replies: FC<Props> = ({ commentId }) => {
+  const queryKey = [`/api/comments/${commentId}/replies`]
   const queryClient = useQueryClient()
   const classes = useStyles()
 
+  const { videoId, updateTotalCommentsCount } = useComments()
+
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
-    useInfiniteQuery(
+    useInfiniteQuery<
+      ICommentPage,
+      AxiosError,
+      CommentsQueryData,
+      string[],
+      number | null
+    >({
       queryKey,
-      ({ pageParam }) =>
+      queryFn: ({ pageParam }) =>
         axios
-          .get<ICommentPage>(queryKey, { params: { beforeId: pageParam } })
+          .get<ICommentPage>(queryKey[0], { params: { beforeId: pageParam } })
           .then(res => res.data),
-      {
-        getNextPageParam: lastPage =>
-          lastPage.hasMore
-            ? lastPage.items[lastPage.items.length - 1].id
-            : undefined,
-      }
-    )
+      initialPageParam: null,
+      getNextPageParam: lastPage =>
+        lastPage.hasMore
+          ? lastPage.items[lastPage.items.length - 1].id
+          : undefined,
+    })
 
   function handleCommentDeleted(id: number) {
     // Remove from the replies data
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
+    queryClient.setQueryData<CommentsQueryData>(queryKey, data => ({
       pages:
         data?.pages.map(page => {
           const items = page.items.filter(item => item.id !== id)
@@ -56,22 +63,27 @@ const Replies: FC<Props> = ({ commentId, videoId }) => {
     }))
 
     // Decrease the `replyCount` of the original commentId
-    queryClient.setQueryData<QueryData>(`/api/comments/${videoId}`, data => ({
-      pages:
-        data?.pages.map(page => ({
-          ...page,
-          items: page.items.map(comment =>
-            comment.id === commentId
-              ? { ...comment, replyCount: comment.replyCount - 1 }
-              : comment
-          ),
-        })) ?? [],
-      pageParams: data?.pageParams ?? [],
-    }))
+    queryClient.setQueryData<CommentsQueryData>(
+      [`/api/comments/${videoId}`],
+      data => ({
+        pages:
+          data?.pages.map(page => ({
+            ...page,
+            items: page.items.map(comment =>
+              comment.id === commentId
+                ? { ...comment, replyCount: comment.replyCount - 1 }
+                : comment
+            ),
+          })) ?? [],
+        pageParams: data?.pageParams ?? [],
+      })
+    )
+
+    updateTotalCommentsCount(total => total - 1)
   }
 
   function handleCommentEdited(editedComment: IComment) {
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
+    queryClient.setQueryData<CommentsQueryData>(queryKey, data => ({
       pages:
         data?.pages.map(page => ({
           ...page,
@@ -84,7 +96,7 @@ const Replies: FC<Props> = ({ commentId, videoId }) => {
   }
 
   function handleCommentRated(id: number, ratings: IRatings) {
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
+    queryClient.setQueryData<CommentsQueryData>(queryKey, data => ({
       pages:
         data?.pages.map(page => ({
           ...page,
@@ -96,34 +108,37 @@ const Replies: FC<Props> = ({ commentId, videoId }) => {
     }))
   }
 
-  function handleOnReplied(id: number, replyComment: IComment) {
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
-      pages:
-        data?.pages.map((page, i) => {
-          const isFirstPage = i === 0
-          return isFirstPage
-            ? {
-                ...page,
-                total: page.total + 1,
-                items: [replyComment, ...page.items],
-              }
-            : page
-        }) ?? [],
-      pageParams: data?.pageParams ?? [],
-    }))
+  function handleOnReplied(replyComment: IComment) {
+    queryClient.setQueryData<CommentsQueryData>(
+      [`/api/comments/${videoId}`],
+      data => ({
+        pages:
+          data?.pages.map(page => ({
+            ...page,
+            items: page.items.map(comment =>
+              comment.id === commentId
+                ? { ...comment, replyCount: comment.replyCount + 1 }
+                : comment
+            ),
+          })) ?? [],
+        pageParams: data?.pageParams ?? [],
+      })
+    )
 
-    queryClient.setQueryData<QueryData>(`/api/comments/${videoId}`, data => ({
-      pages:
-        data?.pages.map(page => ({
-          ...page,
-          items: page.items.map(comment =>
-            comment.id === commentId
-              ? { ...comment, replyCount: comment.replyCount + 1 }
-              : comment
-          ),
-        })) ?? [],
-      pageParams: data?.pageParams ?? [],
-    }))
+    // Insert reply comment to the original comment replies
+    queryClient.setQueryData<CommentsQueryData>(
+      [`/api/comments/${replyComment.originalCommentId}/replies`],
+      data => ({
+        pages:
+          data?.pages.map(page => ({
+            ...page,
+            items: [replyComment, ...page.items],
+          })) ?? [],
+        pageParams: data?.pageParams ?? [],
+      })
+    )
+
+    updateTotalCommentsCount(total => total + 1)
   }
 
   if (isLoading) return <CenteredSpinner />
@@ -134,12 +149,11 @@ const Replies: FC<Props> = ({ commentId, videoId }) => {
         page.items.map(comment => (
           <Comment
             key={comment.id}
-            data={comment}
+            commentData={comment}
             onDeleted={handleCommentDeleted}
             onEdited={handleCommentEdited}
             onRated={handleCommentRated}
             onReplied={handleOnReplied}
-            videoId={videoId}
           />
         ))
       )}

@@ -1,7 +1,8 @@
-import grey from '@material-ui/core/colors/grey'
-import { makeStyles, Button } from '@material-ui/core'
+import { grey } from '@mui/material/colors'
+import { makeStyles } from '@material-ui/core'
 import MultilineInput from '@/components/MultilineInput'
 import { FC, FormEventHandler, RefObject } from 'react'
+import { Button } from '@mui/material'
 
 interface Props {
   onSubmit: FormEventHandler

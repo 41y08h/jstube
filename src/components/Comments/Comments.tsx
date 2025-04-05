@@ -8,10 +8,7 @@ import {
 import axios, { AxiosError } from 'axios'
 import Comment from './Comment'
 import CommentForm from './CommentForm'
-import { useAuth } from '../../contexts/Auth'
-import Button from '@material-ui/core/Button'
-import Avatar from '@material-ui/core/Avatar'
-import MultilineInput from '../MultilineInput'
+import { useAuth } from '../../contexts/auth'
 import IRatings from '../../interfaces/Ratings'
 import CenteredSpinner from '../CenteredSpinner'
 import grey from '@material-ui/core/colors/grey'
@@ -20,6 +17,7 @@ import Typography from '@material-ui/core/Typography'
 import { useInView } from 'react-intersection-observer'
 import IComment, { ICommentPage } from '../../interfaces/Comment'
 import { FC, FormEventHandler, useEffect, useRef, useState } from 'react'
+import { useComments } from '@/contexts/comments'
 
 const useStyles = makeStyles(theme => ({
   heading: { margin: '0.5rem 0' },
@@ -32,200 +30,162 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface Props {
-  videoId: number
-}
+type CommentsQueryData = InfiniteData<ICommentPage>
 
-type QueryData = InfiniteData<ICommentPage>
-
-function useComments(videoId: number) {
-  const key = [`/api/comments/${videoId}`]
-
-  return useInfiniteQuery({
-    queryKey: key,
-    queryFn: async ({ pageParam }) => {
-      const { data } = await axios.get<ICommentPage>(key[0], {
-        params: { beforeId: pageParam },
-      })
-      return data
-    },
-    initialPageParam: 1,
-    getNextPageParam(lastPage) {
-      return lastPage.hasMore
-        ? lastPage.items[lastPage.items.length - 1].id
-        : undefined
-    },
-  })
-}
-
-const Comments: FC<Props> = ({ videoId }) => {
+const Comments: FC = () => {
   const classes = useStyles()
-  const queryClient = useQueryClient()
   const { authenticate } = useAuth()
-  const queryKey = [`/api/comments/${videoId}`]
+  const queryClient = useQueryClient()
+  const { commentsQuery, commentsQueryKey, updateTotalCommentsCount } =
+    useComments()
 
-  // Data query
-  const [bottomRef, isAtBottom] = useInView()
-  const { data, isLoading, isFetchingNextPage, fetchNextPage } =
-    useInfiniteQuery<
-      ICommentPage,
-      AxiosError,
-      InfiniteData<ICommentPage>,
-      string[],
-      number | null
-    >({
-      queryKey,
-      queryFn: async ({ pageParam }) => {
-        const { data } = await axios.get<ICommentPage>(
-          `/api/comments/${videoId}`,
-          { params: { beforeId: pageParam } }
-        )
-        return data
-      },
+  const [bottomIntersectionRef, isScrollbarAtBottom] = useInView()
+  const [isCommentFormActive, setIsCommentFormActive] = useState(false)
+  const commentInputRef = useRef<HTMLTextAreaElement | undefined>(undefined)
 
-      initialPageParam: null,
-      getNextPageParam: lastPage =>
-        lastPage.hasMore
-          ? lastPage.items[lastPage.items.length - 1].id
-          : undefined,
-    })
-
-  const latestPage = data?.pages[data?.pages.length - 1]
-
-  function setTotal(updater: (total: number) => number) {
-    const total = updater(latestPage.total)
-
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
-      pages: data?.pages.map(page => ({ ...page, total })) ?? [],
-      pageParams: data?.pageParams ?? [],
-    }))
-  }
-
-  useEffect(() => {
-    if (isAtBottom) fetchNextPage()
-  }, [isAtBottom, fetchNextPage])
-  // ---
-
-  const setPages = (updater: (pages: ICommentPage[]) => ICommentPage[]) => {
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
-      pages: updater(data?.pages ?? []),
-      pageParams: data?.pageParams ?? [],
-    }))
-  }
-
-  const inputRef = useRef<HTMLTextAreaElement>(null)
   const commentsMutation = useMutation({
     mutationFn: (text: string) =>
-      axios.post<IComment>(`/api/comments/${videoId}`, { text }),
+      axios.post<IComment>(commentsQueryKey[0], { text }),
   })
+
+  useEffect(() => {
+    if (isScrollbarAtBottom) commentsQuery.fetchNextPage()
+  }, [isScrollbarAtBottom, commentsQuery.fetchNextPage])
 
   const handleCommentFormSubmit: FormEventHandler = event => {
     event.preventDefault()
 
     const submit = authenticate(async () => {
-      const input = inputRef.current as HTMLTextAreaElement
-      const { data: newComment } = await commentsMutation.mutateAsync(
-        input.value
+      const text = commentInputRef.current?.value
+      if (!text) return
+      const { data: newComment } = await commentsMutation.mutateAsync(text)
+
+      queryClient.setQueryData<CommentsQueryData>(
+        commentsQueryKey,
+        comments => {
+          const pages = comments?.pages.map((page, idx) => {
+            if (idx != 0) return page
+            const items = [newComment, ...page.items]
+            const total = page.total + 1
+            return { ...page, items, total }
+          })
+          return { pages: pages ?? [], pageParams: comments?.pageParams ?? [] }
+        }
       )
 
-      setPages(pages =>
-        pages.map((page, i) => {
-          // Insert new comment at first page
-          const isFirstPage = i === 0
-          return isFirstPage
-            ? { ...page, items: [newComment, ...page.items] }
-            : page
-        })
-      )
+      setIsCommentFormActive(false)
+      updateTotalCommentsCount(total => total + 1)
     })
 
     submit()
   }
 
   function handleCommentDeleted(id: number) {
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
+    queryClient.setQueryData<CommentsQueryData>(commentsQueryKey, comments => ({
       pages:
-        data?.pages.map(page => {
+        comments?.pages.map(page => {
           const items = page.items.filter(item => item.id !== id)
           return { ...page, items }
         }) ?? [],
-      pageParams: data?.pageParams ?? [],
+      pageParams: comments?.pageParams ?? [],
     }))
 
-    // Decrease total
-    setTotal(total => total - 1)
+    updateTotalCommentsCount(total => total - 1)
   }
 
   function handleCommentEdited(editedComment: IComment) {
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
+    queryClient.setQueryData<CommentsQueryData>(commentsQueryKey, comments => ({
       pages:
-        data?.pages.map(page => ({
+        comments?.pages.map(page => ({
           ...page,
           items: page.items.map(item =>
             item.id === editedComment.id ? editedComment : item
           ),
         })) ?? [],
-      pageParams: data?.pageParams ?? [],
+      pageParams: comments?.pageParams ?? [],
     }))
   }
 
   function handleCommentRated(id: number, ratings: IRatings) {
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
+    queryClient.setQueryData<CommentsQueryData>(commentsQueryKey, comments => ({
       pages:
-        data?.pages.map(page => ({
+        comments?.pages.map(page => ({
           ...page,
           items: page.items.map(item =>
             item.id === id ? { ...item, ratings } : item
           ),
         })) ?? [],
-      pageParams: data?.pageParams ?? [],
+      pageParams: comments?.pageParams ?? [],
     }))
   }
 
-  function handleCommentReplied(id: number) {
-    queryClient.setQueryData<QueryData>(queryKey, data => ({
+  function handleCommentReplied(replyComment: IComment) {
+    // Increase reply count
+    queryClient.setQueryData<CommentsQueryData>(commentsQueryKey, comments => ({
       pages:
-        data?.pages.map(page => ({
+        comments?.pages.map(page => ({
           ...page,
           items: page.items.map(item =>
-            item.id === id ? { ...item, replyCount: item.replyCount + 1 } : item
+            item.id === replyComment.originalCommentId
+              ? { ...item, replyCount: item.replyCount + 1 }
+              : item
           ),
         })) ?? [],
-      pageParams: data?.pageParams ?? [],
+      pageParams: comments?.pageParams ?? [],
     }))
+
+    // Insert reply comment to the original comment replies
+    queryClient.setQueryData<CommentsQueryData>(
+      [`/api/comments/${replyComment.originalCommentId}/replies`],
+      data => ({
+        pages:
+          data?.pages.map(page => ({
+            ...page,
+            items: [replyComment, ...page.items],
+          })) ?? [],
+        pageParams: data?.pageParams ?? [],
+      })
+    )
+    updateTotalCommentsCount(total => total + 1)
   }
 
-  if (!data || isLoading) return <CenteredSpinner spacing={8} />
+  if (commentsQuery.isLoading) return <CenteredSpinner spacing={8} />
+  const commentsPages = commentsQuery.data?.pages
+  const latestCommentsPage = commentsPages?.at(commentsPages?.length - 1)
 
   return (
     <div>
       <Typography variant='body1' className={classes.heading}>
-        {latestPage?.total} Comments
+        {latestCommentsPage?.total} Comments
       </Typography>
       <div className='mt-5 mb-8'>
-        {commentsMutation.isLoading ? (
+        {commentsMutation.isPending ? (
           <CenteredSpinner spacing={0} />
         ) : (
-          <CommentForm onSubmit={handleCommentFormSubmit} inputRef={inputRef} />
+          <CommentForm
+            inputRef={commentInputRef}
+            onSubmit={handleCommentFormSubmit}
+            isFormActive={isCommentFormActive}
+            toggleForm={setIsCommentFormActive}
+          />
         )}
       </div>
       <div className='space-y-5'>
-        {data.pages.map(page =>
+        {commentsQuery.data?.pages.map(page =>
           page.items.map(comment => (
             <Comment
               key={comment.id}
-              data={comment}
-              onDeleted={handleCommentDeleted}
-              onEdited={handleCommentEdited}
+              commentData={comment}
               onRated={handleCommentRated}
+              onEdited={handleCommentEdited}
+              onDeleted={handleCommentDeleted}
               onReplied={handleCommentReplied}
-              videoId={videoId}
             />
           ))
         )}
       </div>
-      {isFetchingNextPage && <CenteredSpinner />}
-      <div ref={bottomRef} />
+      {commentsQuery.isFetchingNextPage && <CenteredSpinner />}
+      <div ref={bottomIntersectionRef} />
     </div>
   )
 }

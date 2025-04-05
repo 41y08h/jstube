@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useState, useRef, FormEventHandler } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { useAuth } from '../contexts/Auth'
+import { useAuth } from '../contexts/auth'
 import IComment from '../interfaces/Comment'
 import IRatings from '../interfaces/Ratings'
 

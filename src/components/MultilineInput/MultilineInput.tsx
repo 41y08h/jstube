@@ -1,5 +1,5 @@
+import { InputBase, InputBaseProps } from '@mui/material'
 import { FC, useRef, useEffect, RefObject } from 'react'
-import { InputBase, InputBaseProps } from '@material-ui/core'
 
 interface Props extends InputBaseProps {
   inputRef?: RefObject<HTMLTextAreaElement | undefined>

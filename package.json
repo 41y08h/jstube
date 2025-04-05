@@ -30,6 +30,7 @@
     "next": "15.2.4",
     "nookies": "^2.5.2",
     "react": "^19.0.0",
+    "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
     "react-intersection-observer": "^9.16.0",
     "react-toastify": "^11.0.5"

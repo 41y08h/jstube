@@ -1,9 +1,13 @@
+'use client'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import { LinearProgress } from '@material-ui/core'
+import { LinearProgress } from '@mui/material'
 
-export default function History() {
-  const { data, isLoading, isFetching } = useQuery('/api/history')
+export default function History({ data: initialData }) {
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ['/api/history'],
+    initialData,
+  })
 
   if (isLoading) return <>...</>
 

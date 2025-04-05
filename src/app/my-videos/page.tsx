@@ -1,7 +1,9 @@
+'use client'
 import { LinearProgress } from '@material-ui/core'
 import { useQuery } from '@tanstack/react-query'
 import { Card } from 'react-bootstrap'
 import Link from 'next/link'
+import Layout from '@/components/Layout'
 
 function VideoCard({ data: video }) {
   return (
@@ -15,16 +17,20 @@ function VideoCard({ data: video }) {
 }
 
 export default function MyVideos() {
-  const { data, isLoading, isFetching } = useQuery('/api/videos/mine')
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ['/api/videos/mine'],
+  })
 
   if (isLoading) return <>...</>
   return (
-    <div>
-      {isFetching && <LinearProgress />}
-      <Link href='/'>back</Link>
-      {data.map(video => (
-        <VideoCard data={video} />
-      ))}
-    </div>
+    <Layout>
+      <div>
+        {isFetching && <LinearProgress />}
+        <Link href='/'>back</Link>
+        {data.map(video => (
+          <VideoCard data={video} />
+        ))}
+      </div>
+    </Layout>
   )
 }

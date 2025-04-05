@@ -121,7 +121,7 @@ const Watch: FC<Props> = ({ video }) => {
         </div>
         <Divider sx={{ my: 2 }} />
         <div className='px-5 py-3'>
-          <ChannelBar channel={data.channel} />
+          <ChannelBar videoId={data.id} channel={data.channel} />
         </div>
         <Divider />
         <div className='px-5 pb-2'>

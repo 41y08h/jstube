@@ -11,11 +11,11 @@ import formatNumber from '../../lib/formatNumber'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 interface Props {
+  videoId: number
   channel: IChannel
 }
 
-const ChannelBar: FC<Props> = ({ channel }) => {
-  const [subscribers, setSubscribers] = useState(channel.subscribers)
+const ChannelBar: FC<Props> = ({ videoId, channel }) => {
   const { authenticate } = useAuth()
   const queryClient = useQueryClient()
   const theme = useTheme()
@@ -28,16 +28,23 @@ const ChannelBar: FC<Props> = ({ channel }) => {
         : axios.post<ISubscribers>(url).then(res => res.data)
     },
     onSuccess: data => {
-      setSubscribers(data)
       queryClient.invalidateQueries({
         queryKey: ['/api/subscribers/subscriptions'],
       })
+      queryClient.setQueryData([`/api/videos/${videoId}`], (prevData: any) => ({
+        ...prevData,
+        channel: {
+          ...prevData.channel,
+          subscribers: data,
+        },
+      }))
     },
   })
 
   const subscribe = authenticate(() =>
-    subscribersMutation.mutate(subscribers.isUserSubscribed)
+    subscribersMutation.mutate(channel.subscribers.isUserSubscribed)
   )
+  const subscribers = channel.subscribers
 
   return (
     <div className='flex justify-between items-center'>

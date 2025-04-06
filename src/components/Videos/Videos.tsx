@@ -56,7 +56,7 @@ const Videos: FC<{ url: string }> = ({ url }) => {
 
   return data ? (
     <>
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-4 2xl:grid-cols-6 2xl:gap-x-5 gap-3 gap-y-0 sm:p-4 items-start'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 xl:gap-x-4 2xl:gap-x-5 gap-3 gap-y-0 sm:p-4 items-start'>
         {data.pages.map(page =>
           page.items.map(video => <VideoCard key={video.id} data={video} />)
         )}

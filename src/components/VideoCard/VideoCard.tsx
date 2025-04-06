@@ -3,14 +3,15 @@ import Link from 'next/link'
 import VideoMenu from './VideoMenu'
 import timeSince from '../../lib/timeSince'
 import formatTime from '../../lib/formatTime'
-import Avatar from '@material-ui/core/Avatar'
 import { QVideo } from '../../interfaces/Video'
 import formatNumber from '../../lib/formatNumber'
 
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
-import { ButtonBase, Typography } from '@mui/material'
+import { Avatar, ButtonBase, Typography, useTheme } from '@mui/material'
 
 const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
+  const theme = useTheme()
+
   const links = {
     video: `/watch?v=${data.id}`,
     channel: `/channel/${data.channel.id}`,
@@ -22,7 +23,11 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
         <div className='relative'>
           <Link href={links.video}>
             <div className='aspect-ratio'>
-              <img src={data.thumbnail} alt={data.title} />
+              <img
+                src={data.thumbnail}
+                alt={data.title}
+                className='rounded-lg'
+              />
             </div>
           </Link>
           <Typography
@@ -33,7 +38,7 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
             {formatTime(data.duration)}
           </Typography>
         </div>
-        <div className='flex items-start relative w-full pt-0 p-2 pl-4'>
+        <div className='flex items-start relative w-full pt-0 pb-2'>
           <Link href={links.channel}>
             <Avatar
               style={{ width: '2.25rem', height: '2.25rem' }}
@@ -48,8 +53,8 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
             <Link href={links.video}>
               <Typography
                 className='line-clamp-2'
-                variant='subtitle2'
-                component='p'
+                variant='subtitle1'
+                sx={{ fontWeight: theme.typography.fontWeightMedium }}
               >
                 {data.title}
               </Typography>
@@ -60,10 +65,8 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
                 href={links.channel}
                 className='flex items-center space-x-2 pr-2'
               >
-                <Typography variant='body2' component='span'>
-                  {data.channel.name}
-                </Typography>
-                <CheckCircleIcon style={{ width: '12px' }} />
+                <Typography variant='body2'>{data.channel.name}</Typography>
+                <CheckCircleIcon className='ml-1' style={{ width: '12px' }} />
               </Link>
               <div className='flex items-center flex-wrap'>
                 <Typography variant='body2' component='span'>

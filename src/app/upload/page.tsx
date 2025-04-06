@@ -1,12 +1,14 @@
-import Layout from '../components/Layout'
+'use client'
+import Layout from '@/components/Layout'
 import axios from 'axios'
 import Head from 'next/head'
 import { useRef } from 'react'
-import { siteName } from '../config'
+
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { useRouter } from 'next/router'
+
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 
 export default function Upload() {
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -15,8 +17,8 @@ export default function Upload() {
   const descriptionInputRef = useRef()
   const router = useRouter()
 
-  const videoUpload = useMutation(
-    formData =>
+  const videoUpload = useMutation({
+    mutationFn: formData =>
       axios.post('/api/videos', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: progressEvent =>
@@ -24,11 +26,9 @@ export default function Upload() {
             Math.round((progressEvent.loaded / progressEvent.total) * 100)
           ),
       }),
-    {
-      onSuccess: () => router.push('/'),
-      onError: err => toast.error(err.response.data.message),
-    }
-  )
+    onSuccess: () => router.push('/'),
+    onError: err => toast.error(err.response.data.message),
+  })
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -42,7 +42,7 @@ export default function Upload() {
   return (
     <Layout>
       <Head>
-        <title>Upload | {siteName}</title>
+        <title>Upload - JsTube</title>
       </Head>
       <h1 className='text-2xl'>Upload a video</h1>
       <form onSubmit={handleSubmit}>

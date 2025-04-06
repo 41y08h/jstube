@@ -1,31 +1,35 @@
-import Link from "next/link";
-import { FC } from "react";
+'use client'
+import { Typography } from '@mui/material'
+import Link from 'next/link'
+import { FC } from 'react'
 
 const Footer: FC = () => (
-  <footer className="p-6 pt-0">
-    <div className="text-xs font-medium text-secondary space-y-2">
-      <div className="space-x-3">
-        <Link href="/about">About</Link>
-        <a target="blank" href="https://github.com/41y08h/jstube">
+  <footer className='p-6 pt-0'>
+    <div className='text-xs font-medium text-secondary space-y-2'>
+      <div className='space-x-3'>
+        <Link href='/about'>About</Link>
+        <Link target='blank' href='https://github.com/41y08h/jstube'>
           Source
-        </a>
-        <a target="blank" href="https://github.com/41y08h">
+        </Link>
+        <Link target='blank' href='https://github.com/41y08h'>
           Developer
-        </a>
+        </Link>
       </div>
-      <div className="space-x-3">
-        <a target="blank" href="https://github.com/41y08h/jstube/issues">
+      <div className='space-x-3'>
+        <Link target='blank' href='https://github.com/41y08h/jstube/issues'>
           Report Bug
-        </a>
-        <a target="blank" href="/copyright">
+        </Link>
+        <Link target='blank' href='/copyright'>
           Copyright
-        </a>
+        </Link>
       </div>
     </div>
-    <span className="block mt-4 text-xs text-secondary">
-      &copy; {new Date().getFullYear()} JsTube
-    </span>
+    <div className='mt-2'>
+      <Typography variant='caption' color='secondary'>
+        &copy; {new Date().getFullYear()} JsTube
+      </Typography>
+    </div>
   </footer>
-);
+)
 
-export default Footer;
+export default Footer

@@ -1,12 +1,18 @@
 'use client'
 import Link from 'next/link'
 import React, { FC, useMemo } from 'react'
-import { IconButton, Toolbar, AppBar, Box } from '@mui/material'
-import MenuIcon from '@material-ui/icons/Menu'
+import {
+  IconButton,
+  Toolbar,
+  AppBar,
+  Box,
+  TextField,
+  Button,
+  Typography,
+} from '@mui/material'
 import SignInButton from '../SignInButton'
 import { useAuth } from '../../contexts/auth'
 import Profile from './Profile'
-import Search from './Search'
 import { useTheme } from '@mui/material/styles'
 
 const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
@@ -28,29 +34,80 @@ const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
           boxShadow: 'none',
           backgroundColor: 'white',
           borderRight: 'none',
+          borderBottom: 'none',
         }}
       >
         <Toolbar className='text-primary justify-between'>
-          <div className='flex items-center space-x-3'>
-            <IconButton
-              onClick={() => toggleSidebar()}
-              edge='start'
-              color='default'
-              aria-label='menu'
-            >
-              <MenuIcon />
-            </IconButton>
-            <Link href='/'>
-              <img className='h-5' src='/jstube_logo.svg' alt='JsTube' />
-            </Link>
-          </div>
-          <div className='flex items-center space-x-2'>
-            <Search />
-            {isAuthLoading ? null : isAuthenticated ? (
-              <Profile />
-            ) : (
-              <SignInButton />
-            )}
+          <div className='flex justify-between w-full px-2'>
+            <div className='flex items-center'>
+              <IconButton
+                onClick={() => toggleSidebar()}
+                edge='start'
+                color='default'
+                aria-label='menu'
+              >
+                <span className='material-symbols-outlined'>menu</span>
+              </IconButton>
+              <Link href='/' className='block ml-3'>
+                <img className='h-5' src='/jstube_logo.svg' alt='JsTube' />
+              </Link>
+            </div>
+
+            <div className='flex'>
+              <TextField
+                size='small'
+                variant='outlined'
+                placeholder='Search'
+                className='w-lg'
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '20px 0 0 20px',
+                  },
+                }}
+              />
+              <Button
+                variant='outlined'
+                color='secondary'
+                sx={{
+                  borderRadius: '0 20px 20px 0',
+                  borderLeft: 'none',
+                  minHeight: '100%',
+                  padding: '0 20px',
+                }}
+              >
+                <span className='material-symbols-outlined'>search</span>
+              </Button>
+            </div>
+            <div className='flex items-center'>
+              <Link href='/upload' className='h-full'>
+                <Button
+                  color='inherit'
+                  sx={{
+                    borderRadius: '20px',
+                    padding: '0 20px',
+                    marginLeft: '10px',
+                    height: '95%',
+                    backgroundColor: theme.palette.grey[200],
+                    textTransform: 'none',
+                  }}
+                >
+                  <span className='material-symbols-outlined mr-1'>add</span>
+                  <Typography
+                    variant='subtitle2'
+                    fontWeight={theme.typography.fontWeightBold}
+                  >
+                    Create
+                  </Typography>
+                </Button>
+              </Link>
+              <div className='ml-3'>
+                {isAuthLoading ? null : isAuthenticated ? (
+                  <Profile />
+                ) : (
+                  <SignInButton />
+                )}
+              </div>
+            </div>
           </div>
         </Toolbar>
       </AppBar>

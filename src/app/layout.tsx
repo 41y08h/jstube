@@ -11,6 +11,11 @@ import { ThemeProvider } from '@mui/material'
 import theme from '@/lib/theme'
 import 'react-toastify/dist/ReactToastify.css'
 import './globals.css'
+import 'material-symbols'
+import '@fontsource/roboto/300.css'
+import '@fontsource/roboto/400.css'
+import '@fontsource/roboto/500.css'
+import '@fontsource/roboto/700.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,22 +1,24 @@
 import { FC } from 'react'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import List from '@material-ui/core/List'
 import SignInButton from '../SignInButton'
-import Avatar from '@material-ui/core/Avatar'
 import { useAuth } from '../../contexts/auth'
-import { makeStyles } from '@material-ui/core'
 import { ISubscription } from '../../interfaces/Subscribers'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Image from 'next/image'
 import AlienImage from '@/images/alien.svg'
+
 import {
+  Avatar,
+  Button,
+  CircularProgress,
   Fade,
+  List,
   ListItem,
   ListItemIcon,
   ListItemText,
   Typography,
+  useTheme,
 } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 
 const useStyles = makeStyles(theme => ({
   text: theme.typography.body2,
@@ -25,71 +27,83 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Subscriptions: FC = () => {
-  const classes = useStyles()
-  const { user: isLoggedIn, isLoading: isAuthLoading } = useAuth()
-  const { data, isLoading } = useQuery<ISubscription[]>({
+  const theme = useTheme()
+  const { user } = useAuth()
+  const isLoggedIn = Boolean(user)
+  const subscriptionsQuery = useQuery<ISubscription[]>({
     queryKey: ['/api/subscribers/subscriptions'],
-    enabled: Boolean(isLoggedIn),
+    enabled: isLoggedIn,
   })
 
-  if (isLoading || isAuthLoading)
+  if (subscriptionsQuery.isLoading)
     return (
       <Fade
-        in={isLoading}
-        style={{ transitionDelay: isLoading ? '800ms' : '0ms' }}
+        in={subscriptionsQuery.isLoading}
+        style={{
+          transitionDelay: subscriptionsQuery.isLoading ? '800ms' : '0ms',
+        }}
         unmountOnExit
       >
         <CircularProgress className='mx-auto my-7' />
       </Fade>
     )
 
-  if (isLoggedIn)
+  if (subscriptionsQuery.isSuccess && subscriptionsQuery.data.length > 0)
     return (
-      <>
-        <Typography component='span' variant='button' className='px-7'>
+      <div className='py-4'>
+        <Typography
+          className='px-4'
+          style={{ fontWeight: theme.typography.fontWeightBold }}
+        >
           Subscriptions
         </Typography>
-
-        {data && (
-          <List component='nav'>
-            {data.map(subscription => (
-              <Link
-                key={subscription.channel.id}
-                href={`/channel/${subscription.channel.id}`}
-              >
-                <ListItem className={classes.item}>
-                  <ListItemIcon className={classes.icon}>
-                    <Avatar
-                      style={{ height: '28px', width: '28px' }}
-                      src={subscription.channel.picture}
-                      alt={subscription.channel.name}
-                    />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={subscription.channel.name}
-                    classes={{ primary: classes.text }}
+        <List component='nav'>
+          {subscriptionsQuery.data.map(subscription => (
+            <Link
+              key={subscription.channel.id}
+              href={`/channel/${subscription.channel.id}`}
+            >
+              <ListItem sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
+                <ListItemIcon sx={{ minWidth: 'unset', width: '46px' }}>
+                  <Avatar
+                    style={{ height: '28px', width: '28px' }}
+                    src={subscription.channel.picture}
+                    alt={subscription.channel.name}
                   />
-                </ListItem>
-              </Link>
-            ))}
-          </List>
-        )}
-      </>
+                </ListItemIcon>
+                <Typography variant='body2'>
+                  {subscription.channel.name}
+                </Typography>
+              </ListItem>
+            </Link>
+          ))}
+        </List>
+      </div>
     )
 
+  if (subscriptionsQuery.isSuccess && subscriptionsQuery.data.length === 0)
+    return null
+
   return (
-    <div className='px-7 space-y-3'>
-      <div className='flex space-x-4 items-center'>
-        <AlienImage className='w-14' />
-        <SignInButton />
-      </div>
-      <Typography
-        component='p'
-        variant='body2'
-        className='max-w-full text-secondary'
-      >
+    <div className='px-7 space-y-3 py-4'>
+      <Typography variant='body2'>
         Sign in to like videos, comment, and subscribe.
       </Typography>
+      <Button
+        variant='outlined'
+        color='primary'
+        href='/api/auth/google'
+        sx={{
+          borderRadius: '20px',
+          borderColor: theme.palette.grey[300],
+          textTransform: 'none',
+
+          marginTop: '10px',
+        }}
+      >
+        <span className='material-symbols-outlined mr-1'>account_circle</span>
+        <Typography variant='subtitle2'>Sign in</Typography>
+      </Button>
     </div>
   )
 }

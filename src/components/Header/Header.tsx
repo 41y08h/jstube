@@ -62,6 +62,7 @@ const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     borderRadius: '20px 0 0 20px',
+                    minHeight: '100%',
                   },
                 }}
               />

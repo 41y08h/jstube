@@ -16,7 +16,7 @@ const Layout: FC<Props> = ({ children }) => {
     <>
       <Header toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} toggleIsOpen={toggleSidebar} />
-      {children}
+      <div className='bg-white'>{children}</div>
     </>
   )
 }

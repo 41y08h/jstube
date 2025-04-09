@@ -3,7 +3,11 @@ import { FC } from 'react'
 import Comment from '../Comments/Comment'
 import IRatings from '../../interfaces/Ratings'
 import CenteredSpinner from '../CenteredSpinner'
-import IComment, { ICommentPage } from '../../interfaces/Comment'
+import IComment, {
+  ICommentPage,
+  IReply,
+  IReplyPage,
+} from '../../interfaces/Comment'
 import {
   useInfiniteQuery,
   useQueryClient,
@@ -108,7 +112,7 @@ const Replies: FC<Props> = ({ commentId }) => {
     }))
   }
 
-  function handleOnReplied(replyComment: IComment) {
+  function handleOnReplied(replyComment: IReply) {
     queryClient.setQueryData<CommentsQueryData>(
       [`/api/comments/${videoId}`],
       data => ({
@@ -126,7 +130,7 @@ const Replies: FC<Props> = ({ commentId }) => {
     )
 
     // Insert reply comment to the original comment replies
-    queryClient.setQueryData<CommentsQueryData>(
+    queryClient.setQueryData<InfiniteData<IReplyPage>>(
       [`/api/comments/${replyComment.originalCommentId}/replies`],
       data => ({
         pages:
@@ -160,7 +164,7 @@ const Replies: FC<Props> = ({ commentId }) => {
       {isFetchingNextPage ? (
         <CenteredSpinner />
       ) : (
-        Boolean(data?.pages[data?.pages.length - 1].hasMore) && (
+        Boolean(data?.pages[data?.pages.length - 1]?.hasMore) && (
           <Button
             className={classes.blueTextbutton}
             onClick={() => fetchNextPage()}

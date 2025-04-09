@@ -36,7 +36,7 @@ export default function Profile() {
   const closeMenu = () => setAnchorEl(null)
 
   return (
-    <div>
+    <div className='flex items-center'>
       <button onClick={openMenu}>
         <Avatar
           style={{ width: '2rem', height: '2rem' }}

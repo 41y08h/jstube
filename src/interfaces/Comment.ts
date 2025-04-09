@@ -34,8 +34,6 @@ export interface ICommentPage {
 
 export interface IReplyPage {
   total: number
-  count: number
-  page: number
   hasMore: boolean
   items: IReply[]
 }

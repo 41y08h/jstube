@@ -15,12 +15,16 @@ import grey from '@material-ui/core/colors/grey'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import { useInView } from 'react-intersection-observer'
-import IComment, { ICommentPage } from '../../interfaces/Comment'
+import IComment, {
+  ICommentPage,
+  IReply,
+  IReplyPage,
+} from '../../interfaces/Comment'
 import { FC, FormEventHandler, useEffect, useRef, useState } from 'react'
 import { useComments } from '@/contexts/comments'
+import { useTheme } from '@mui/material'
 
 const useStyles = makeStyles(theme => ({
-  heading: { margin: '0.5rem 0' },
   input: {
     ...theme.typography.body2,
     backgroundColor: grey[200],
@@ -34,6 +38,7 @@ type CommentsQueryData = InfiniteData<ICommentPage>
 
 const Comments: FC = () => {
   const classes = useStyles()
+  const theme = useTheme()
   const { authenticate } = useAuth()
   const queryClient = useQueryClient()
   const { commentsQuery, commentsQueryKey, updateTotalCommentsCount } =
@@ -81,6 +86,12 @@ const Comments: FC = () => {
   }
 
   function handleCommentDeleted(id: number) {
+    const repliesCount =
+      queryClient
+        .getQueryData<CommentsQueryData>(commentsQueryKey)
+        ?.pages.find(page => page.items.find(t => t.id === id))
+        ?.items.find(t => t.id === id)?.replyCount ?? 0
+
     queryClient.setQueryData<CommentsQueryData>(commentsQueryKey, comments => ({
       pages:
         comments?.pages.map(page => {
@@ -90,7 +101,7 @@ const Comments: FC = () => {
       pageParams: comments?.pageParams ?? [],
     }))
 
-    updateTotalCommentsCount(total => total - 1)
+    updateTotalCommentsCount(total => total - 1 - repliesCount)
   }
 
   function handleCommentEdited(editedComment: IComment) {
@@ -119,7 +130,7 @@ const Comments: FC = () => {
     }))
   }
 
-  function handleCommentReplied(replyComment: IComment) {
+  function handleCommentReplied(replyComment: IReply) {
     // Increase reply count
     queryClient.setQueryData<CommentsQueryData>(commentsQueryKey, comments => ({
       pages:
@@ -135,7 +146,7 @@ const Comments: FC = () => {
     }))
 
     // Insert reply comment to the original comment replies
-    queryClient.setQueryData<CommentsQueryData>(
+    queryClient.setQueryData<InfiniteData<IReplyPage>>(
       [`/api/comments/${replyComment.originalCommentId}/replies`],
       data => ({
         pages:
@@ -155,7 +166,10 @@ const Comments: FC = () => {
 
   return (
     <div>
-      <Typography variant='body1' className={classes.heading}>
+      <Typography
+        variant='h6'
+        style={{ fontWeight: theme.typography.fontWeightBold }}
+      >
         {latestCommentsPage?.total} Comments
       </Typography>
       <div className='mt-5 mb-8'>

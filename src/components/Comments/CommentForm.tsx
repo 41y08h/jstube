@@ -2,16 +2,9 @@
 import { useAuth } from '@/contexts/auth'
 import MultilineInput from '../MultilineInput'
 import { grey } from '@mui/material/colors'
-import { makeStyles } from '@material-ui/core'
-import {
-  FC,
-  FormEventHandler,
-  useState,
-  RefObject,
-  useMemo,
-  useEffect,
-} from 'react'
-import { Avatar, Button } from '@mui/material'
+import { FC, FormEventHandler, RefObject, useState } from 'react'
+import { Button, inputBaseClasses, TextField, useTheme } from '@mui/material'
+import Avatar from '../Avatar'
 
 interface Props {
   onSubmit: FormEventHandler
@@ -20,17 +13,6 @@ interface Props {
   inputRef: RefObject<HTMLTextAreaElement | undefined>
 }
 
-const useStyles = makeStyles(theme => ({
-  avatar: { width: '2rem', height: '2rem' },
-  input: {
-    ...theme.typography.body2,
-    backgroundColor: grey[200],
-    padding: '0.8rem',
-    width: '100%',
-    borderRadius: 6,
-  },
-}))
-
 const CommentForm: FC<Props> = ({
   onSubmit,
   isFormActive,
@@ -38,34 +20,51 @@ const CommentForm: FC<Props> = ({
   inputRef,
 }) => {
   const { user } = useAuth()
-  const classes = useStyles()
+  const [text, setText] = useState('')
 
   return (
     <form onSubmit={onSubmit}>
       <div className='flex space-x-4'>
-        <Avatar
-          className={classes.avatar}
-          src={user?.picture}
-          alt={user?.name}
-        />
+        <Avatar src={user?.picture} alt={user?.name} />
         <MultilineInput
+          fullWidth
           required
           inputRef={inputRef}
+          value={text}
+          onChange={e => setText(e.target.value)}
           onClick={() => toggleForm(true)}
-          className={classes.input}
           placeholder='Add a public comment...'
         />
       </div>
       {isFormActive && (
-        <div className='flex justify-end pt-3 space-x-2'>
-          <Button color='secondary' onClick={() => toggleForm(false)}>
+        <div className='flex justify-end mt-3'>
+          <Button
+            variant='text'
+            color='inherit'
+            sx={{
+              borderRadius: '20px',
+              padding: '0.5rem 1rem',
+              textTransform: 'none',
+              color: grey[600],
+              '&:hover': {
+                backgroundColor: grey[200],
+              },
+              marginRight: '12px',
+            }}
+            onClick={() => toggleForm(false)}
+          >
             Cancel
           </Button>
           <Button
-            type='submit'
-            color='primary'
-            variant='contained'
             disableElevation
+            disabled={!text}
+            variant='contained'
+            color='primary'
+            type='submit'
+            sx={{
+              borderRadius: '20px',
+              textTransform: 'none',
+            }}
           >
             Comment
           </Button>

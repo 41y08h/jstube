@@ -9,6 +9,8 @@ import {
   Typography,
   CircularProgress,
   MenuItem,
+  IconButton,
+  useTheme,
 } from '@mui/material'
 import { useAuth } from '../../contexts/auth'
 import EditIcon from '@mui/icons-material/Edit'
@@ -22,13 +24,13 @@ import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { FC, FormEventHandler, useState, useRef } from 'react'
-import IComment, { ICommentPage } from '../../interfaces/Comment'
+import IComment, { ICommentPage, IReply } from '../../interfaces/Comment'
 import {
   useMutation,
   useQueryClient,
   InfiniteData,
 } from '@tanstack/react-query'
-import { blue } from '@mui/material/colors'
+import { blue, grey } from '@mui/material/colors'
 import { useComments } from '@/contexts/comments'
 
 interface Props {
@@ -36,7 +38,7 @@ interface Props {
   onDeleted(id: number): any
   onEdited(editedComment: IComment): any
   onRated(id: number, ratings: IRatings): any
-  onReplied(replyComment: IComment): any
+  onReplied(replyComment: IReply): any
 }
 
 const Comment: FC<Props> = ({
@@ -46,7 +48,8 @@ const Comment: FC<Props> = ({
   onRated,
   onReplied,
 }) => {
-  const queryClient = useQueryClient()
+  const theme = useTheme()
+  const [replyText, setReplyText] = useState('')
   const { authenticate, user } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const editInputRef = useRef<HTMLTextAreaElement | undefined>(undefined)
@@ -159,75 +162,163 @@ const Comment: FC<Props> = ({
               </CommentMenu>
             )}
           </div>
-          <div className='flex space-x-2'>
+          <div className='flex space-x-2 items-center mb-1'>
             <Link href={`/channel/${commentData.author.id}`}>
-              <Typography variant='body2'>{commentData.author.name}</Typography>
+              <Typography variant='subtitle2'>
+                {commentData.author.name}
+              </Typography>
             </Link>
-            <Typography variant='body2' color='text.secondary'>
+            <Typography variant='caption' color='secondary'>
               {new Date(commentData.createdAt).toLocaleDateString()}
             </Typography>
           </div>
-          <Typography variant='body1' sx={{ whiteSpace: 'pre-wrap' }}>
+          <Typography
+            variant='body2'
+            sx={{
+              whiteSpace: 'pre-wrap',
+            }}
+          >
             {commentData.text}
           </Typography>
-          <div className='flex mt-2'>
-            <Button
-              color='secondary'
-              startIcon={
-                <ThumbUpAltIcon
-                  sx={{ color: hasUserLiked ? blue[700] : 'inherit' }}
-                />
-              }
-              disabled={ratingMutation.isPending}
-              onClick={authenticate(() =>
-                ratingMutation.mutate(hasUserLiked ? 'remove' : 'like')
-              )}
-            >
-              {commentData.ratings.count.likes}
-            </Button>
-            <Button
-              color='secondary'
-              startIcon={
-                <ThumbDownIcon
-                  sx={{ color: hasUserDisliked ? blue[700] : 'inherit' }}
-                />
-              }
+          <div
+            className='flex items-center mt-1'
+            style={{ marginLeft: '-8px' }}
+          >
+            <div>
+              <IconButton
+                color='inherit'
+                disabled={ratingMutation.isPending}
+                onClick={authenticate(() =>
+                  ratingMutation.mutate(hasUserLiked ? 'remove' : 'like')
+                )}
+                className='flex items-center'
+                sx={{
+                  height: '36px',
+                  width: '36px',
+                  '&.Mui-disabled': {
+                    opacity: 1, // Keep full opacity when disabled
+                    color: 'black', // Ensure text and icons stay black
+                    cursor: 'not-allowed',
+                  },
+                }}
+              >
+                <span
+                  className='material-symbols-outlined'
+                  style={{
+                    ...(hasUserLiked
+                      ? {
+                          fontVariationSettings:
+                            "'FILL' 1, 'wght' 200, 'GRAD' 200, 'opsz' 48",
+                        }
+                      : {}),
+                    fontSize: '1.25rem',
+                  }}
+                >
+                  thumb_up
+                </span>
+              </IconButton>
+              <Typography variant='overline'>
+                {commentData.ratings.count.likes}
+              </Typography>
+            </div>
+            <IconButton
+              color='inherit'
               disabled={ratingMutation.isPending}
               onClick={authenticate(() =>
                 ratingMutation.mutate(hasUserDisliked ? 'remove' : 'dislike')
               )}
+              className='flex items-center'
+              sx={{
+                '&.Mui-disabled': {
+                  opacity: 1, // Keep full opacity when disabled
+                  color: 'black', // Ensure text and icons stay black
+                  cursor: 'not-allowed',
+                },
+              }}
             >
-              {commentData.ratings.count.dislikes}
+              <span
+                className='material-symbols-outlined'
+                style={{
+                  ...(hasUserDisliked
+                    ? {
+                        fontVariationSettings:
+                          "'FILL' 1, 'wght' 200, 'GRAD' 200, 'opsz' 48",
+                      }
+                    : {}),
+                  fontSize: '1.25rem',
+                }}
+              >
+                thumb_down
+              </span>
+            </IconButton>
+            <Button
+              variant='text'
+              color='inherit'
+              aria-pressed
+              sx={{
+                textTransform: 'none',
+                borderRadius: '20px',
+                maxHeight: 'fit-content',
+                fontSize: theme.typography.caption.fontSize,
+              }}
+              onClick={toggleReplyingMode}
+            >
+              Reply
             </Button>
-            <Button onClick={toggleReplyingMode}>Reply</Button>
           </div>
           {isReplyingMode &&
             (replyMutation.isPending ? (
               <CenteredSpinner />
             ) : (
               <form
-                className='flex space-x-3 w-full mt-2'
+                className='flex space-x-3 w-full'
                 onSubmit={handleReplySubmit}
               >
                 <Avatar
-                  style={{ width: '2rem', height: '2rem' }}
                   src={user?.picture}
                   alt={user?.name}
+                  sx={{ width: 24, height: 24 }}
                 />
                 <div className='flex flex-col w-full space-y-3'>
                   <MultilineInput
                     required
                     autoFocus
                     inputRef={replyInputRef}
+                    value={replyText}
+                    onChange={e => setReplyText(e.target.value)}
                     placeholder='Add a public reply...'
                   />
-                  <div className='flex justify-end space-x-2'>
-                    <Button onClick={toggleReplyingMode}>Cancel</Button>
+                  <div className='flex justify-end mt-3'>
                     <Button
-                      type='submit'
-                      color='primary'
+                      variant='text'
+                      color='inherit'
+                      sx={{
+                        borderRadius: '20px',
+                        padding: '0.5rem 1rem',
+                        textTransform: 'none',
+                        color: grey[600],
+                        '&:hover': {
+                          backgroundColor: grey[200],
+                        },
+                        marginRight: '12px',
+                      }}
+                      onClick={() => {
+                        setReplyText('')
+                        toggleReplyingMode()
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
                       disableElevation
+                      disabled={!replyText}
                       variant='contained'
+                      color='primary'
+                      type='submit'
+                      sx={{
+                        borderRadius: '20px',
+                        textTransform: 'none',
+                      }}
                     >
                       Reply
                     </Button>
@@ -238,15 +329,22 @@ const Comment: FC<Props> = ({
           {isFirstLevelComment && hasReplies && (
             <div>
               <Button onClick={() => toggleRepliesView()} disableRipple>
-                {isViewingReplies ? (
-                  <>
-                    <ArrowDropUpIcon /> Hide {commentData.replyCount} replies
-                  </>
-                ) : (
-                  <>
-                    <ArrowDropDownIcon /> View {commentData.replyCount} replies
-                  </>
-                )}
+                <Button
+                  variant='text'
+                  color='primary'
+                  sx={{
+                    borderRadius: '20px',
+                    borderColor: theme.palette.grey[300],
+                    textTransform: 'none',
+                  }}
+                >
+                  <span className='material-symbols-outlined mr-1'>
+                    keyboard_arrow_{isViewingReplies ? 'up' : 'down'}
+                  </span>
+                  <Typography variant='subtitle2'>
+                    {commentData.replyCount} replies
+                  </Typography>
+                </Button>
               </Button>
               {isViewingReplies && <Replies commentId={commentData.id} />}
             </div>

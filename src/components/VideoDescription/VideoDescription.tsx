@@ -36,7 +36,7 @@ const VideoDescription: FC<Props> = ({ text, views, uploadedAt }) => {
           </Typography>
         </div>
       </div>
-      <Typography variant='body2'>
+      <Typography variant='body2' sx={{ whiteSpace: 'pre-wrap' }}>
         {isExpanded ? text : `${text.substring(0, shortLength)}...`}
       </Typography>
       {isExpanded && (

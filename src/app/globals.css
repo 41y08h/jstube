@@ -137,7 +137,10 @@ button:focus {
   height: 100%;
 }
 
-.aspect-ratio > img,
-.aspect-ratio > video {
+.aspect-ratio > img {
   object-fit: cover;
+}
+
+.aspect-ratio > video {
+  object-fit: contain;
 }

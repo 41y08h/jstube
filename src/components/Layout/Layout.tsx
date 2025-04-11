@@ -13,11 +13,11 @@ const Layout: FC<Props> = ({ children }) => {
   const toggleSidebar = () => setIsSidebarOpen(previous => !previous)
 
   return (
-    <>
+    <div className='flex flex-col h-screen'>
       <Header toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} toggleIsOpen={toggleSidebar} />
-      <div className='bg-white'>{children}</div>
-    </>
+      <div className='bg-white h-full'>{children}</div>
+    </div>
   )
 }
 

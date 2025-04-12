@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Videos from '@/components/Videos'
 import { useParams } from 'next/navigation'
 import Layout from '@/components/Layout'
-import { Avatar, Button, useTheme } from '@mui/material'
+import { Avatar, Button, Divider, Typography, useTheme } from '@mui/material'
 import { useAuth } from '@/contexts/auth'
 import ISubscribers from '@/interfaces/Subscribers'
 import axios from 'axios'
@@ -51,54 +51,64 @@ export default function ChannelPage() {
 
   return (
     <Layout>
-      <div>
-        <div className='relative w-full pt-[15.625%]'>
-          {/* 250 / 1600 = 0.15625 */}
-          <img
-            src='https://picsum.photos/1600/250'
-            alt='cover image'
-            className='absolute top-0 left-0 w-full h-full object-cover'
-          />
-        </div>
-        <div className='flex justify-between items-center w-full p-4'>
-          <div className='flex space-x-4'>
-            <Avatar
-              src={channel.picture}
-              alt={channel.name}
-              style={{ width: '75px', height: '75px' }}
+      <div className='py-6'>
+        <div className='px-32'>
+          <div className='relative w-full pt-[15.625%]'>
+            {/* 250 / 1600 = 0.15625 */}
+            <img
+              src='https://picsum.photos/1600/250'
+              alt='cover image'
+              className='absolute top-0 left-0 w-full h-full object-cover rounded-2xl'
             />
-            <div>
-              <p className='text-xl'>{channel.name}</p>
-              <p className='text-md text-secondary'>
-                {channel.subscribers.count} subscribers
-              </p>
+          </div>
+          <div className='flex justify-between items-center w-full py-4'>
+            <div className='flex space-x-4'>
+              <Avatar
+                src={channel.picture}
+                alt={channel.name}
+                sx={{ width: 140, height: 140 }}
+              />
+              <div className='flex flex-col py-5'>
+                <Typography
+                  variant='h4'
+                  sx={{ fontWeight: theme.typography.fontWeightBold }}
+                >
+                  {channel.name}
+                </Typography>
+
+                <div className='flex items-center mt-2'>
+                  <Button
+                    disableElevation
+                    variant='contained'
+                    sx={{
+                      px: 2,
+                      backgroundColor: subscribers.isUserSubscribed
+                        ? grey[300]
+                        : 'black',
+                      borderRadius: '20px',
+                      textTransform: 'none',
+                      color: subscribers.isUserSubscribed
+                        ? theme.palette.text.primary
+                        : theme.palette.getContrastText(red[500]),
+                    }}
+                    onClick={subscribe}
+                    disabled={subscribersMutation.isPending}
+                  >
+                    {subscribers.isUserSubscribed ? 'Subscribed' : 'Subscribe'}
+                  </Button>
+                  <Typography color='secondary' variant='body2' sx={{ ml: 2 }}>
+                    {channel.subscribers.count} subscribers
+                  </Typography>
+                </div>
+              </div>
             </div>
           </div>
-          <Button
-            disableElevation
-            variant='contained'
-            sx={{
-              px: 2,
-              backgroundColor: subscribers.isUserSubscribed
-                ? grey[200]
-                : red[500],
-              color: subscribers.isUserSubscribed
-                ? theme.palette.text.primary
-                : theme.palette.getContrastText(red[500]),
-              '&:hover': {
-                backgroundColor: subscribers.isUserSubscribed
-                  ? grey[300]
-                  : red[700],
-              },
-            }}
-            onClick={subscribe}
-            disabled={subscribersMutation.isPending}
-          >
-            {subscribers.isUserSubscribed ? 'Subscribed' : 'Subscribe'}
-          </Button>
+          <ChannelTabs />
         </div>
-        <ChannelTabs />
-        <Videos url={`/api/channel/${channel.id}/videos`} />
+        <Divider />
+        <div className='px-32 mt-2'>
+          <Videos url={`/api/channel/${channel.id}/videos`} />
+        </div>
       </div>
     </Layout>
   )

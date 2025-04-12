@@ -22,6 +22,7 @@ import ReplyIcon from '@mui/icons-material/Reply'
 import { blue } from '@mui/material/colors'
 import numberWithCommas from '@/lib/numberWithCommas'
 import {
+  InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -45,6 +46,7 @@ interface Props {
 
 const Suggestions = () => {
   const theme = useTheme()
+  const queryClient = useQueryClient()
   const suggestionsQuery = useInfiniteQuery<QVideos, AxiosError>({
     queryKey: ['/api/videos'],
     initialPageParam: 1,
@@ -69,6 +71,22 @@ const Suggestions = () => {
             channel: `/channel/${video.channel.id}`,
           }
 
+          function updateIsInWL() {
+            queryClient.setQueryData<InfiniteData<QVideos>>(
+              ['/api/videos'],
+              data => ({
+                pages:
+                  data?.pages.map(page => ({
+                    ...page,
+                    items: page.items.map(t =>
+                      t.id === video.id ? { ...t, isInWL: !video.isInWL } : t
+                    ),
+                  })) ?? [],
+                pageParams: data?.pageParams ?? [],
+              })
+            )
+          }
+
           return (
             <ButtonBase
               key={video.id}
@@ -78,7 +96,11 @@ const Suggestions = () => {
             >
               <div className='flex w-full pr-6'>
                 <div className='absolute -top-2 right-3'>
-                  <VideoMenu id={video.id} isInWL={video.isInWL} />
+                  <VideoMenu
+                    id={video.id}
+                    isInWL={video.isInWL}
+                    updateIsInWL={updateIsInWL}
+                  />
                 </div>
                 <div className='relative min-w-[200px] mr-2'>
                   <Link href={links.video}>

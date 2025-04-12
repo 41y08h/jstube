@@ -48,7 +48,7 @@ export default function RootLayout({
               <AuthProvider>
                 {children}
                 <ToastContainer
-                  position='bottom-left'
+                  position='bottom-center'
                   newestOnTop={true}
                   style={{ maxWidth: '100%' }}
                 />

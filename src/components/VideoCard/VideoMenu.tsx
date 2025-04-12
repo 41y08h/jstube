@@ -19,18 +19,18 @@ import { useAuth } from '../../contexts/auth'
 interface Props {
   id: number
   isInWL: boolean
+  updateIsInWL: (videoId: number) => void
 }
 
-const VideoMenu: FC<Props> = ({ id, isInWL }) => {
+const VideoMenu: FC<Props> = ({ id, isInWL, updateIsInWL }) => {
   const { authenticate } = useAuth()
   const queryClient = useQueryClient()
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const { mutate: addToWL, isPending: isAdding } = useMutation({
     mutationFn: () => axios.post(`/api/watchlater/${id}`),
     onSuccess: () => {
-      updateIsInWL()
+      updateIsInWL(id)
       toast.dark('Saved to Watch Later', {
-        position: 'bottom-left',
         hideProgressBar: true,
       })
     },
@@ -38,26 +38,12 @@ const VideoMenu: FC<Props> = ({ id, isInWL }) => {
   const { mutate: removeFromWL, isPending: isDeleting } = useMutation({
     mutationFn: () => axios.delete(`/api/watchlater/${id}`),
     onSuccess: () => {
-      updateIsInWL()
+      updateIsInWL(id)
       toast.dark('Removed from Watch Later', {
-        position: 'bottom-left',
         hideProgressBar: true,
       })
     },
   })
-
-  function updateIsInWL() {
-    queryClient.setQueryData<InfiniteData<QVideos>>(['/api/videos'], data => ({
-      pages:
-        data?.pages.map(page => ({
-          ...page,
-          items: page.items.map(video =>
-            video.id === id ? { ...video, isInWL: !isInWL } : video
-          ),
-        })) ?? [],
-      pageParams: data?.pageParams ?? [],
-    }))
-  }
 
   const openMenu = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)

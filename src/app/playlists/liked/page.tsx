@@ -52,7 +52,7 @@ export default function Liked() {
     )
   }
 
-  if (isLoading) return null
+  if (isLoading) return <Layout />
 
   return (
     <Layout>

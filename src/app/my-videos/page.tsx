@@ -62,7 +62,7 @@ export default function MyVideos() {
     )
   }
 
-  if (isLoading) return null
+  if (isLoading) return <Layout />
 
   return (
     <Layout>

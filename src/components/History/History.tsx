@@ -16,7 +16,7 @@ import formatNumber from '@/lib/formatNumber'
 import timeSince from '@/lib/timeSince'
 
 interface IHistory extends QVideo {
-  viwedAt: string
+  viewedAt: string
 }
 
 type QHistory = IHistory[]

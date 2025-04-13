@@ -1,4 +1,3 @@
-import { IComments } from './Comment'
 import IRatings from './Ratings'
 import User, { IChannel } from './User'
 
@@ -9,25 +8,20 @@ export default interface IVideo {
   src: string
   thumbnail: string
   duration: number
-  userId: number
   views: number
+  userId: number
   uploadedAt: string
   updatedAt: string
 }
 
 export interface QVideo extends IVideo {
   channel: IChannel
+  ratings: IRatings
   isInWL: boolean
 }
 
-export interface QVideos {
-  page: number
+export interface QVideosPage {
+  pageNumber: number
   hasMore: boolean
   items: QVideo[]
-}
-
-export interface QVideoDetailed extends IVideo {
-  channel: IChannel
-  ratings: IRatings
-  comments: IComments
 }

@@ -22,16 +22,6 @@ const nextConfig: NextConfig = {
       { hostname: 'commondatastorage.googleapis.com' },
     ],
   },
-  experimental: {
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js', // Or other desired output extension
-        },
-      },
-    },
-  },
 }
 
 export default nextConfig

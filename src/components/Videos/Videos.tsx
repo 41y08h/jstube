@@ -11,9 +11,9 @@ import { QVideosPage } from '../../interfaces/Video'
 import VideoLoadingGrid from '../VideoLoadingGrid'
 import { useInView } from 'react-intersection-observer'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import AlienImage from '@/images/alien.svg'
 import { Typography } from '@mui/material'
 import { Button } from '@mui/material'
+import Image from 'next/image'
 
 const Videos: FC<{ url: string }> = ({ url }) => {
   const {
@@ -63,7 +63,13 @@ const Videos: FC<{ url: string }> = ({ url }) => {
   if (isError)
     return (
       <div className='py-16 flex flex-col items-center justify-center space-y-4 text-center'>
-        <AlienImage className='h-32 mx-auto' />
+        <Image
+          src='/alien.svg'
+          alt='alien'
+          height={128}
+          width={128}
+          className='mx-auto'
+        />
         <Typography variant='h5'>An error occurred</Typography>
         <Typography variant='body2'>
           {error?.response?.data?.message}

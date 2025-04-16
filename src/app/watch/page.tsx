@@ -7,7 +7,11 @@ export function generateMetadata() {
   return { title: `Watch - JS Tube` }
 }
 
-export default async function WatchPage({ searchParams }) {
+export default async function WatchPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ v: string }>
+}) {
   const { v: videoId } = await searchParams
   const { data: video } = await axios.get(
     `http://localhost:3000/api/videos/${videoId}`,

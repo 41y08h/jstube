@@ -7,18 +7,20 @@ import React, { createContext, FC, useContext, useState } from 'react'
 
 interface AuthContext {
   isLoading: boolean
-  error: AxiosError<any> | null
+  error: AxiosError<{ code: number; message: string }> | null
   user?: User
-  authenticate<T extends (...args: any[]) => any>(
+  authenticate<T extends (...args: unknown[]) => unknown>(
     fn: T
   ): (...fnArgs: Parameters<T>) => ReturnType<T> | void
   isAuthenticated: boolean
 }
 
-const AuthContext = createContext<any>(undefined)
+const AuthContext = createContext<AuthContext | undefined>(undefined)
 
 export function useAuth(): AuthContext {
-  return useContext(AuthContext)
+  const t = useContext(AuthContext)
+  if (t === undefined) throw Error('AuthProvider missing')
+  return t
 }
 
 interface Props {
@@ -28,7 +30,10 @@ interface Props {
 export const AuthProvider: FC<Props> = ({ children }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
-  const { isLoading, error, data } = useQuery<User, AxiosError>({
+  const { isLoading, error, data } = useQuery<
+    User,
+    AxiosError<{ code: number; message: string }>
+  >({
     queryKey: ['/api/auth/user'],
     retry: false,
     refetchOnWindowFocus: false,
@@ -36,7 +41,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
   const user = data
 
-  function authenticate<T extends (...args: any[]) => any>(
+  function authenticate<T extends (...args: unknown[]) => unknown>(
     fn: T
   ): (...fnArgs: Parameters<T>) => ReturnType<T> | void {
     return (...args: Parameters<T>): ReturnType<T> | void => {
@@ -45,10 +50,9 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
       // The user is authenticated
       const isUserAuthenticated = Boolean(user)
-      if (isUserAuthenticated) return fn(...args)
-
+      if (isUserAuthenticated) fn(...args)
       // The user is not authenticated
-      setIsLoginModalOpen(true)
+      else setIsLoginModalOpen(true)
     }
   }
 

@@ -1,12 +1,9 @@
 'use client'
-import { LinearProgress } from '@material-ui/core'
 import {
   InfiniteData,
   useInfiniteQuery,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { Card } from 'react-bootstrap'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
 import { ButtonBase, Typography, useTheme } from '@mui/material'
@@ -16,22 +13,12 @@ import axios from 'axios'
 import formatTime from '@/lib/formatTime'
 import formatNumber from '@/lib/formatNumber'
 import timeSince from '@/lib/timeSince'
-
-function VideoCard({ data: video }) {
-  return (
-    <Card style={{ width: '18rem' }}>
-      <Card.Img variant='top' src={video.thumbnail} />
-      <Card.Body>
-        <Card.Title>{video.title}</Card.Title>
-      </Card.Body>
-    </Card>
-  )
-}
+import Image from 'next/image'
 
 export default function MyVideos() {
   const theme = useTheme()
   const queryClient = useQueryClient()
-  const { data, isLoading, isFetching } = useInfiniteQuery<QVideosPage>({
+  const { data, isLoading } = useInfiniteQuery<QVideosPage>({
     queryKey: ['/api/videos/mine'],
     initialPageParam: 1,
     queryFn: async ({ pageParam }) =>
@@ -99,7 +86,8 @@ export default function MyVideos() {
                     <div className='relative min-w-[260px] mr-4'>
                       <Link href={links.video}>
                         <div className='aspect-ratio'>
-                          <img
+                          <Image
+                            fill
                             src={video.thumbnail}
                             alt={video.title}
                             className='rounded-lg'

@@ -15,6 +15,13 @@ const nextConfig: NextConfig = {
       },
     ]
   },
+  images: {
+    remotePatterns: [
+      { hostname: 'picsum.photos' },
+      { hostname: 'github.com' },
+      { hostname: 'commondatastorage.googleapis.com' },
+    ],
+  },
   experimental: {
     turbo: {
       rules: {

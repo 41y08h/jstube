@@ -2,18 +2,22 @@
 import Link from 'next/link'
 import { MouseEvent } from 'react'
 import { useState, FC } from 'react'
-import { DetailedHTMLProps } from 'react'
-import { AnchorHTMLAttributes } from 'react'
 import { useAuth } from '../../contexts/auth'
-import { OverridableComponent } from '@material-ui/core/OverridableComponent'
-import { Avatar, Divider, Menu, MenuItem, Typography } from '@mui/material'
+import {
+  Avatar,
+  Divider,
+  Menu,
+  MenuItem,
+  SvgIconProps,
+  Typography,
+} from '@mui/material'
 import AccountBoxIcon from '@mui/icons-material/AccountBox'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import SettingsIcon from '@mui/icons-material/Settings'
 import HelpIcon from '@mui/icons-material/Help'
 
 interface Props {
-  Icon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>>
+  Icon: FC<SvgIconProps>
   text: string
 }
 
@@ -40,7 +44,7 @@ export default function Profile() {
       <button onClick={openMenu}>
         <Avatar
           style={{ width: '2rem', height: '2rem' }}
-          src={user?.picture}
+          src={user?.picture ?? ''}
           alt={user?.name}
         />
       </button>
@@ -62,7 +66,7 @@ export default function Profile() {
         sx={{ width: '220px' }}
       >
         <div className='p-4 pb-2 flex items-center space-x-4'>
-          <Avatar src={user?.picture} alt={user?.name} />
+          <Avatar src={user?.picture ?? ''} alt={user?.name} />
           <Typography variant='h6' className='truncate'>
             {user?.name}
           </Typography>
@@ -73,11 +77,11 @@ export default function Profile() {
             <MenuItemContent Icon={AccountBoxIcon} text='Your channel' />
           </MenuItem>
         </Link>
-        <a href='/api/logout'>
+        <Link href='/api/logout'>
           <MenuItem onClick={closeMenu}>
             <MenuItemContent Icon={ExitToAppIcon} text='Sign out' />
           </MenuItem>
-        </a>
+        </Link>
         <Divider sx={{ margin: '12px 0' }} />
         <MenuItem onClick={closeMenu}>
           <MenuItemContent Icon={SettingsIcon} text='Settings' />

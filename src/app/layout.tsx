@@ -22,7 +22,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: { queryFn, staleTime: 5 * 60 * 1000, refetchOnMount: 'always' },
     mutations: {
-      onError(error, variables, context) {
+      onError(error) {
         if (error instanceof AxiosError) {
           toast(error?.response?.data.message, {
             type: 'error',

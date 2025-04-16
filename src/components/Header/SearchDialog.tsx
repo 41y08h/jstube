@@ -1,18 +1,11 @@
 import React from 'react'
-import {
-  AppBar,
-  Dialog,
-  IconButton,
-  Input,
-  Slide,
-  Toolbar,
-} from '@mui/material'
+import { AppBar, Dialog, IconButton, Input, Toolbar } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import SearchIcon from '@mui/icons-material/Search'
 
 interface Props {
   isOpen: boolean
-  close(): any
+  close(): void
 }
 
 const SearchDialog: React.FC<Props> = ({ isOpen, close }) => {

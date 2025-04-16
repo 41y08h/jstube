@@ -11,6 +11,8 @@ export default interface IComment {
   replyToCommentId: null
   createdAt: Date
   updatedAt: Date
+  userId: number
+  videoId: number
   repliedToAuthorName: string
 }
 
@@ -24,6 +26,9 @@ export interface IReply {
   replyToCommentId: number
   createdAt: Date
   updatedAt: Date
+  userId: number
+  videoId: number
+  repliedToAuthorName: unknown
 }
 
 export interface ICommentPage {

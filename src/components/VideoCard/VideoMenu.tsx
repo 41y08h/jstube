@@ -8,12 +8,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import WatchLaterIcon from '@mui/icons-material/WatchLater'
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
 
-import {
-  useMutation,
-  useQueryClient,
-  InfiniteData,
-} from '@tanstack/react-query'
-import { QVideos } from '../../interfaces/Video'
+import { useMutation } from '@tanstack/react-query'
 import { useAuth } from '../../contexts/auth'
 
 interface Props {
@@ -24,7 +19,6 @@ interface Props {
 
 const VideoMenu: FC<Props> = ({ id, isInWL, updateIsInWL }) => {
   const { authenticate } = useAuth()
-  const queryClient = useQueryClient()
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const { mutate: addToWL, isPending: isAdding } = useMutation({
     mutationFn: () => axios.post(`/api/watchlater/${id}`),
@@ -53,7 +47,7 @@ const VideoMenu: FC<Props> = ({ id, isInWL, updateIsInWL }) => {
     setAnchorEl(null)
   }
 
-  function handleMenuItemClick(fn: any) {
+  function handleMenuItemClick(fn: () => void) {
     const run = authenticate(fn)
     run()
     closeMenu()

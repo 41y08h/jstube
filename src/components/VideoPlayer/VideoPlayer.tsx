@@ -1,8 +1,9 @@
 'use client'
-import { FC } from 'react'
-import { __PROD__ } from '../../config'
+import { DetailedHTMLProps, FC, VideoHTMLAttributes } from 'react'
 
-const VideoPlayer: FC<any> = props => (
+const VideoPlayer: FC<
+  DetailedHTMLProps<VideoHTMLAttributes<HTMLVideoElement>, HTMLVideoElement>
+> = props => (
   <video
     style={{ width: '100%' }}
     className='rounded-xl'

@@ -1,13 +1,9 @@
 'use client'
-import { LinearProgress } from '@material-ui/core'
 import axios from 'axios'
 import Link from 'next/link'
-import { Card, Button } from 'react-bootstrap'
 import {
   InfiniteData,
   useInfiniteQuery,
-  useMutation,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
 import Layout from '@/components/Layout'
@@ -17,11 +13,12 @@ import formatTime from '@/lib/formatTime'
 import formatNumber from '@/lib/formatNumber'
 import timeSince from '@/lib/timeSince'
 import { QVideosPage } from '@/interfaces/Video'
+import Image from 'next/image'
 
 export default function WatchLater() {
   const theme = useTheme()
   const queryClient = useQueryClient()
-  const { data, isLoading, isFetching } = useInfiniteQuery<QVideosPage>({
+  const { data, isLoading } = useInfiniteQuery<QVideosPage>({
     queryKey: ['/api/watchlater'],
     initialPageParam: 1,
     queryFn: async ({ pageParam }) =>
@@ -84,7 +81,8 @@ export default function WatchLater() {
                     <div className='relative min-w-[260px] mr-4'>
                       <Link href={links.video}>
                         <div className='aspect-ratio'>
-                          <img
+                          <Image
+                            fill
                             src={video.thumbnail}
                             alt={video.title}
                             className='rounded-lg'

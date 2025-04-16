@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const getVideo = async (videoId: string) => {
+export const getVideo = async (videoId: number) => {
   const { data } = await axios.get(
     `http://localhost:3000/api/videos/${videoId}`
   )

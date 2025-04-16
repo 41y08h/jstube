@@ -1,19 +1,13 @@
 'use client'
 import Link from 'next/link'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  Button,
-  ButtonBase,
-  LinearProgress,
-  Typography,
-  useTheme,
-} from '@mui/material'
-import IVideo, { QVideo } from '@/interfaces/Video'
-import VideoCard from '../VideoCard'
+import { ButtonBase, Typography, useTheme } from '@mui/material'
+import { QVideo } from '@/interfaces/Video'
 import VideoMenu from '../VideoCard/VideoMenu'
 import formatTime from '@/lib/formatTime'
 import formatNumber from '@/lib/formatNumber'
 import timeSince from '@/lib/timeSince'
+import Image from 'next/image'
 
 interface IHistory extends QVideo {
   viewedAt: string
@@ -24,7 +18,7 @@ type QHistory = IHistory[]
 export default function History({ data: initialData }: { data: QHistory }) {
   const theme = useTheme()
   const queryClient = useQueryClient()
-  const { data, isLoading, isFetching } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['/api/history'],
     initialData,
   })
@@ -72,7 +66,8 @@ export default function History({ data: initialData }: { data: QHistory }) {
                 <div className='relative min-w-[260px] mr-4'>
                   <Link href={links.video}>
                     <div className='aspect-ratio'>
-                      <img
+                      <Image
+                        fill
                         src={video.thumbnail}
                         alt={video.title}
                         className='rounded-lg'

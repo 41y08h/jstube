@@ -9,11 +9,11 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText,
   SwipeableDrawer,
   Typography,
   useTheme,
 } from '@mui/material'
+import Image from 'next/image'
 
 interface Props {
   isOpen: boolean
@@ -62,7 +62,14 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
             <span className='material-symbols-outlined'>menu</span>
           </IconButton>
           <Link href='/' className='block ml-3'>
-            <img className='h-5' src='/jstube_logo.svg' alt='JsTube' />
+            <div className='relative h-5 aspect-[421.384/109.2]'>
+              <Image
+                src='/jstube_logo.svg'
+                alt='JsTube'
+                fill
+                className='object-contain'
+              />
+            </div>
           </Link>
         </div>
         <div className='overflow-y-auto flex-1 themed-scrollbar'>

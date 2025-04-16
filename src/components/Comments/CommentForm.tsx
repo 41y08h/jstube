@@ -3,12 +3,11 @@ import { useAuth } from '@/contexts/auth'
 import MultilineInput from '../MultilineInput'
 import { grey } from '@mui/material/colors'
 import { FC, FormEventHandler, RefObject, useState } from 'react'
-import { Button, inputBaseClasses, TextField, useTheme } from '@mui/material'
-import Avatar from '../Avatar'
+import { Avatar, Button } from '@mui/material'
 
 interface Props {
   onSubmit: FormEventHandler
-  isFormActive: Boolean
+  isFormActive: boolean
   toggleForm: (t: boolean) => void
   inputRef: RefObject<HTMLTextAreaElement | undefined>
 }
@@ -25,7 +24,7 @@ const CommentForm: FC<Props> = ({
   return (
     <form onSubmit={onSubmit}>
       <div className='flex space-x-4'>
-        <Avatar src={user?.picture} alt={user?.name} />
+        <Avatar src={user?.picture ?? ''} alt={user?.name} />
         <MultilineInput
           fullWidth
           required

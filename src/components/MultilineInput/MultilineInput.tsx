@@ -15,7 +15,7 @@ const MultilineInput: FC<Props> = props => {
 
     // Put the cursor at the end of input
     element.setSelectionRange(element.value.length, element.value.length)
-  }, [])
+  }, [props.inputRef])
 
   return (
     <TextField

@@ -1,7 +1,7 @@
 'use client'
 import axios from 'axios'
 import Link from 'next/link'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { Avatar, Button, Divider, Typography, useTheme } from '@mui/material'
 import { red, grey } from '@mui/material/colors'
 import { useAuth } from '../../contexts/auth'
@@ -10,6 +10,7 @@ import { IChannel } from '../../interfaces/User'
 import formatNumber from '../../lib/formatNumber'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import IRatings from '@/interfaces/Ratings'
+import { QVideo } from '@/interfaces/Video'
 
 interface Props {
   videoId: number
@@ -33,13 +34,16 @@ const ChannelBar: FC<Props> = ({ videoId, channel, ratings }) => {
       queryClient.invalidateQueries({
         queryKey: ['/api/subscribers/subscriptions'],
       })
-      queryClient.setQueryData([`/api/videos/${videoId}`], (prevData: any) => ({
-        ...prevData,
-        channel: {
-          ...prevData.channel,
-          subscribers: data,
-        },
-      }))
+      queryClient.setQueryData<QVideo>(
+        [`/api/videos/${videoId}`],
+        prevData => ({
+          ...prevData!,
+          channel: {
+            ...prevData!.channel,
+            subscribers: data,
+          },
+        })
+      )
     },
   })
 
@@ -55,10 +59,13 @@ const ChannelBar: FC<Props> = ({ videoId, channel, ratings }) => {
         : axios.delete<T>(url)
     },
     onSuccess: res => {
-      queryClient.setQueryData([`/api/videos/${videoId}`], (prevData: any) => ({
-        ...prevData,
-        ratings: res.data,
-      }))
+      queryClient.setQueryData<QVideo>(
+        [`/api/videos/${videoId}`],
+        prevData => ({
+          ...prevData!,
+          ratings: res.data,
+        })
+      )
     },
   })
 
@@ -75,7 +82,7 @@ const ChannelBar: FC<Props> = ({ videoId, channel, ratings }) => {
       <div className='flex items-center'>
         <div className='flex items-center space-x-4 mr-10'>
           <Link href={`/channel/${channel.id}`}>
-            <Avatar src={channel.picture} alt={channel.name} />
+            <Avatar src={channel.picture ?? ''} alt={channel.name} />
           </Link>
           <div className='flex flex-col'>
             <Link href={`/channel/${channel.id}`}>

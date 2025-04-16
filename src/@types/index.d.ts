@@ -1,10 +1,5 @@
 import React from 'react'
 
-declare module '*.svg' {
-  const content: any
-  export default content
-}
-
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
     palette: {

@@ -1,5 +1,5 @@
 'use client'
-import IComment, { ICommentPage } from '@/interfaces/Comment'
+import { ICommentPage } from '@/interfaces/Comment'
 import {
   InfiniteData,
   useInfiniteQuery,
@@ -9,20 +9,19 @@ import {
 import axios, { AxiosError } from 'axios'
 import React, { createContext, FC, useContext } from 'react'
 
-interface AuthContext {
+interface CommentsContext {
   updateTotalCommentsCount: (updater: (total: number) => number) => void
   commentsQueryKey: string[]
-  commentsQuery: UseInfiniteQueryResult<
-    CommentsQueryData,
-    AxiosError<unknown, any>
-  >
+  commentsQuery: UseInfiniteQueryResult<CommentsQueryData, AxiosError<unknown>>
   videoId: number
 }
 
-const CommentsContext = createContext<any>(undefined)
+const CommentsContext = createContext<CommentsContext | undefined>(undefined)
 
-export function useComments(): AuthContext {
-  return useContext(CommentsContext)
+export function useComments(): CommentsContext {
+  const t = useContext(CommentsContext)
+  if (t === undefined) throw Error('CommentsProvider missing')
+  return t
 }
 
 interface Props {

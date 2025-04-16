@@ -14,9 +14,10 @@ import SignInButton from '../SignInButton'
 import { useAuth } from '../../contexts/auth'
 import Profile from './Profile'
 import { useTheme } from '@mui/material/styles'
+import Image from 'next/image'
 
-const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
-  const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth()
+const Header: FC<{ toggleSidebar: () => void }> = ({ toggleSidebar }) => {
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth()
   const theme = useTheme()
   const styles = useMemo(
     () => ({
@@ -49,7 +50,14 @@ const Header: FC<{ toggleSidebar: Function }> = ({ toggleSidebar }) => {
                 <span className='material-symbols-outlined'>menu</span>
               </IconButton>
               <Link href='/' className='block ml-3'>
-                <img className='h-5' src='/jstube_logo.svg' alt='JsTube' />
+                <div className='relative h-5 aspect-[421.384/109.2]'>
+                  <Image
+                    src='/jstube_logo.svg'
+                    alt='JsTube'
+                    fill
+                    className='object-contain'
+                  />
+                </div>
               </Link>
             </div>
 

@@ -1,5 +1,5 @@
 'use client'
-import ChannelTabs from '../../../components/ChannelTabs'
+import ChannelTabs from '@/components/ChannelTabs'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Videos from '@/components/Videos'
 import { useParams } from 'next/navigation'
@@ -9,10 +9,12 @@ import { useAuth } from '@/contexts/auth'
 import ISubscribers from '@/interfaces/Subscribers'
 import axios from 'axios'
 import { grey, red } from '@mui/material/colors'
+import { IChannel } from '@/interfaces/User'
+import Image from 'next/image'
 
 export default function ChannelPage() {
   const params = useParams<{ id: string }>()
-  const { data: channel } = useQuery({
+  const channelQuery = useQuery<IChannel>({
     queryKey: [`/api/channel/${params?.id}`],
   })
   const theme = useTheme()
@@ -22,7 +24,7 @@ export default function ChannelPage() {
 
   const subscribersMutation = useMutation({
     mutationFn: (unsubscribe: boolean) => {
-      const url = `/api/subscribers/${channel.id}`
+      const url = `/api/subscribers/${channelQuery.data?.id}`
       return unsubscribe
         ? axios.delete<ISubscribers>(url).then(res => res.data)
         : axios.post<ISubscribers>(url).then(res => res.data)
@@ -32,16 +34,17 @@ export default function ChannelPage() {
         queryKey: ['/api/subscribers/subscriptions'],
       })
 
-      queryClient.setQueryData(
+      queryClient.setQueryData<IChannel>(
         [`/api/channel/${params?.id}`],
-        (prevData: any) => ({
-          ...prevData,
+        prevData => ({
+          ...prevData!,
           subscribers: data,
         })
       )
     },
   })
 
+  const channel = channelQuery.data
   if (!channel) return <Layout>{null}</Layout>
 
   const subscribe = authenticate(() =>
@@ -55,7 +58,8 @@ export default function ChannelPage() {
         <div className='px-32'>
           <div className='relative w-full pt-[15.625%]'>
             {/* 250 / 1600 = 0.15625 */}
-            <img
+            <Image
+              fill
               src='https://picsum.photos/1600/250'
               alt='cover image'
               className='absolute top-0 left-0 w-full h-full object-cover rounded-2xl'
@@ -64,7 +68,7 @@ export default function ChannelPage() {
           <div className='flex justify-between items-center w-full py-4'>
             <div className='flex space-x-4'>
               <Avatar
-                src={channel.picture}
+                src={channel.picture ?? ''}
                 alt={channel.name}
                 sx={{ width: 140, height: 140 }}
               />

@@ -1,5 +1,5 @@
 'use client'
-import axios, { AxiosError, AxiosResponse } from 'axios'
+import axios, { AxiosError } from 'axios'
 import Link from 'next/link'
 import Replies from '../Replies'
 import CommentMenu from './CommentMenu'
@@ -7,7 +7,6 @@ import {
   Button,
   Avatar,
   Typography,
-  CircularProgress,
   MenuItem,
   IconButton,
   useTheme,
@@ -19,26 +18,17 @@ import IRatings from '../../interfaces/Ratings'
 import CommentEditForm from './CommentEditForm'
 import CenteredSpinner from '../CenteredSpinner'
 import DeleteIcon from '@mui/icons-material/Delete'
-import ThumbDownIcon from '@mui/icons-material/ThumbDown'
-import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt'
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { FC, FormEventHandler, useState, useRef } from 'react'
-import IComment, { ICommentPage, IReply } from '../../interfaces/Comment'
-import {
-  useMutation,
-  useQueryClient,
-  InfiniteData,
-} from '@tanstack/react-query'
-import { blue, grey } from '@mui/material/colors'
-import { useComments } from '@/contexts/comments'
+import IComment, { IReply } from '@/interfaces/Comment'
+import { useMutation } from '@tanstack/react-query'
+import { grey } from '@mui/material/colors'
 
 interface Props {
   commentData: IComment
-  onDeleted(id: number): any
-  onEdited(editedComment: IComment): any
-  onRated(id: number, ratings: IRatings): any
-  onReplied(replyComment: IReply): any
+  onDeleted(id: number): void
+  onEdited(editedComment: IComment): void
+  onRated(id: number, ratings: IRatings): void
+  onReplied(replyComment: IReply): void
 }
 
 const Comment: FC<Props> = ({
@@ -91,7 +81,7 @@ const Comment: FC<Props> = ({
     onSuccess: ratings => onRated(commentData.id, ratings),
   })
 
-  const replyMutation = useMutation<IComment, AxiosError, string>({
+  const replyMutation = useMutation<IReply, AxiosError, string>({
     mutationFn: text =>
       axios
         .post(`/api/comments/${commentData.id}/replies`, { text })
@@ -135,7 +125,7 @@ const Comment: FC<Props> = ({
       <Link href={`/channel/${commentData.author.id}`}>
         <Avatar
           sx={{ width: 32, height: 32 }}
-          src={commentData.author.picture}
+          src={commentData.author.picture ?? ''}
           alt={commentData.author.name}
         />
       </Link>
@@ -275,7 +265,7 @@ const Comment: FC<Props> = ({
                 onSubmit={handleReplySubmit}
               >
                 <Avatar
-                  src={user?.picture}
+                  src={user?.picture ?? ''}
                   alt={user?.name}
                   sx={{ width: 24, height: 24 }}
                 />

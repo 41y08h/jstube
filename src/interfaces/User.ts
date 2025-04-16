@@ -1,11 +1,12 @@
-import ISubscribers from "./Subscribers";
+import ISubscribers from './Subscribers'
 
 export default interface IUser {
-  id: number;
-  name: string;
-  picture: string;
+  id: number
+  name: string
+  email: string
+  picture: string | null
 }
 
 export interface IChannel extends IUser {
-  subscribers: ISubscribers;
+  subscribers: ISubscribers
 }

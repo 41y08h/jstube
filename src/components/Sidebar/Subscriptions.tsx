@@ -1,10 +1,8 @@
 import { FC } from 'react'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import SignInButton from '../SignInButton'
 import { useAuth } from '../../contexts/auth'
 import { ISubscription } from '../../interfaces/Subscribers'
-import AlienImage from '@/images/alien.svg'
 
 import {
   Avatar,
@@ -14,17 +12,9 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText,
   Typography,
   useTheme,
 } from '@mui/material'
-import { makeStyles } from '@mui/styles'
-
-const useStyles = makeStyles(theme => ({
-  text: theme.typography.body2,
-  icon: { width: 46, minWidth: 'unset' },
-  item: { paddingLeft: 24, paddingRight: 24 },
-}))
 
 const Subscriptions: FC = () => {
   const theme = useTheme()
@@ -67,7 +57,7 @@ const Subscriptions: FC = () => {
                 <ListItemIcon sx={{ minWidth: 'unset', width: '46px' }}>
                   <Avatar
                     style={{ height: '28px', width: '28px' }}
-                    src={subscription.channel.picture}
+                    src={subscription.channel.picture ?? ''}
                     alt={subscription.channel.name}
                   />
                 </ListItemIcon>

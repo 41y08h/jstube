@@ -1,5 +1,5 @@
-import axios from "axios";
+import axios from 'axios'
 
-export default function fetcher(url) {
-  return axios.get(url).then((res) => res.data);
+export default function fetcher(url: string) {
+  return axios.get(url).then(res => res.data)
 }

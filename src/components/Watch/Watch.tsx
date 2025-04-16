@@ -1,53 +1,37 @@
 'use client'
 
 import axios, { AxiosError } from 'axios'
-import { FC, useState } from 'react'
-import dateformat from 'dateformat'
-import { useAuth } from '@/contexts/auth'
-import IRatings from '@/interfaces/Ratings'
+import { FC } from 'react'
 import Comments from '@/components/Comments'
 import ChannelBar from '@/components/ChannelBar'
 import VideoPlayer from '@/components/VideoPlayer'
 import VideoDescription from '@/components/VideoDescription'
-import {
-  Button,
-  ButtonBase,
-  Divider,
-  Typography,
-  useTheme,
-} from '@mui/material'
-import ThumbDownIcon from '@mui/icons-material/ThumbDown'
-import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt'
-import ReplyIcon from '@mui/icons-material/Reply'
-import { blue } from '@mui/material/colors'
-import numberWithCommas from '@/lib/numberWithCommas'
+import { ButtonBase, Typography, useTheme } from '@mui/material'
 import {
   InfiniteData,
   useInfiniteQuery,
-  useMutation,
   useQuery,
   useQueryClient,
-  useSuspenseQuery,
 } from '@tanstack/react-query'
 import { getVideo } from '@/lib/api' // Fetch video data in a separate function
 import { CommentsProvider } from '@/contexts/comments'
-import Videos from '../Videos'
 import CenteredSpinner from '../CenteredSpinner'
-import { QVideos } from '@/interfaces/Video'
 import Link from 'next/link'
 import formatTime from '@/lib/formatTime'
 import formatNumber from '@/lib/formatNumber'
 import timeSince from '@/lib/timeSince'
 import VideoMenu from '../VideoCard/VideoMenu'
+import { QVideo, QVideosPage } from '@/interfaces/Video'
+import Image from 'next/image'
 
 interface Props {
-  video: any
+  video: QVideo
 }
 
 const Suggestions = () => {
   const theme = useTheme()
   const queryClient = useQueryClient()
-  const suggestionsQuery = useInfiniteQuery<QVideos, AxiosError>({
+  const suggestionsQuery = useInfiniteQuery<QVideosPage, AxiosError>({
     queryKey: ['/api/videos'],
     initialPageParam: 1,
     queryFn: async ({ pageParam }) =>
@@ -55,7 +39,7 @@ const Suggestions = () => {
         params: { page: pageParam },
       }).then(res => res.data),
     getNextPageParam: lastPage =>
-      lastPage.hasMore ? lastPage.page + 1 : undefined,
+      lastPage.hasMore ? lastPage.pageNumber + 1 : undefined,
   })
 
   if (suggestionsQuery.isLoading) return <CenteredSpinner />
@@ -72,7 +56,7 @@ const Suggestions = () => {
           }
 
           function updateIsInWL() {
-            queryClient.setQueryData<InfiniteData<QVideos>>(
+            queryClient.setQueryData<InfiniteData<QVideosPage>>(
               ['/api/videos'],
               data => ({
                 pages:
@@ -105,7 +89,8 @@ const Suggestions = () => {
                 <div className='relative min-w-[200px] mr-2'>
                   <Link href={links.video}>
                     <div className='aspect-ratio'>
-                      <img
+                      <Image
+                        fill
                         src={video.thumbnail}
                         alt={video.title}
                         className='rounded-lg'
@@ -179,8 +164,6 @@ const Suggestions = () => {
 }
 
 const Watch: FC<Props> = ({ video }) => {
-  const { authenticate, user } = useAuth()
-  const queryClient = useQueryClient()
   const queryKey = [`/api/videos/${video.id}`]
 
   const { data } = useQuery({

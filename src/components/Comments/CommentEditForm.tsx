@@ -1,5 +1,4 @@
 import { grey } from '@mui/material/colors'
-import { makeStyles } from '@material-ui/core'
 import MultilineInput from '@/components/MultilineInput'
 import { FC, FormEventHandler, RefObject, useState } from 'react'
 import { Button } from '@mui/material'
@@ -8,18 +7,8 @@ interface Props {
   onSubmit: FormEventHandler
   inputRef: RefObject<HTMLTextAreaElement | undefined>
   defaultValue: string
-  onCancel: Function
+  onCancel: () => void
 }
-
-const useStyles = makeStyles(theme => ({
-  input: {
-    ...theme.typography.body2,
-    width: '100%',
-    borderRadius: 6,
-    padding: '0.8rem',
-    backgroundColor: grey[200],
-  },
-}))
 
 const CommentEditForm: FC<Props> = ({
   onSubmit,
@@ -27,7 +16,6 @@ const CommentEditForm: FC<Props> = ({
   defaultValue,
   onCancel,
 }) => {
-  const classes = useStyles()
   const [text, setText] = useState(defaultValue)
   return (
     <form className='flex flex-col w-full' onSubmit={onSubmit}>

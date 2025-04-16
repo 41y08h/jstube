@@ -1,18 +1,15 @@
 'use client'
 import {
   InfiniteData,
-  useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import Comment from './Comment'
 import CommentForm from './CommentForm'
 import { useAuth } from '../../contexts/auth'
 import IRatings from '../../interfaces/Ratings'
 import CenteredSpinner from '../CenteredSpinner'
-import grey from '@material-ui/core/colors/grey'
-import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import { useInView } from 'react-intersection-observer'
 import IComment, {
@@ -24,20 +21,9 @@ import { FC, FormEventHandler, useEffect, useRef, useState } from 'react'
 import { useComments } from '@/contexts/comments'
 import { useTheme } from '@mui/material'
 
-const useStyles = makeStyles(theme => ({
-  input: {
-    ...theme.typography.body2,
-    backgroundColor: grey[200],
-    padding: '0.8rem',
-    width: '100%',
-    borderRadius: 6,
-  },
-}))
-
 type CommentsQueryData = InfiniteData<ICommentPage>
 
 const Comments: FC = () => {
-  const classes = useStyles()
   const theme = useTheme()
   const { authenticate } = useAuth()
   const queryClient = useQueryClient()
@@ -55,7 +41,7 @@ const Comments: FC = () => {
 
   useEffect(() => {
     if (isScrollbarAtBottom) commentsQuery.fetchNextPage()
-  }, [isScrollbarAtBottom, commentsQuery.fetchNextPage])
+  }, [isScrollbarAtBottom, commentsQuery])
 
   const handleCommentFormSubmit: FormEventHandler = event => {
     event.preventDefault()

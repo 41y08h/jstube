@@ -1,5 +1,5 @@
 import IRatings from './Ratings'
-import User, { IChannel } from './User'
+import { IChannel } from './User'
 
 export default interface IVideo {
   id: number

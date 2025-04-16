@@ -8,8 +8,12 @@ import formatNumber from '../../lib/formatNumber'
 
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import { Avatar, ButtonBase, Typography, useTheme } from '@mui/material'
+import Image from 'next/image'
 
-const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
+const VideoCard: FC<{ data: QVideo; updateIsInWL(videoId: number): void }> = ({
+  data,
+  updateIsInWL,
+}) => {
   const theme = useTheme()
 
   const links = {
@@ -23,7 +27,8 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
         <div className='relative'>
           <Link href={links.video}>
             <div className='aspect-ratio'>
-              <img
+              <Image
+                fill
                 src={data.thumbnail}
                 alt={data.title}
                 className='rounded-lg'
@@ -42,13 +47,17 @@ const VideoCard: FC<{ data: QVideo }> = ({ data }) => {
           <Link href={links.channel}>
             <Avatar
               style={{ width: '2.25rem', height: '2.25rem' }}
-              src={data.channel.picture}
+              src={data.channel.picture ?? ''}
               alt={data.channel.name}
             />
           </Link>
           <div className='flex flex-col pl-4 space-y-0.5 text-md leading-tight pr-8 w-full'>
             <div className='pl-1 absolute -top-2 right-3'>
-              <VideoMenu id={data.id} isInWL={data.isInWL} />
+              <VideoMenu
+                id={data.id}
+                isInWL={data.isInWL}
+                updateIsInWL={updateIsInWL}
+              />
             </div>
             <Link href={links.video}>
               <Typography

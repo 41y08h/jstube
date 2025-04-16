@@ -1,4 +1,4 @@
-import { Box, SxProps, Tab, Tabs, Theme, useTheme } from '@mui/material'
+import { SxProps, Tab, Tabs, Theme, useTheme } from '@mui/material'
 
 export default function ChannelTabs() {
   const theme = useTheme()

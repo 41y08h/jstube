@@ -13,14 +13,9 @@ import {
   useQueryClient,
   InfiniteData,
 } from '@tanstack/react-query'
-import { makeStyles } from '@material-ui/styles'
-import blue from '@material-ui/core/colors/blue'
 import { Button } from '@mui/material'
 import { useComments } from '@/contexts/comments'
-
-const useStyles = makeStyles({
-  blueTextbutton: { color: blue[700], textTransform: 'unset' },
-})
+import { blue } from '@mui/material/colors'
 
 interface Props {
   commentId: number
@@ -31,7 +26,6 @@ type CommentsQueryData = InfiniteData<ICommentPage>
 const Replies: FC<Props> = ({ commentId }) => {
   const queryKey = [`/api/comments/${commentId}/replies`]
   const queryClient = useQueryClient()
-  const classes = useStyles()
 
   const { videoId, updateTotalCommentsCount } = useComments()
 
@@ -166,7 +160,10 @@ const Replies: FC<Props> = ({ commentId }) => {
       ) : (
         Boolean(data?.pages[data?.pages.length - 1]?.hasMore) && (
           <Button
-            className={classes.blueTextbutton}
+            sx={{
+              color: blue[700],
+              textTransform: 'unset',
+            }}
             onClick={() => fetchNextPage()}
             color='primary'
           >

@@ -1,6 +1,6 @@
 import { FC, useState, MouseEvent } from 'react'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { IconButton, Menu } from '@mui/material'
+import { MoreVert } from '@mui/icons-material'
 
 interface Props {
   children: React.ReactNode
@@ -20,7 +20,7 @@ const CommentMenu: FC<Props> = ({ children }) => {
   return (
     <div>
       <IconButton size='small' edge='end' onClick={toggleMenu}>
-        <MoreVertIcon style={{ width: '20px', height: '20px' }} />
+        <MoreVert style={{ width: '20px', height: '20px' }} />
       </IconButton>
       <Menu
         keepMounted

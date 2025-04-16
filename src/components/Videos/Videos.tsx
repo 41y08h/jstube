@@ -10,8 +10,7 @@ import {
 import { QVideosPage } from '../../interfaces/Video'
 import VideoLoadingGrid from '../VideoLoadingGrid'
 import { useInView } from 'react-intersection-observer'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import { Typography } from '@mui/material'
+import { CircularProgress, Typography } from '@mui/material'
 import { Button } from '@mui/material'
 import Image from 'next/image'
 

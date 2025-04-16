@@ -6,9 +6,9 @@ import formatTime from '../../lib/formatTime'
 import { QVideo } from '../../interfaces/Video'
 import formatNumber from '../../lib/formatNumber'
 
-import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import { Avatar, ButtonBase, Typography, useTheme } from '@mui/material'
 import Image from 'next/image'
+import { CheckCircle } from '@mui/icons-material'
 
 const VideoCard: FC<{ data: QVideo; updateIsInWL(videoId: number): void }> = ({
   data,
@@ -75,7 +75,7 @@ const VideoCard: FC<{ data: QVideo; updateIsInWL(videoId: number): void }> = ({
                 className='flex items-center space-x-2 pr-2'
               >
                 <Typography variant='body2'>{data.channel.name}</Typography>
-                <CheckCircleIcon className='ml-1' style={{ width: '12px' }} />
+                <CheckCircle className='ml-1' style={{ width: '12px' }} />
               </Link>
               <div className='flex items-center flex-wrap'>
                 <Typography variant='body2' component='span'>

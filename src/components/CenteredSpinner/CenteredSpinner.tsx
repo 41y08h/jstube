@@ -1,5 +1,5 @@
+import { CircularProgress } from '@mui/material'
 import { FC } from 'react'
-import CircularProgress from '@material-ui/core/CircularProgress'
 
 interface Props {
   spacing?: number

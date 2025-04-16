@@ -10,7 +10,6 @@ import CommentForm from './CommentForm'
 import { useAuth } from '../../contexts/auth'
 import IRatings from '../../interfaces/Ratings'
 import CenteredSpinner from '../CenteredSpinner'
-import Typography from '@material-ui/core/Typography'
 import { useInView } from 'react-intersection-observer'
 import IComment, {
   ICommentPage,
@@ -19,7 +18,7 @@ import IComment, {
 } from '../../interfaces/Comment'
 import { FC, FormEventHandler, useEffect, useRef, useState } from 'react'
 import { useComments } from '@/contexts/comments'
-import { useTheme } from '@mui/material'
+import { Typography, useTheme } from '@mui/material'
 
 type CommentsQueryData = InfiniteData<ICommentPage>
 

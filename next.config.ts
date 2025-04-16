@@ -4,7 +4,7 @@ const isDevEnvironment = process.env.NODE_ENV === 'development'
 
 const API_URL = isDevEnvironment
   ? 'http://localhost:5000'
-  : 'https://jstube-api.herokuapp.com'
+  : 'https://jstube-api.onrender.com'
 
 const nextConfig: NextConfig = {
   async rewrites() {

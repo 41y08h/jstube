@@ -3,7 +3,7 @@ import Videos from '@/components/Videos'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Home - JsTube',
+  title: 'jsTube',
 }
 
 export default function Home() {

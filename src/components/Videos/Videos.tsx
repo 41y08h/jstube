@@ -10,11 +10,14 @@ import {
 import { QVideosPage } from '../../interfaces/Video'
 import VideoLoadingGrid from '../VideoLoadingGrid'
 import { useInView } from 'react-intersection-observer'
-import { CircularProgress, Typography } from '@mui/material'
+import { CircularProgress, Typography, useTheme } from '@mui/material'
 import { Button } from '@mui/material'
 import Image from 'next/image'
+import Link from 'next/link'
+import { red } from '@mui/material/colors'
 
 const Videos: FC<{ url: string }> = ({ url }) => {
+  const theme = useTheme()
   const {
     data,
     isLoading,
@@ -79,10 +82,10 @@ const Videos: FC<{ url: string }> = ({ url }) => {
       </div>
     )
 
-  return data ? (
+  return data!.pages.some(page => page.items.length) ? (
     <>
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 xl:gap-x-4 2xl:gap-x-5 gap-3 gap-y-0 sm:p-4 items-start'>
-        {data.pages.map(page =>
+        {data!.pages.map(page =>
           page.items.map(video => (
             <VideoCard
               key={video.id}
@@ -96,7 +99,56 @@ const Videos: FC<{ url: string }> = ({ url }) => {
         {isFetchingNextPage && <CircularProgress />}
       </div>
     </>
-  ) : null
+  ) : (
+    <div className='mt-[-40px] h-full flex items-center justify-center text-center'>
+      <div className='flex items-center'>
+        <Image
+          src='/alien.svg'
+          alt='alien'
+          height={128}
+          width={128}
+          className='mr-6'
+        />
+        <div className='flex flex-col'>
+          <Typography
+            variant='h6'
+            sx={{
+              fontSize: '1.8rem',
+              fontWeight: 100,
+              mb: 1.5,
+            }}
+          >
+            No videos found
+          </Typography>
+          <Link
+            href='/upload'
+            style={{
+              width: 'min-content',
+            }}
+          >
+            <Button
+              sx={{
+                borderRadius: '20px',
+                padding: '0 20px',
+                height: '40px',
+                backgroundColor: red[500],
+                textTransform: 'none',
+                color: 'white',
+              }}
+            >
+              <span className='material-symbols-outlined mr-1'>add</span>
+              <Typography
+                variant='subtitle2'
+                fontWeight={theme.typography.fontWeightBold}
+              >
+                Create
+              </Typography>
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default Videos

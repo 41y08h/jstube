@@ -29,7 +29,18 @@ const Comments: FC = () => {
   const { commentsQuery, commentsQueryKey, updateTotalCommentsCount } =
     useComments()
 
-  const [bottomIntersectionRef, isScrollbarAtBottom] = useInView()
+  const { ref: bottomIntersectionRef } = useInView({
+    threshold: 1,
+    onChange: inView => {
+      if (
+        inView &&
+        commentsQuery.hasNextPage &&
+        !commentsQuery.isFetchingNextPage
+      ) {
+        commentsQuery.fetchNextPage()
+      }
+    },
+  })
   const [isCommentFormActive, setIsCommentFormActive] = useState(false)
   const commentInputRef = useRef<HTMLTextAreaElement | undefined>(undefined)
 
@@ -37,10 +48,6 @@ const Comments: FC = () => {
     mutationFn: (text: string) =>
       axios.post<IComment>(commentsQueryKey[0], { text }),
   })
-
-  useEffect(() => {
-    if (isScrollbarAtBottom) commentsQuery.fetchNextPage()
-  }, [isScrollbarAtBottom, commentsQuery])
 
   const handleCommentFormSubmit: FormEventHandler = event => {
     event.preventDefault()

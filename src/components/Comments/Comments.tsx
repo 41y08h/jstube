@@ -16,7 +16,7 @@ import IComment, {
   IReply,
   IReplyPage,
 } from '../../interfaces/Comment'
-import { FC, FormEventHandler, useEffect, useRef, useState } from 'react'
+import { FC, FormEventHandler, useRef, useState } from 'react'
 import { useComments } from '@/contexts/comments'
 import { Typography, useTheme } from '@mui/material'
 

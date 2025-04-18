@@ -18,7 +18,7 @@ import {
 import VideoPlayer from '@/components/VideoPlayer'
 import { grey, red } from '@mui/material/colors'
 import IVideo from '@/interfaces/Video'
-import Authenticated from '../../components/Authenticated/Authenticated'
+import Authenticated from '@/components/Authenticated'
 
 export default function Upload() {
   const [file, setFile] = useState<File>()

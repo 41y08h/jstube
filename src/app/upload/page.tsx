@@ -80,7 +80,10 @@ export default function Upload() {
           <title>Upload - JsTube</title>
         </Head>
         <div className='px-18 py-6'>
-          <Typography variant='h5' sx={{ fontWeight: 700 }}>
+          <Typography
+            variant='h4'
+            sx={{ fontWeight: theme.typography.fontWeightBold }}
+          >
             Upload a video
           </Typography>
           <form onSubmit={handleSubmit}>

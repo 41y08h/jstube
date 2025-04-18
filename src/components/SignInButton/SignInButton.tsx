@@ -6,7 +6,7 @@ const SignInButton = () => (
     variant='outlined'
     color='primary'
     startIcon={<AccountCircleIcon />}
-    href='/api/auth/google'
+    href='/login'
   >
     Sign in
   </Button>

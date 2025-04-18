@@ -1,6 +1,7 @@
 'use client'
 import { Fragment, useRef, FC } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
+import SignInButton from '../SignInButton'
 
 interface Props {
   isOpen: boolean
@@ -46,12 +47,7 @@ const LoginModal: FC<Props> = ({ isOpen, setIsOpen }) => {
                   >
                     Sign in to continue
                   </Dialog.Title>
-                  <a
-                    className='text-align-center bg-gray-200 rounded-md m-4 ml-0 p-4 w-100 block outline-none'
-                    href='/api/auth/google'
-                  >
-                    Continue with Google
-                  </a>
+                  <SignInButton />
                 </div>
               </div>
             </div>

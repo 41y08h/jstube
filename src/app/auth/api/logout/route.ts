@@ -8,5 +8,7 @@ export async function GET(req: NextRequest) {
     maxAge: -1,
   })
 
-  return NextResponse.redirect(req.headers.get('referer') ?? '/')
+  return NextResponse.redirect(
+    (req.headers.get('referer') ?? '/') + '?action=logout'
+  )
 }

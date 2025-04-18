@@ -8,7 +8,9 @@ export async function GET(req: NextRequest) {
     maxAge: -1,
   })
 
-  return NextResponse.redirect(
-    (req.headers.get('referer') ?? '/') + '?action=logout'
-  )
+  const referer = req.headers.get('referer') ?? '/'
+  const url = new URL(referer, req.url) // Use req.url as the base
+  url.searchParams.set('action', 'logout')
+
+  return NextResponse.redirect(url)
 }

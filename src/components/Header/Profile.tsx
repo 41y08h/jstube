@@ -77,11 +77,11 @@ export default function Profile() {
             <MenuItemContent Icon={AccountBoxIcon} text='Your channel' />
           </MenuItem>
         </Link>
-        <Link href='/api/logout'>
+        <a href='/auth/api/logout'>
           <MenuItem onClick={closeMenu}>
             <MenuItemContent Icon={ExitToAppIcon} text='Sign out' />
           </MenuItem>
-        </Link>
+        </a>
         <Divider sx={{ margin: '12px 0' }} />
         <MenuItem onClick={closeMenu}>
           <MenuItemContent Icon={SettingsIcon} text='Settings' />

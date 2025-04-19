@@ -101,21 +101,25 @@ const Videos: FC<{ url: string }> = ({ url }) => {
     </>
   ) : (
     <div className='mt-[-40px] h-full flex items-center justify-center text-center'>
-      <div className='flex items-center'>
-        <Image
-          src='/alien.svg'
-          alt='alien'
-          height={128}
-          width={128}
-          className='mr-6'
-        />
-        <div className='flex flex-col'>
+      <div className='flex flex-col items-center'>
+        <div className='flex items-center justify-center gap-1 text-8xl font-extrabold text-gray-800'>
+          <span>4</span>
+          <Image
+            src='/alien.svg'
+            alt='alien'
+            width={84}
+            height={84}
+            className='rounded-full'
+          />
+          <span>4</span>
+        </div>
+        <div className='flex flex-col items-center'>
           <Typography
             variant='h6'
+            className='py-2'
             sx={{
               fontSize: '1.8rem',
               fontWeight: 100,
-              mb: 1.5,
             }}
           >
             No videos found

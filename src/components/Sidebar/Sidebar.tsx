@@ -47,6 +47,7 @@ const Sidebar: FC<Props> = ({ isOpen, toggleIsOpen }) => {
   return (
     <SwipeableDrawer
       anchor='left'
+      swipeAreaWidth={100}
       open={isOpen}
       onOpen={toggleIsOpen}
       onClose={toggleIsOpen}

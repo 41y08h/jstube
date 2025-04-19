@@ -1,10 +1,10 @@
 'use client'
 
 import { usePathname, useSearchParams } from 'next/navigation'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import { Button } from '@mui/material'
+import { Button, Typography, useTheme } from '@mui/material'
 
 const SignInButton = () => {
+  const theme = useTheme()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
@@ -17,10 +17,19 @@ const SignInButton = () => {
     <Button
       variant='outlined'
       color='primary'
-      startIcon={<AccountCircleIcon />}
       href={`/api/auth/google?state=${state}`}
+      sx={{
+        borderRadius: '20px',
+        borderColor: theme.palette.grey[300],
+        textTransform: 'none',
+        height: '40px',
+        padding: '0 10px',
+      }}
     >
-      Sign in
+      <span className='material-symbols-outlined mr-1'>account_circle</span>
+      <Typography variant='subtitle2' className='text-xs'>
+        Sign in
+      </Typography>
     </Button>
   )
 }

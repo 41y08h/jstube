@@ -39,7 +39,7 @@ const Header: FC<{ toggleSidebar: () => void }> = ({ toggleSidebar }) => {
         }}
       >
         <Toolbar className='text-primary justify-between'>
-          <div className='flex justify-between w-full px-2'>
+          <div className='flex justify-between w-full'>
             <div className='flex items-center'>
               <IconButton
                 onClick={() => toggleSidebar()}
@@ -60,17 +60,16 @@ const Header: FC<{ toggleSidebar: () => void }> = ({ toggleSidebar }) => {
                 </div>
               </Link>
             </div>
-
-            <div className='flex'>
+            <div className='hidden sm:flex w-full max-w-56 md:max-w-[22rem] lg:max-w-lg xl:max-w-xl'>
               <TextField
                 size='small'
                 variant='outlined'
                 placeholder='Search'
-                className='w-lg'
+                className='w-full'
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     borderRadius: '20px 0 0 20px',
-                    minHeight: '100%',
+                    minHeight: '40px',
                   },
                 }}
               />
@@ -80,7 +79,7 @@ const Header: FC<{ toggleSidebar: () => void }> = ({ toggleSidebar }) => {
                 sx={{
                   borderRadius: '0 20px 20px 0',
                   borderLeft: 'none',
-                  minHeight: '100%',
+                  minHeight: '40px',
                   padding: '0 20px',
                 }}
               >
@@ -88,14 +87,14 @@ const Header: FC<{ toggleSidebar: () => void }> = ({ toggleSidebar }) => {
               </Button>
             </div>
             <div className='flex items-center'>
-              <Link href='/upload' className='h-full'>
+              <Link href='/upload' className=''>
                 <Button
                   color='inherit'
                   sx={{
                     borderRadius: '20px',
                     padding: '0 20px',
                     marginLeft: '10px',
-                    height: '95%',
+                    height: '40px',
                     backgroundColor: theme.palette.grey[200],
                     textTransform: 'none',
                   }}
